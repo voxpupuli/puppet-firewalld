@@ -42,6 +42,11 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
   end
 
   ## TODO: Add ICM blocks, ports and other zone options
+  #
+
+  def get_rules
+    zone_exec_firewall('--list-rich-rules').split(/\n/)
+  end
 
 
 end

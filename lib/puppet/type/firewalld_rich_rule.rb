@@ -74,6 +74,13 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   newparam(:action) do
     desc "doc"
   end
+
+  newparam(:raw_rule) do
+    desc "Manage the entire rule as one string - this is used internally by firwalld_zone
+          handle pruning of rules"
+  end
+
+
  
   ELEMENTS = [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
   validate do

@@ -100,6 +100,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
   end
 
   def build_rich_rule
+    return @resource[:raw_rule] if @resource[:raw_rule]
     rule = [ 'rule' ]
     rule << key_val_opt('family')
     rule << eval_source
@@ -108,15 +109,15 @@ Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
     rule << eval_log
     rule << eval_audit
     rule << eval_action
-    rule.flatten.reject { |r| r.empty? }.join(" ")
-
+    @resource[:raw_rule] = rule.flatten.reject { |r| r.empty? }.join(" ")
+    @resource[:raw_rule]
   end
 
   def firewall_cmd_run(opt)
     args = []
     args << [ '--permanent', '--zone', @resource[:zone] ]
     args << opt
-    args << "'#{@rule_args}'"
+    args << "'#{@resource[:raw_rule]}'"
     output = %x{/usr/bin/firewall-cmd #{args.flatten.join(' ')} 2>&1}
     raise Puppet::Error, "Failed to add firewall rule: #{output}" unless $?.success?
   end
@@ -129,7 +130,6 @@ Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
     firewall_cmd_run('--remove-rich-rule')
   end
 
-  
 
 end
 

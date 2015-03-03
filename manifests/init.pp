@@ -29,13 +29,13 @@ class firewalld {
       enable    => true,
       subscribe => Package['firewalld'],
     }
-   
-    exec { 'firewalld::reload':
-      path        => '/usr/bin:/bin',
+
+    exec{ 'firewalld::reload':
+      path        =>'/usr/bin:/bin',
       command     => 'firewall-cmd --complete-reload',
       refreshonly => true,
-   }
-     
+    }
+
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
 }

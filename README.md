@@ -50,11 +50,11 @@ Parameters:
 * `zone`: Name of the zone this rich rule belongs to
 * `family`: Protocol family, defaults to `ipv4`
 * `source`: Source address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
-```puppet
-   source => '192.168.2.1',
+  ```puppet
+     source => '192.168.2.1',
 
-   source => { 'address' => '192.168.1.1', 'invert' => true }
-```
+     source => { 'address' => '192.168.1.1', 'invert' => true }
+  ```
 
 * `dest`: Source address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
 ```puppet

@@ -48,7 +48,9 @@ _Example_:
 Parameters:
 
 * `zone`: Name of the zone this rich rule belongs to
+
 * `family`: Protocol family, defaults to `ipv4`
+
 * `source`: Source address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
   ```puppet
      source => '192.168.2.1',
@@ -88,6 +90,7 @@ Parameters:
 The following paramters are the element of the rich rule, only _one_ may be used.
 
 * `service`: Name of the service
+
 * `port`: A hash containing `port` and `protocol` values
   ```puppet
      port => {
@@ -95,8 +98,11 @@ The following paramters are the element of the rich rule, only _one_ may be used
        'protocol' => 'tcp',
      },
   ```
+
 * `icmp_block`: Specify an `icmp-block` for the rule
+
 * `masquerade`: Set to `true` or `false` to enable masquerading
+
 * `forward_port`: Set forward-port, this should be a hash containing `port`,`protocol`,`to_port`,`to_addr`
   ```puppet
      forward_port => {

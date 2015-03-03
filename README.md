@@ -113,5 +113,11 @@ The following paramters are the element of the rich rule, only _one_ may be used
      },
   ```
 
+## Limitations / TODO (PR's welcome!)
 
+* Currently only _target_ is a managable property for a zone
 
+## Author
+
+* Written and maintained by Craig Dunn <craig@craigdunn.org> @crayfisx
+* Sponsered by Baloise Group [http://baloise.github.io](http://baloise.github.io)

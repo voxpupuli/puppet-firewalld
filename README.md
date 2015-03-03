@@ -22,7 +22,7 @@ _Example_:
   }
 ```
 
-Parameters:
+#### Parameters
 
 * `target`: Specify the target of the zone
 * `purge_rich_rules`: Optional, and defaulted to false.  When true any configured rich rules found in the zone that do not match what is in the Puppet catalog will be purged.
@@ -45,7 +45,7 @@ _Example_:
   }
 ```
 
-Parameters:
+#### Parameters
 
 * `zone`: Name of the zone this rich rule belongs to
 

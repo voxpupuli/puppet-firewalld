@@ -1,79 +1,111 @@
-# firewalld
+# Module: firewalld
 
-#### Table of Contents
+## Description
 
-1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with firewalld](#setup)
-    * [What firewalld affects](#what-firewalld-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with firewalld](#beginning-with-firewalld)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
-
-## Overview
-
-A one-maybe-two sentence summary of what the module does/what problem it solves.
-This is your 30 second elevator pitch for your module. Consider including
-OS/Puppet version it works with.
-
-## Module Description
-
-If applicable, this section should have a brief description of the technology
-the module integrates with and what that integration enables. This section
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?"
-
-If your module has a range of functionality (installation, configuration,
-management, etc.) this is the time to mention it.
-
-## Setup
-
-### What firewalld affects
-
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
-
-### Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
-
-### Beginning with firewalld
-
-The very basic steps needed for a user to get the module up and running.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones and rich rules. 
 
 ## Usage
 
-Put the classes, types, and resources for customizing, configuring, and doing
-the fancy stuff with your module here.
+The firewalld module contains types and providers to manage zones and rich rules by interfacing with the `firewall-cmd` command.  The following types are currently supported.  Note that all zone and rules management is done in `--permanent` mode.
 
-## Reference
+### Firewalld Zones
 
-Here, list the classes, types, providers, facts, etc contained in your module.
-This section should include all of the under-the-hood workings of your module so
-people know what the module is touching on their system but don't need to mess
-with things. (We are working on automating this section!)
+Firewalld zones can be managed with the `firewalld_zone` resource type.
 
-## Limitations
+_Example_:
 
-This is where you list OS compatibility, version compatibility, etc.
+```puppet
+  firewalld_zone { 'restricted':
+    ensure => present,
+    target => '%%REJECT%%',
+    purge_rich_rules => true,
+  }
+```
 
-## Development
+Parameters:
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
+* `target`: Specify the target of the zone
+* `purge_rich_rules`: Optional, and defaulted to false.  When true any configured rich rules found in the zone that do not match what is in the Puppet catalog will be purged.
 
-## Release Notes/Contributors/Etc **Optional**
+### Firewalld rich rules
 
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You may also add any additional sections you feel are
-necessary or important to include here. Please use the `## ` header.
+Firewalld rich rules are managed using the `firewalld_rich_rule` resource type
+
+firewalld_rich_rules will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependancies for this  
+
+_Example_:
+
+```puppet
+  firewalld_rich_rule { 'Accept SSH from barny':
+    ensure => present,
+    zone   => 'restricted',
+    source => '192.168.1.2/32',
+    service => 'ssh',
+    action  => 'accept',
+  }
+```
+
+Parameters:
+
+* `zone`: Name of the zone this rich rule belongs to
+* `family`: Protocol family, defaults to `ipv4`
+* `source`: Source address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
+```puppet
+   source => '192.168.2.1',
+
+   source => { 'address' => '192.168.1.1', 'invert' => true }
+```
+
+* `dest`: Source address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
+```puppet
+   dest => '192.168.2.1',
+
+   dest => { 'address' => '192.168.1.1', 'invert' => true }
+```
+
+* `log`: When set to `true` will enable logging, optionally this can be hash with `prefix`, `level` and `limit`
+```puppet
+   log => { 'level' => 'debug', 'prefix' => 'foo' },
+
+   log => true,
+```
+
+* `audit`: When set to `true` will enable auditing, optionally this can be hash with `limit`
+```puppet
+   audit => { 'limit' => '3/s' },
+
+   audit => true,
+```
+
+* `action`: A string containing the action `accept`, `reject` or `drop`.  For `reject` it can be optionally supplied as a hash containing `type`
+```puppet
+   action => 'accept'
+
+   action => { 'action' => 'reject', 'type' => 'bad' }
+```
+
+
+The following paramters are the element of the rich rule, only _one_ may be used.
+
+* `service`: Name of the service
+* `port`: A hash containing `port` and `protocol` values
+```puppet
+   port => {
+     'port' => 80,
+     'protocol' => 'tcp',
+   },
+```
+* `icmp_block`: Specify an `icmp-block` for the rule
+* `masquerade`: Set to `true` or `false` to enable masquerading
+* `forward_port`: Set forward-port, this should be a hash containing `port`,`protocol`,`to_port`,`to_addr`
+```puppet
+   forward_port => {
+     'port' => '8080',
+     'protocol' => 'tcp',
+     'to_addr' => '10.2.1.1',
+     'to_port' => '8993'
+   },
+```
+
+
+

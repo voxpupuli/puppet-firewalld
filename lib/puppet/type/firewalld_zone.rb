@@ -43,7 +43,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         :name     => purge,
         :raw_rule => purge,
         :ensure   => :absent,
-        :zone     => self[:name]
+        :zone     => self[:name],
       )
     end
     return purge_rules

@@ -57,55 +57,55 @@ Parameters:
   ```
 
 * `dest`: Source address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
-```puppet
-   dest => '192.168.2.1',
-
-   dest => { 'address' => '192.168.1.1', 'invert' => true }
-```
+  ```puppet
+     dest => '192.168.2.1',
+  
+     dest => { 'address' => '192.168.1.1', 'invert' => true }
+  ```
 
 * `log`: When set to `true` will enable logging, optionally this can be hash with `prefix`, `level` and `limit`
-```puppet
-   log => { 'level' => 'debug', 'prefix' => 'foo' },
-
-   log => true,
-```
+  ```puppet
+     log => { 'level' => 'debug', 'prefix' => 'foo' },
+  
+     log => true,
+  ```
 
 * `audit`: When set to `true` will enable auditing, optionally this can be hash with `limit`
-```puppet
-   audit => { 'limit' => '3/s' },
-
-   audit => true,
-```
+  ```puppet
+     audit => { 'limit' => '3/s' },
+  
+     audit => true,
+  ```
 
 * `action`: A string containing the action `accept`, `reject` or `drop`.  For `reject` it can be optionally supplied as a hash containing `type`
-```puppet
-   action => 'accept'
-
-   action => { 'action' => 'reject', 'type' => 'bad' }
-```
+  ```puppet
+     action => 'accept'
+  
+     action => { 'action' => 'reject', 'type' => 'bad' }
+  ```
 
 
 The following paramters are the element of the rich rule, only _one_ may be used.
 
 * `service`: Name of the service
 * `port`: A hash containing `port` and `protocol` values
-```puppet
-   port => {
-     'port' => 80,
-     'protocol' => 'tcp',
-   },
-```
+  ```puppet
+     port => {
+       'port' => 80,
+       'protocol' => 'tcp',
+     },
+  ```
 * `icmp_block`: Specify an `icmp-block` for the rule
 * `masquerade`: Set to `true` or `false` to enable masquerading
 * `forward_port`: Set forward-port, this should be a hash containing `port`,`protocol`,`to_port`,`to_addr`
-```puppet
-   forward_port => {
-     'port' => '8080',
-     'protocol' => 'tcp',
-     'to_addr' => '10.2.1.1',
-     'to_port' => '8993'
-   },
-```
+  ```puppet
+     forward_port => {
+       'port' => '8080',
+       'protocol' => 'tcp',
+       'to_addr' => '10.2.1.1',
+       'to_port' => '8993'
+     },
+  ```
 
 
 

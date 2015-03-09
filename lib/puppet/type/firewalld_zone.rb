@@ -1,4 +1,5 @@
 require 'puppet'
+require 'puppet/type/firewalld_rich_rule'
 
 Puppet::Type.newtype(:firewalld_zone) do
 

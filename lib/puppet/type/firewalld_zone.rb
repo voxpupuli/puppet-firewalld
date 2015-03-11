@@ -1,5 +1,5 @@
 require 'puppet'
-require 'puppet/type/firewalld_rich_rule'
+require File.dirname(__FILE__).concat('/firewalld_rich_rule.rb')
 
 Puppet::Type.newtype(:firewalld_zone) do
 

@@ -116,20 +116,27 @@ Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
   end
 
   def firewall_cmd_run(opt)
-    args = []
-    args << [ '--permanent', '--zone', @resource[:zone] ]
-    args << opt
-    args << "'#{@resource[:raw_rule]}'"
-    output = %x{/usr/bin/firewall-cmd #{args.flatten.join(' ')} 2>&1}
-    raise Puppet::Error, "Failed to run firewall rule: #{output}" unless $?.success?
+    if opt == '--reload'
+      output = %x(/usr/bin/firewall-cmd #{opt} 2>&1)
+      raise Puppet::Error, "Failed to reload firewall rule: #{output}" unless $?.success?
+    else
+      args = []
+      args << [ '--permanent', '--zone', @resource[:zone] ]
+      args << opt
+      args << "'#{@resource[:raw_rule]}'"
+      output = %x{/usr/bin/firewall-cmd #{args.flatten.join(' ')} 2>&1}
+      raise Puppet::Error, "Failed to run firewall rule: #{output}" unless $?.success?
+    end
   end
 
   def create
     firewall_cmd_run('--add-rich-rule')
+    firewall_cmd_run('--reload')
   end
 
   def destroy
     firewall_cmd_run('--remove-rich-rule')
+    firewall_cmd_run('--reload')
   end
 
 

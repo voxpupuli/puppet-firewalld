@@ -116,12 +116,15 @@ Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
   end
 
   def firewall_cmd_run(opt)
-    args = []
-    args << [ '--permanent', '--zone', @resource[:zone] ]
-    args << opt
-    args << "'#{@resource[:raw_rule]}'"
-    output = %x{/usr/bin/firewall-cmd #{args.flatten.join(' ')} 2>&1}
-    raise Puppet::Error, "Failed to run firewall rule: #{output}" unless $?.success?
+      args = []
+      args << [ '--permanent', '--zone', @resource[:zone] ]
+      args << opt
+      args << "'#{@resource[:raw_rule]}'"
+      output = %x{/usr/bin/firewall-cmd #{args.flatten.join(' ')} 2>&1}
+      raise Puppet::Error, "Failed to run firewall rule: #{output}" unless $?.success?
+      output = %x{/usr/bin/firewall-cmd --reload 2>&1}
+      raise Puppet::Error, "Failed to reload firewall rule: #{output}" unless $?.success?
+    end
   end
 
   def create

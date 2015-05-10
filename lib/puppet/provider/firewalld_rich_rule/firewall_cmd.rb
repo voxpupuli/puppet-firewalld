@@ -124,7 +124,6 @@ Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
       raise Puppet::Error, "Failed to run firewall rule: #{output}" unless $?.success?
       output = %x{/usr/bin/firewall-cmd --reload 2>&1}
       raise Puppet::Error, "Failed to reload firewall rule: #{output}" unless $?.success?
-    end
   end
 
   def create

@@ -18,10 +18,23 @@
 # Copyright 2015 Craig Dunn
 #
 #
-class firewalld {
+class firewalld (
+  $package_config = true,
+){
 
-    package { [ 'firewalld', 'firewall-config' ]:
+    validate_bool($package_config)
+
+    package { 'firewalld':
       ensure => installed,
+    }
+
+    if ($package_config){
+      $_package_config = 'installed'
+    } else {
+      $_package_config = 'absent'
+    }
+    package { 'firewall-config':
+      ensure => $_package_config,
     }
 
     service { 'firewalld':
@@ -39,3 +52,4 @@ class firewalld {
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
 }
+

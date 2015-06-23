@@ -2,13 +2,26 @@
 
 ## Description
 
-This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones and rich rules. 
+This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones and rich rules.
 
 ## Usage
 
 The firewalld module contains types and providers to manage zones and rich rules by interfacing with the `firewall-cmd` command.  The following types are currently supported.  Note that all zone and rules management is done in `--permanent` mode.
 
-### Firewalld Zones
+### Class: firewalld
+Manages firewalld packages and service.
+```
+class { '::firewalld':
+  package_config => false,
+}
+```
+##### Parameters
+
+* `package_config`: Optional, and defaulted to `true`. When set to `true` will install package `firewall-config`. `false` will remove the package.
+
+### Ressource Types
+
+#### Firewalld Zones
 
 Firewalld zones can be managed with the `firewalld_zone` resource type.
 
@@ -22,12 +35,12 @@ _Example_:
   }
 ```
 
-#### Parameters
+##### Parameters
 
 * `target`: Specify the target of the zone
 * `purge_rich_rules`: Optional, and defaulted to false.  When true any configured rich rules found in the zone that do not match what is in the Puppet catalog will be purged.
 
-### Firewalld rich rules
+#### Firewalld rich rules
 
 Firewalld rich rules are managed using the `firewalld_rich_rule` resource type
 
@@ -45,7 +58,7 @@ _Example_:
   }
 ```
 
-#### Parameters
+##### Parameters
 
 * `zone`: Name of the zone this rich rule belongs to
 
@@ -61,28 +74,28 @@ _Example_:
 * `dest`: Source address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
   ```puppet
      dest => '192.168.2.1',
-  
+
      dest => { 'address' => '192.168.1.1', 'invert' => true }
   ```
 
 * `log`: When set to `true` will enable logging, optionally this can be hash with `prefix`, `level` and `limit`
   ```puppet
      log => { 'level' => 'debug', 'prefix' => 'foo' },
-  
+
      log => true,
   ```
 
 * `audit`: When set to `true` will enable auditing, optionally this can be hash with `limit`
   ```puppet
      audit => { 'limit' => '3/s' },
-  
+
      audit => true,
   ```
 
 * `action`: A string containing the action `accept`, `reject` or `drop`.  For `reject` it can be optionally supplied as a hash containing `type`
   ```puppet
      action => 'accept'
-  
+
      action => { 'action' => 'reject', 'type' => 'bad' }
   ```
 
@@ -121,3 +134,4 @@ The following paramters are the element of the rich rule, only _one_ may be used
 
 * Written and maintained by Craig Dunn <craig@craigdunn.org> @crayfisx
 * Sponsered by Baloise Group [http://baloise.github.io](http://baloise.github.io)
+

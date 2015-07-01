@@ -59,7 +59,7 @@ define firewalld::custom_service (
     ensure => "${ensure}"
   }
   
-  exec{ 'firewalld::custom_service::reload':
+  exec{ "firewalld::custom_service::reload-${name}":
       path        =>'/usr/bin:/bin',
       command     => 'firewall-cmd --complete-reload',
       refreshonly => true,
@@ -69,7 +69,7 @@ define firewalld::custom_service (
     ensure  => "${ensure}",
     content => template('firewalld/service.xml.erb'),
     mode    => '0644',
-    notify  => Exec['firewalld::custom_service::reload'],
+    notify  => Exec["firewalld::custom_service::reload-${name}"],
   }
 
 }

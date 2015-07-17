@@ -7,7 +7,14 @@
 #
 # === Examples
 #
-#  include firewalld
+#  Standard:
+#    include firewalld
+#
+#  Command line only, no GUI components:
+#    class{'firewalld':
+#      packages => ['firewalld']
+#    }
+#
 #
 # === Authors
 #
@@ -18,16 +25,41 @@
 # Copyright 2015 Craig Dunn
 #
 #
-class firewalld {
+class firewalld (
+  $packages       = [ 'firewalld', 'firewall-config' ],
+  $package_ensure = 'installed',
+  $service_ensure = 'running',
+  $service_enable = true,
+) {
+    # Type Validation
+    validate_array(
+      $packages,
+    )
+    validate_string(
+      $package_ensure,
+      $service_ensure,
+    )
+    validate_bool(
+      $service_enable,
+    )
 
-    package { [ 'firewalld', 'firewall-config' ]:
-      ensure => installed,
+    # Further validation of string parameters
+    if !($package_ensure in ['present','absent','latest','installed']) {
+      fail("Parameter package_ensure not set to valid value in module firewalld. Valid values are: present, absent, latest, installed. Value set: $package_ensure")
+    }
+    
+    if !($service_ensure in ['stopped','running',]) {
+    fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: $service_ensure")
+  }
+
+    package { $packages:
+      ensure => "${package_ensure}",
+      notify => Service['firewalld']
     }
 
     service { 'firewalld':
-      ensure    => running,
-      enable    => true,
-      subscribe => Package['firewalld'],
+      ensure    => "${$service_ensure}",
+      enable    => $service_enable,
     }
 
     exec{ 'firewalld::reload':
@@ -38,4 +70,5 @@ class firewalld {
 
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
 }

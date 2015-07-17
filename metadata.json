@@ -1,8 +1,8 @@
 {
   "name": "crayfishx-firewalld",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "author": "Craig Dunn",
-  "summary": "Configure firewalld zones and rich rules",
+  "summary": "Configure firewalld zones, services, and rich rules",
   "license": "Apache-2.0",
   "tags": [ "firewalld", "firewall" ],
   "operatingsystem_support": [
@@ -15,6 +15,10 @@
   "project_page": "https://github.com/crayfishx/puppet-firewalld",
   "issues_url": "https://github.com/crayfishx/puppet-firewalld/issues",
   "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": "\u003e\u003d 4.2.0"
+    }
   ]
 }
 

@@ -16,6 +16,11 @@ Puppet::Type.type(:firewalld_service).provide :firewall_cmd do
     args.flatten!
     firewall_cmd(args)
   end
+  
+  def reload_firewall
+    output = %x{/usr/bin/firewall-cmd --reload 2>&1}
+    raise Puppet::Error, "Failed to reload firewall after changing service #{@resource[:service]} : #{output}" unless $?.success?
+  end
 
   def exists?
     exec_firewall('--list-services').split(" ").include?(@resource[:service])
@@ -24,11 +29,13 @@ Puppet::Type.type(:firewalld_service).provide :firewall_cmd do
   def create
     self.debug("Adding new service to firewalld: #{@resource[:service]}")
     exec_firewall('--add-service', @resource[:service])
+    reload_firewall
   end
 
   def destroy
     self.debug("Removing service from firewalld: #{@resource[:service]}")
     exec_firewall('--remove-service', @resource[:service])
+    reload_firewall
   end
 
 end

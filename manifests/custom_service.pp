@@ -55,21 +55,17 @@ define firewalld::custom_service (
   }
   validate_absolute_path($config_dir)
   
-  firewalld_custom_service{"${$short}":
-    ensure => "${ensure}"
-  }
-  
-  exec{ "firewalld::custom_service::reload-${name}":
-      path        =>'/usr/bin:/bin',
-      command     => 'firewall-cmd --complete-reload',
-      refreshonly => true,
-  }
-  
   file{"${config_dir}/${$short}.xml":
     ensure  => "${ensure}",
     content => template('firewalld/service.xml.erb'),
     mode    => '0644',
     notify  => Exec["firewalld::custom_service::reload-${name}"],
+  }
+  
+  exec{ "firewalld::custom_service::reload-${name}":
+    path        =>'/usr/bin:/bin',
+    command     => 'firewall-cmd --reload',
+    refreshonly => true,
   }
 
 }

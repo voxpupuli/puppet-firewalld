@@ -25,9 +25,9 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
   end
 
   def create
-    self.debug("Creating new zone #{@resource[:name]}")
+    self.debug("Creating new zone #{@resource[:name]} with target: '#{@resource[:target]}'")
     exec_firewall('--new-zone', @resource[:name])
-    self.target=(@resource[:target]) 
+    self.target=(@resource[:target]) if @resource[:target]
   end
 
   def destroy

@@ -71,4 +71,5 @@ class firewalld (
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_port <||> ~> Exec['firewalld::reload']
 }

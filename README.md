@@ -2,11 +2,11 @@
 
 ## Description
 
-This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones and rich rules. 
+This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones, ports, and rich rules. 
 
 ## Usage
 
-The firewalld module contains types and providers to manage zones, services. and rich rules by interfacing with the `firewall-cmd` command.  The following types are currently supported.  Note that all zone, service, and rule management is done in `--permanent` mode, and a complete reload will be triggered anytime something changes.
+The firewalld module contains types and providers to manage zones, services, ports, and rich rules by interfacing with the `firewall-cmd` command.  The following types are currently supported.  Note that all zone, service, port, and rule management is done in `--permanent` mode, and a complete reload will be triggered anytime something changes.
 
 ### Firewalld Zones
 
@@ -20,6 +20,7 @@ _Example_:
     target           => '%%REJECT%%',
     purge_rich_rules => true,
     purge_services   => true,
+    purge_ports      => true,
   }
 ```
 
@@ -27,13 +28,14 @@ _Example_:
 
 * `target`: Specify the target of the zone.
 * `purge_rich_rules`: Optional, and defaulted to false.  When true any configured rich rules found in the zone that do not match what is in the Puppet catalog will be purged.
-* `purge_services`: Optional, and defaulted to false.  When true any configured services found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* This includes the default ssh service, if you need SSH to access the box, make sure you add the service through either a rich firewall rule or service (see below) or you will lock yourself out!
-
+* `purge_services`: Optional, and defaulted to false.  When true any configured services found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* This includes the default ssh service, if you need SSH to access the box, make sure you add the service through either a rich firewall rule, port, or service (see below) or you will lock yourself out!
+* `purge_ports`: Optional, and defaulted to false. When true any configured ports found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* As with services, this includes the default ssh port. If you fail to specify the appropriate port, rich rule, or service, you will lock yourself out.
+* 
 ### Firewalld rich rules
 
 Firewalld rich rules are managed using the `firewalld_rich_rule` resource type
 
-firewalld_rich_rules will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependancies for this  
+firewalld_rich_rules will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependencies for this  
 
 _Example_:
 
@@ -185,7 +187,7 @@ and you will also see 'XZY' in the service list when you issue ```firewall-cmd -
 
 The `firewalld_service` type is used to add or remove both built in and custom services from zones.
 
-firewalld_service will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependancies for this  
+firewalld_service will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependencies for this  
 
 
 _Example_:
@@ -207,6 +209,8 @@ _Example_:
 ### Firewalld Ports
 
 Firewalld ports can be managed with the `firewalld_port` resource type.
+
+firewalld_port will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependencies for this  
 
 _Example_:
 

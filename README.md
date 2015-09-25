@@ -204,6 +204,34 @@ _Example_:
 
 * `zone`: Name of the zone in which you want to manage the service
 
+### Firewalld Ports
+
+Firewalld ports can be managed withthe `firewalld_port` resource type.
+
+_Example_:
+
+```puppet
+  firewalld_port { 'Open port 8080 in the public zone':
+    ensure => present,
+    zone => 'public'
+    port => {
+      'port' => 8080,
+      'protocol' => 'tcp',
+    },
+  }
+```
+
+#### Parameters
+
+* `zone`: Name of the zone this port belongs to
+
+* `port`: A hash containing `port` and `protocol values
+```puppet
+  port => {
+    'port' => 8080,
+    'protocol' => 'tcp',
+  },
+```
 
 ## Limitations / TODO (PR's welcome!)
 

@@ -213,7 +213,7 @@ _Example_:
 ```puppet
   firewalld_port { 'Open port 8080 in the public zone':
     ensure => present,
-    zone => 'public'
+    zone => 'public',
     port => {
       'port' => 8080,
       'protocol' => 'tcp',

@@ -229,7 +229,7 @@ _Example_:
 
 * `zone`: Name of the zone this port belongs to
 
-* `port`: A hash containing `port` and `protocol values
+* `port`: A hash containing `port` and `protocol` values
 ```puppet
   port => {
     'port' => 8080,

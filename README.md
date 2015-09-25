@@ -166,7 +166,7 @@ and you will also see 'XZY' in the service list when you issue ```firewall-cmd -
 * `port`: (Optional) The protocol / port definitions for this service. Specified as an array of hashes, where each hash defines a protocol and/or port associated with this service. Each hash requires both port and protocol keys, even if the value is an empty string. Specifying a port only works for TCP & UDP, otherwise leave it empty and the entire protocol will be allowed. Valid protocols are tcp, udp, or any protocol defined in /etc/protocols
   ```puppet
      port => [{'port' => '1234', 'protocol' => 'tcp'}],
-      
+      wi
      port => [{'port' => '4321', 'protocol' => 'udp'}, {'protocol' => 'rdp'}],
   ```
   
@@ -206,7 +206,7 @@ _Example_:
 
 ### Firewalld Ports
 
-Firewalld ports can be managed withthe `firewalld_port` resource type.
+Firewalld ports can be managed with the `firewalld_port` resource type.
 
 _Example_:
 

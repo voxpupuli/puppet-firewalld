@@ -2,6 +2,7 @@ require 'puppet'
 require 'puppet/parameter/boolean'
 require File.dirname(__FILE__).concat('/firewalld_rich_rule.rb')
 require File.dirname(__FILE__).concat('/firewalld_service.rb')
+require File.dirname(__FILE__).concat('/firewalld_port.rb')
 
 Puppet::Type.newtype(:firewalld_zone) do
 
@@ -16,6 +17,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         target           => '%%REJECT%%',
         purge_rich_rules => true,
         purge_services   => true,
+        purge_ports      => true,
         icmp_blocks      => 'router-advertisement'
       }
 
@@ -33,6 +35,9 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
     if self.purge_services?
       resources.concat(purge_services())
+    end
+    if self.purge_ports?
+      resources.concat(purge_ports())
     end
     
     return resources
@@ -77,6 +82,12 @@ Puppet::Type.newtype(:firewalld_zone) do
          "
     defaultto :false
   end
+  
+  newparam(:purge_ports, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc "When set to true any ports associated with this zone
+          that are not managed by Puppet will be removed."
+    defaultto :false
+  end
 
   def purge_rich_rules
     return Array.new unless provider.exists?
@@ -118,6 +129,28 @@ Puppet::Type.newtype(:firewalld_zone) do
       )
     end
     return purge_services
+  end
+
+  def purge_ports
+    return Array.new unless provider.exists?
+    purge_ports = Array.new
+    puppet_services = Array.new
+    catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_port) }.each do |fwp|
+      if fwp[:zone] == self[:name]
+        self.debug("Not purging puppet controlled port #{fwp[:port]}")
+        puppet_ports << "#{fwp[:port]}"
+      end
+    end
+    provider.get_services.reject { |p| puppet_ports.include?(p) }.each do |purge|
+      self.debug("Should purge port #{port}")
+      purge_ports << Puppet::Type.type(:firewalld_port).new(
+        :port    => purge,
+        :ensure  => :absent,
+        :port    => purge,
+        :zone    => self[:name]
+      )
+    end
+    return purge_ports
   end
 
 end

@@ -1,45 +1,51 @@
 
 
 firewalld_zone { 'testcraig':
-  target => '%%REJECT%%',
   ensure => present,
+  target => '%%REJECT%%',
 }
 
 firewalld_zone { 'restricted':
-  target => '%%REJECT%%',
   ensure => present,
+  target => '%%REJECT%%',
 }
 
 
 
 firewalld_rich_rule { 'Accept SSH from my box':
-  ensure => present,
-  family => 'ipv4',
-  zone   => 'restricted',
-  source => { 'address' => '10.0.1.2/24' },
-  service => 'ssh', 
+  ensure  => present,
+  family  => 'ipv4',
+  zone    => 'restricted',
+  source  => {
+    'address' => '10.0.1.2/24'
+  },
+  service => 'ssh',
   # log => true,
-  log => { 'level' => 'debug' },
-  action => 'accept',
+  log     => {
+    'level' => 'debug'
+  },
+  action  => 'accept',
 }
 
 # rule family="ipv4" source address="192.168.245.158/32" service name="ssh" accept
 
 firewalld_rich_rule { 'Already exists':
-  ensure => present,
-  family => 'ipv4',
-  zone   => 'restricted',
-  source => { 'address' => '192.168.245.158/32' },
+  ensure  => present,
+  family  => 'ipv4',
+  zone    => 'restricted',
+  source  => {
+    'address' => '192.168.245.158/32'
+  },
   service => 'ssh',
   log     => true,
   action  => 'accept',
 }
 
 firewalld_rich_rule { 'Already exists II':
-  ensure => present,
-  family => 'ipv4',
-  zone   => 'restricted',
-  source => '192.77.55.4/34',
+  ensure  => present,
+  family  => 'ipv4',
+  zone    => 'restricted',
+  source  => '192.77.55.4/34',
   service => 'ssh',
   action  => 'accept',
 }

@@ -45,21 +45,21 @@ class firewalld (
 
     # Further validation of string parameters
     if !($package_ensure in ['present','absent','latest','installed']) {
-      fail("Parameter package_ensure not set to valid value in module firewalld. Valid values are: present, absent, latest, installed. Value set: $package_ensure")
+      fail("Parameter package_ensure not set to valid value in module firewalld. Valid values are: present, absent, latest, installed. Value set: ${package_ensure}")
     }
     
     if !($service_ensure in ['stopped','running',]) {
-    fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: $service_ensure")
+    fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: ${service_ensure}")
   }
 
     package { $packages:
-      ensure => "${package_ensure}",
+      ensure => $package_ensure,
       notify => Service['firewalld']
     }
 
     service { 'firewalld':
-      ensure    => "${$service_ensure}",
-      enable    => $service_enable,
+      ensure => $service_ensure,
+      enable => $service_enable,
     }
 
     exec{ 'firewalld::reload':

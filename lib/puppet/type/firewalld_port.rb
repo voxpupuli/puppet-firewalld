@@ -19,7 +19,7 @@ Puppet::Type.newtype(:firewalld_port) do
   
   ensurable
   
-  newparam(:name, :namevar => :true) do
+  newparam(:name, :namevar => true) do
     desc "Name of the port resource in Puppet"
   end
   

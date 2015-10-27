@@ -1,5 +1,7 @@
 # Module: firewalld
 
+[![Join the chat at https://gitter.im/crayfishx/puppet-firewalld](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/crayfishx/puppet-firewalld?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Description
 
 This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones, ports, and rich rules. 

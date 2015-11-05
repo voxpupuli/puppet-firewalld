@@ -44,6 +44,7 @@ Puppet::Type.newtype(:firewalld_zone) do
     
   end
 
+
   newparam(:name) do
     desc "Name of the rule resource in Puppet"
   end

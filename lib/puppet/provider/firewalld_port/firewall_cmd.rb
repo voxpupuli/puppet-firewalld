@@ -3,15 +3,21 @@ require 'puppet'
 Puppet::Type.type(:firewalld_port).provide :firewall_cmd do
   desc "Interact with firewall-cmd"
   
-  commands :firewall_cmd => 'fiewall-cmd'
+  commands :firewall_cmd => 'firewall-cmd'
   
   mk_resource_methods
   
   def exists?
     @rule_args ||= build_port_rule
-    args=['--permanent','--zone',@resource[:zone],'--query-port',"'#[@rule_args}'}].join(' ')
-    %x{/usr/bin/firewall-cmd #{args} }
-    $?.success?
+    args=['--zone', @resource[:zone],'--query-port', @rule_args ]
+    #%x{/usr/bin/firewall-cmd #{args} }
+    #$?.success? 
+    begin
+      firewall_cmd(args)
+      true
+    rescue Puppet::ExecutionFailure => e
+      false
+    end
   end
   
   def quote_keyval(key,val)
@@ -20,27 +26,27 @@ Puppet::Type.type(:firewalld_port).provide :firewall_cmd do
   
   def eval_port
     args = []
-    args << [quote_keyval('port',@resource[:port]['port']),quote_keyval('protocol, @resource[:port]['protocol'])].join("/")
+    args << ["#{@resource[:port]['port']}", @resource[:port]['protocol']].join("/")
     args
   end
   
   def build_port_rule
-    return @resource[:raw_rule] if @resource[:raw_rule]
+    #return @resource[:port] if @resource[:port]
     rule = []
     rule << eval_port
-    @resource[:raw_rule] = rule.flatten.reject { |r| r.empty? }.join(" ")
-    @resource[:raw_rule]
+    #@resource[:port] = rule.flatten.reject { |r| r.empty? }.join(" ")
+    #@resource[:port]
+    rule
   end
   
   def firewall_cmd_run(opt)
       args = []
       args << [ '--permanent', '--zone', @resource[:zone] ]
       args << opt
-      args << "'#{@resource[:raw_rule]}'"
-      output = %x{/usr/bin/firewall-cmd #{args.flatten.join(' ')} 2>&1}
-      raise Puppet::Error, "Failed to run firewall rule: #{output}" unless $?.success?
-      output = %x{/usr/bin/firewall-cmd --reload 2>&1}
-      raise Puppet::Error, "Failed to reload firewall rule: #{output}" unless $?.success?
+      #args << "'#{@resource[:port]}'"
+      args << build_port_rule 
+      firewall_cmd(args)
+      firewall_cmd(["--reload"])
   end
   
   def create

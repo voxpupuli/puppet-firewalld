@@ -30,8 +30,7 @@ Puppet::Type.newtype(:firewalld_port) do
   newparam(:port) do
     desc "Specify the element as a port"
   end
-end
-  
+
   newparam(:protocol) do
     desc "Specify the element as a protocol"
   end
@@ -39,3 +38,6 @@ end
   autorequire(:firewalld_zone) do
     self[:zone]
   end
+
+end
+  

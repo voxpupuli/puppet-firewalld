@@ -1,4 +1,5 @@
 require 'puppet'
+require 'puppet/type'
 
 Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
   desc "Interact with firewall-cmd"

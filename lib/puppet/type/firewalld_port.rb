@@ -8,12 +8,10 @@ Puppet::Type.newtype(:firewalld_port) do
     Example:
     
         firewalld_port {'Open port 8080 in the public Zone':
-            ensure => 'present',
-            zone   => 'public',
-            port   => {
-              'port' => 8080,
-              'protocol' => 'tcp',
-            },
+            ensure   => 'present',
+            zone     => 'public',
+            port     => 8080,
+            protocol => 'tcp',
         }
   }
   

@@ -16,6 +16,14 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
     firewall_cmd(args)
   end
 
+  #Don't apply --permanent to this command
+  def exec_firewall_noperm(*extra_args)
+    args=[]
+    args << extra_args
+    args.flatten!
+    firewall_cmd(args)
+  end
+
   def zone_exec_firewall(*extra_args)
     args = [ "--zone=#{@resource[:name]}" ]
     exec_firewall(args, extra_args)
@@ -44,7 +52,62 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
     self.debug("Setting target for zone #{@resource[:name]} to #{@resource[:target]}")
     zone_exec_firewall('--set-target', @resource[:target])
   end
-  
+
+  def source
+    get_source_ips()
+  end
+
+  def source=(i)
+    set_source_ips = Array.new
+    remove_source_ips = Array.new
+    reload = false
+
+    case i
+
+    when Array then
+      get_source_ips.each do |remove_ip|
+        if !i.include?(remove_ip)
+          self.debug("removing IP #{remove_ip} from zone #{@resource[:name]}")
+          remove_source_ips.push(remove_ip)
+        end
+      end
+
+      i.each do |add_ip|
+        if add_ip.is_a?(String)
+          self.debug("adding IP #{add_ip} to zone #{@resource[:name]}")
+          set_source_ips.push(add_ip)
+        else
+          raise Puppet::Error, "parameter source must be an IP or array of IP's!"
+        end
+      end
+    when String then
+      get_source_ips.reject { |x| x == i }.each do |remove_ip|
+        self.debug("removing IP #{remove_ip} from zone #{@resource[:name]}")
+        remove_source_ips.push(remove_ip)
+      end
+    else
+      raise Puppet::Error, "parameter source must be an IP or array of IP's!"
+    end
+
+    if !remove_source_ips.empty?
+      remove_source_ips.each do |ip|
+        zone_exec_firewall('--remove-source', ip)
+        reload = true
+      end
+    end
+
+    if !set_source_ips.empty?
+      set_source_ips.each do |ip|
+        zone_exec_firewall('--add-source', ip)
+        reload = true
+      end
+    end
+
+    if reload == true
+      exec_firewall_noperm('--reload')
+    end
+  end
+
   def icmp_blocks
     get_icmp_blocks()
   end
@@ -128,6 +191,10 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
   
   def get_icmp_blocks
     zone_exec_firewall('--list-icmp-blocks').split(' ').sort
+  end
+
+  def get_source_ips
+    zone_exec_firewall('--list-sources').split(' ')
   end
   
   def get_icmp_types

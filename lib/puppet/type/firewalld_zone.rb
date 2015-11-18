@@ -15,6 +15,7 @@ Puppet::Type.newtype(:firewalld_zone) do
       firewalld_zone { 'restricted':
         ensure           => present,
         target           => '%%REJECT%%',
+        source           => ['192.168.0.0/24','fd1a:7ab7:631e:2480::/64'],
         purge_rich_rules => true,
         purge_services   => true,
         purge_ports      => true,
@@ -51,6 +52,17 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   newparam(:zone) do
     desc "Name of the zone"
+  end
+
+  newproperty(:source, :array_matching => :all) do
+    desc "Source IP's of the zone"
+    def insync?(is)
+      case should
+        when String then should.lines.sort == is
+        when Array then should.sort == is
+        else raise Puppet::Error, "parameter source must be a string or array of strings!"
+      end
+    end
   end
 
   newproperty(:target) do

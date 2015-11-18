@@ -47,7 +47,7 @@ class firewalld (
     if !($package_ensure in ['present','absent','latest','installed']) {
       fail("Parameter package_ensure not set to valid value in module firewalld. Valid values are: present, absent, latest, installed. Value set: ${package_ensure}")
     }
-    
+
     if !($service_ensure in ['stopped','running',]) {
     fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: ${service_ensure}")
   }

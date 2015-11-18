@@ -20,6 +20,7 @@ _Example_:
   firewalld_zone { 'restricted':
     ensure           => present,
     target           => '%%REJECT%%',
+    source           => ['192.168.0.0/24','fd1a:7ab7:631e:2480::/64'],
     purge_rich_rules => true,
     purge_services   => true,
     purge_ports      => true,
@@ -29,6 +30,7 @@ _Example_:
 #### Parameters
 
 * `target`: Specify the target of the zone.
+* `source`: Source IP, can be IPv4 or IPv6. Accepts single entry or array.
 * `purge_rich_rules`: Optional, and defaulted to false.  When true any configured rich rules found in the zone that do not match what is in the Puppet catalog will be purged.
 * `purge_services`: Optional, and defaulted to false.  When true any configured services found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* This includes the default ssh service, if you need SSH to access the box, make sure you add the service through either a rich firewall rule, port, or service (see below) or you will lock yourself out!
 * `purge_ports`: Optional, and defaulted to false. When true any configured ports found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* As with services, this includes the default ssh port. If you fail to specify the appropriate port, rich rule, or service, you will lock yourself out.
@@ -235,6 +237,44 @@ _Example_:
     'port' => 8080,
     'protocol' => 'tcp',
   },
+```
+
+## Examples
+
+* Create a management zone, and only allow SSH from these IP ranges
+
+The service ssh is a predefined service located in /usr/lib/firewalld/services/
+
+```puppet
+      firewalld_zone { 'management':
+        ensure           => present,
+        target           => 'default',
+        source           => ['192.168.0.0/24','fd1a:7ab7:631e:2480::/64'],
+        purge_services   => true,
+      }
+
+      firewalld_service { 'Add ssh service to management IPs':
+        ensure  => 'present',
+        service => 'ssh',
+        zone    => 'management',
+      }
+```
+
+On the target system this will create the following file and present the information like this.
+
+/etc/firewalld/zones/management.xml
+
+```bash
+    firewall-cmd --zone=management --list-all
+    management
+      interfaces:
+      sources: 192.168.0.0/24 fd1a:7ab7:631e:2480::/64
+      services: ssh
+      ports:
+      masquerade: no
+      forward-ports:
+      icmp-blocks:
+      rich rules:
 ```
 
 ## Limitations / TODO (PR's welcome!)

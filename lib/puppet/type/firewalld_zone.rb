@@ -142,8 +142,6 @@ Puppet::Type.newtype(:firewalld_zone) do
         puppet_ports << { "port" => fwp[:port], "protocol" => fwp[:protocol] }
       end
     end
-  self.debug(provider.get_ports)
-  self.debug(puppet_ports)
     provider.get_ports.reject { |p| puppet_ports.include?(p) }.each do |purge|
       self.debug("Should purge port #{purge['port']} proto #{purge['protocol']}")
       purge_ports << Puppet::Type.type(:firewalld_port).new(

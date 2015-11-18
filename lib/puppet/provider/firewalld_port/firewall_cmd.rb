@@ -26,7 +26,7 @@ Puppet::Type.type(:firewalld_port).provide :firewall_cmd do
   
   def eval_port
     args = []
-    args << ["#{@resource[:port]['port']}", @resource[:port]['protocol']].join("/")
+    args << "#{@resource[:port]}/#{@resource[:protocol]}"
     args
   end
   

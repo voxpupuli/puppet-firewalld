@@ -135,20 +135,24 @@ Puppet::Type.newtype(:firewalld_zone) do
   def purge_ports
     return Array.new unless provider.exists?
     purge_ports = Array.new
-    puppet_services = Array.new
+    puppet_ports = Array.new
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_port) }.each do |fwp|
       if fwp[:zone] == self[:name]
         self.debug("Not purging puppet controlled port #{fwp[:port]}")
-        puppet_ports << "#{fwp[:port]}"
+        puppet_ports << { "port" => fwp[:port], "protocol" => fwp[:protocol] }
       end
     end
-    provider.get_services.reject { |p| puppet_ports.include?(p) }.each do |purge|
-      self.debug("Should purge port #{port}")
+  self.debug(provider.get_ports)
+  self.debug(puppet_ports)
+    provider.get_ports.reject { |p| puppet_ports.include?(p) }.each do |purge|
+      self.debug("Should purge port #{purge['port']} proto #{purge['protocol']}")
       purge_ports << Puppet::Type.type(:firewalld_port).new(
-        :port    => purge,
-        :ensure  => :absent,
-        :port    => purge,
-        :zone    => self[:name]
+        :name     => "#{self[:name]}-#{purge['port']}-#{purge['protocol']}-purge",
+        :port     => purge["port"],
+        :ensure   => :absent,
+        :port     => purge["port"],
+        :protocol => purge["protocol"],
+        :zone     => self[:name]
       )
     end
     return purge_ports

@@ -117,6 +117,14 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
   def get_services
     zone_exec_firewall('--list-services').split(' ')
   end
+
+  def get_ports
+    zone_exec_firewall('--list-ports').split(' ').map do |entry|
+      port,protocol = entry.split(/\//)
+      self.debug("get_ports() Found port #{port} protocol #{protocol}")
+      { "port" => port, "protocol" => protocol }
+    end
+  end
   
   def get_icmp_blocks
     zone_exec_firewall('--list-icmp-blocks').split(' ').sort

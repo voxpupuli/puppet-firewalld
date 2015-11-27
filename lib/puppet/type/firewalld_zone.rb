@@ -58,14 +58,23 @@ Puppet::Type.newtype(:firewalld_zone) do
     desc "Specify the target for the zone"
   end
 
-  newproperty(:interfaces) do
+  newproperty(:interfaces, :array_matching => :all) do
     desc "Specify the interfaces for the zone"
-    munge do |value|
-      if value.is_a?(String)
-        [value]
-      else
-        value
-      end
+
+    def insync?(is)
+        case should
+            when String then should.lines.sort == is
+            when Array then should.sort == is
+            else raise Puppet::Error, "parameter interfaces must be a string or array of strings!"
+        end
+    end
+
+    def is_to_s(value)
+      '[' + value.join(", ") + ']'
+    end
+
+    def should_to_s(value)
+      '[' + value.join(", ") + ']'
     end
   end
 

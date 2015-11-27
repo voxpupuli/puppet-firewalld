@@ -69,11 +69,11 @@ Puppet::Type.newtype(:firewalld_zone) do
       end
     end
 
-    def is_to_s(value)
+    def is_to_s(value = [])
       '[' + value.join(", ") + ']'
     end
 
-    def should_to_s(value)
+    def should_to_s(value = [])
       '[' + value.join(", ") + ']'
     end
   end

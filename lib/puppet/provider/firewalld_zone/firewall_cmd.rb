@@ -26,7 +26,7 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
   end
 
   def create
-		self.debug("Creating new zone #{@resource[:name]} with target: '#{@resource[:target]}', interfaces: '#{@resource[:interfaces].join(',')}'")
+    self.debug("Creating new zone #{@resource[:name]} with target: '#{@resource[:target]}', interfaces: '#{@resource[:interfaces].join(',')}'")
     exec_firewall('--new-zone', @resource[:name])
     self.target=(@resource[:target]) if @resource[:target]
     self.interfaces=@resource[:interfaces]
@@ -47,19 +47,19 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
   end
 
   def interfaces
-		zone_exec_firewall('--list-interfaces').chomp.split(" ")
+    zone_exec_firewall('--list-interfaces').chomp.split(" ")
   end
 
   def interfaces=(is)
-		cur_is = self.interfaces
-		(is - cur_is).each do |i|
-			self.debug("Adding interface '#{i}' to zone #{@resource[:name]}")
-			zone_exec_firewall('--add-interface', i)
-		end
-		(cur_is - is).each do |i|
-			self.debug("Removing interface '#{i}' from zone #{@resource[:name]}")
-			zone_exec_firewall('--remove-interface', i)
-		end
+    cur_is = self.interfaces
+    (is - cur_is).each do |i|
+      self.debug("Adding interface '#{i}' to zone #{@resource[:name]}")
+      zone_exec_firewall('--add-interface', i)
+    end
+    (cur_is - is).each do |i|
+      self.debug("Removing interface '#{i}' from zone #{@resource[:name]}")
+      zone_exec_firewall('--remove-interface', i)
+    end
   end
 
   def icmp_blocks

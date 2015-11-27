@@ -4,7 +4,7 @@
 
 ## Description
 
-This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones, ports, and rich rules. 
+This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones, ports, and rich rules.
 
 ## Usage
 
@@ -32,12 +32,12 @@ _Example_:
 * `purge_rich_rules`: Optional, and defaulted to false.  When true any configured rich rules found in the zone that do not match what is in the Puppet catalog will be purged.
 * `purge_services`: Optional, and defaulted to false.  When true any configured services found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* This includes the default ssh service, if you need SSH to access the box, make sure you add the service through either a rich firewall rule, port, or service (see below) or you will lock yourself out!
 * `purge_ports`: Optional, and defaulted to false. When true any configured ports found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* As with services, this includes the default ssh port. If you fail to specify the appropriate port, rich rule, or service, you will lock yourself out.
-* 
+
 ### Firewalld rich rules
 
 Firewalld rich rules are managed using the `firewalld_rich_rule` resource type
 
-firewalld_rich_rules will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependencies for this  
+firewalld_rich_rules will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependencies for this
 
 _Example_:
 
@@ -67,28 +67,28 @@ _Example_:
 * `dest`: Source address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
   ```puppet
      dest => '192.168.2.1',
-  
+
      dest => { 'address' => '192.168.1.1', 'invert' => true }
   ```
 
 * `log`: When set to `true` will enable logging, optionally this can be hash with `prefix`, `level` and `limit`
   ```puppet
      log => { 'level' => 'debug', 'prefix' => 'foo' },
-  
+
      log => true,
   ```
 
 * `audit`: When set to `true` will enable auditing, optionally this can be hash with `limit`
   ```puppet
      audit => { 'limit' => '3/s' },
-  
+
      audit => true,
   ```
 
 * `action`: A string containing the action `accept`, `reject` or `drop`.  For `reject` it can be optionally supplied as a hash containing `type`
   ```puppet
      action => 'accept'
-  
+
      action => { 'action' => 'reject', 'type' => 'bad' }
   ```
 
@@ -170,27 +170,27 @@ and you will also see 'XZY' in the service list when you issue ```firewall-cmd -
 * `port`: (Optional) The protocol / port definitions for this service. Specified as an array of hashes, where each hash defines a protocol and/or port associated with this service. Each hash requires both port and protocol keys, even if the value is an empty string. Specifying a port only works for TCP & UDP, otherwise leave it empty and the entire protocol will be allowed. Valid protocols are tcp, udp, or any protocol defined in /etc/protocols
   ```puppet
      port => [{'port' => '1234', 'protocol' => 'tcp'}],
-     
+
      port => [{'port' => '4321', 'protocol' => 'udp'}, {'protocol' => 'rdp'}],
   ```
-  
+
 * `module`: (Optional) An array of strings specifying netfilter kernel helper modules associated with this service
 
 * `destination`: (Optional) A hash specifying the destination network as a network IP address (optional with /mask), or a plain IP address. Valid hash keys are 'ipv4' and 'ipv6', with values corresponding to the IP / mask associated with each of those protocols. The use of hostnames is possible but not recommended, because these will only be resolved at service activation and transmitted to the kernel.
   ```puppet
      destination => {'ipv4' => '127.0.0.1', 'ipv6' => '::1'},
-      
+
      destination => {'ipv4' => 192.168.0.0/24'},
   ```
-  
+
 * `config_dir`: The location where the service definition XML files will be stored. Defaults to /etc/firewalld/services
 
 ### Firewalld Service
 
 The `firewalld_service` type is used to add or remove both built in and custom services from zones.
 
-firewalld_service will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependencies for this  
-
+firewalld_service will `autorequire` the firewalld_zone specified in the `zone` parameter and the firewalld::custom_service
+specified in the `service` parameter, so there is no need to add dependencies for this
 
 _Example_:
 
@@ -212,7 +212,7 @@ _Example_:
 
 Firewalld ports can be managed with the `firewalld_port` resource type.
 
-firewalld_port will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependencies for this  
+firewalld_port will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependencies for this
 
 _Example_:
 

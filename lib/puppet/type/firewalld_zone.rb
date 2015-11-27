@@ -15,6 +15,7 @@ Puppet::Type.newtype(:firewalld_zone) do
       firewalld_zone { 'restricted':
         ensure           => present,
         target           => '%%REJECT%%',
+        sources          => [],
         purge_rich_rules => true,
         purge_services   => true,
         purge_ports      => true,
@@ -56,7 +57,27 @@ Puppet::Type.newtype(:firewalld_zone) do
   newproperty(:target) do
     desc "Specify the target for the zone"
   end
-  
+
+  newproperty(:sources, :array_matching => :all) do
+    desc "Specify the sources for the zone"
+
+    def insync?(is)
+      case should
+      when String then should.lines.sort == is
+      when Array then should.sort == is
+      else raise Puppet::Error, "parameter sources must be a string or array of strings!"
+      end
+    end
+
+    def is_to_s(value)
+      '[' + value.join(", ") + ']'
+    end
+
+    def should_to_s(value)
+      '[' + value.join(", ") + ']'
+    end
+  end
+
   newproperty(:icmp_blocks, :array_matching => :all) do
     desc "Specify the icmp-blocks for the zone. Can be a single string specifying one icmp type,
           or an array of strings specifying multiple icmp types. Any blocks not specified here will be removed

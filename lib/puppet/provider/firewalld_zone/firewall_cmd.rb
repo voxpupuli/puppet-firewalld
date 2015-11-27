@@ -44,7 +44,23 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
     self.debug("Setting target for zone #{@resource[:name]} to #{@resource[:target]}")
     zone_exec_firewall('--set-target', @resource[:target])
   end
-  
+
+  def sources
+    zone_exec_firewall('--list-sources').chomp.split(" ")
+  end
+
+  def sources=(new_sources)
+    cur_sources = self.sources
+    (sources - cur_sources).each do |s|
+      self.debug("Adding source '#{s}' to zone #{@resource[:name]}")
+      zone_exec_firewall('--add-source', s)
+    end
+    (cur_sources - sources).each do |s|
+      self.debug("Removing source '#{s}' from zone #{@resource[:name]}")
+      zone_exec_firewall('--remove-source', s)
+    end
+  end
+
   def icmp_blocks
     get_icmp_blocks()
   end

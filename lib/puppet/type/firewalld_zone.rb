@@ -16,6 +16,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         ensure           => present,
         target           => '%%REJECT%%',
         interfaces       => [],
+        sources          => [],
         purge_rich_rules => true,
         purge_services   => true,
         purge_ports      => true,
@@ -62,11 +63,22 @@ Puppet::Type.newtype(:firewalld_zone) do
     desc "Specify the interfaces for the zone"
 
     def insync?(is)
-        case should
-            when String then should.lines.sort == is
-            when Array then should.sort == is
-            else raise Puppet::Error, "parameter interfaces must be a string or array of strings!"
-        end
+      case should
+      when String then should.lines.sort == is
+      when Array then should.sort == is
+      else raise Puppet::Error, "parameter interfaces must be a string or array of strings!"
+      end
+    end
+
+  newproperty(:sources, :array_matching => :all) do
+    desc "Specify the sources for the zone"
+
+    def insync?(is)
+      case should
+      when String then should.lines.sort == is
+      when Array then should.sort == is
+      else raise Puppet::Error, "parameter sources must be a string or array of strings!"
+      end
     end
 
     def is_to_s(value = [])

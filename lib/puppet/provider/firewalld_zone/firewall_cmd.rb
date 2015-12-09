@@ -60,6 +60,24 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
     (cur_interfaces - new_interfaces).each do |i|
       self.debug("Removing interface '#{i}' from zone #{@resource[:name]}")
       zone_exec_firewall('--remove-interface', i)
+
+    end
+  end
+
+  def sources
+    zone_exec_firewall('--list-sources').chomp.split(" ") || []
+  end
+
+  def sources=(new_sources)
+    new_sources ||= []
+    cur_sources = self.sources
+    (new_sources - cur_sources).each do |s|
+      self.debug("Adding source '#{s}' to zone #{@resource[:name]}")
+      zone_exec_firewall('--add-source', s)
+    end
+    (cur_sources - new_sources).each do |s|
+      self.debug("Removing source '#{s}' from zone #{@resource[:name]}")
+      zone_exec_firewall('--remove-source', s)
     end
   end
 

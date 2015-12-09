@@ -69,6 +69,7 @@ Puppet::Type.newtype(:firewalld_zone) do
       else raise Puppet::Error, "parameter interfaces must be a string or array of strings!"
       end
     end
+  end
 
   newproperty(:sources, :array_matching => :all) do
     desc "Specify the sources for the zone"

@@ -29,6 +29,7 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
     self.debug("Creating new zone #{@resource[:name]} with target: '#{@resource[:target]}'")
     exec_firewall('--new-zone', @resource[:name])
     self.target=(@resource[:target]) if @resource[:target]
+    self.interfaces=@resource[:interfaces]
   end
 
   def destroy
@@ -44,7 +45,24 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
     self.debug("Setting target for zone #{@resource[:name]} to #{@resource[:target]}")
     zone_exec_firewall('--set-target', @resource[:target])
   end
-  
+
+  def interfaces
+    zone_exec_firewall('--list-interfaces').chomp.split(" ") || []
+  end
+
+  def interfaces=(new_interfaces)
+    new_interfaces ||= []
+    cur_interfaces = self.interfaces
+    (new_interfaces - cur_interfaces).each do |i|
+      self.debug("Adding interface '#{i}' to zone #{@resource[:name]}")
+      zone_exec_firewall('--add-interface', i)
+    end
+    (cur_interfaces - new_interfaces).each do |i|
+      self.debug("Removing interface '#{i}' from zone #{@resource[:name]}")
+      zone_exec_firewall('--remove-interface', i)
+    end
+  end
+
   def icmp_blocks
     get_icmp_blocks()
   end
@@ -52,20 +70,20 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
   def icmp_blocks=(i)
     set_blocks = Array.new
     remove_blocks = Array.new
-    
+
     case i
-    
+
     when Array then
-    
+
         get_icmp_blocks.each do |remove_block|
                 if !i.include?(remove_block)
                     self.debug("removing block #{remove_block} from zone #{@resource[:name]}")
                     remove_blocks.push(remove_block)
                 end
         end
-    
+
         i.each do |block|
-        
+
             if block.is_a?(String)
                 if get_icmp_types().include?(block)
                     self.debug("adding block #{block} to zone #{@resource[:name]}")
@@ -79,12 +97,12 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
             end
         end
     when String then
-    
+
         get_icmp_blocks.reject { |x| x == i }.each do |remove_block|
             self.debug("removing block #{remove_block} from zone #{@resource[:name]}")
             remove_blocks.push(remove_block)
         end
-    
+
         if get_icmp_types().include?(i)
             self.debug("adding block #{i} to zone #{@resource[:name]}")
             set_blocks.push(i)
@@ -113,7 +131,7 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
   def get_rules
     zone_exec_firewall('--list-rich-rules').split(/\n/)
   end
-  
+
   def get_services
     zone_exec_firewall('--list-services').split(' ')
   end
@@ -125,11 +143,11 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
       { "port" => port, "protocol" => protocol }
     end
   end
-  
+
   def get_icmp_blocks
     zone_exec_firewall('--list-icmp-blocks').split(' ').sort
   end
-  
+
   def get_icmp_types
     exec_firewall('--get-icmptypes').split(' ')
   end

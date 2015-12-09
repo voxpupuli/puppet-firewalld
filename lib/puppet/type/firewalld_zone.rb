@@ -15,6 +15,7 @@ Puppet::Type.newtype(:firewalld_zone) do
       firewalld_zone { 'restricted':
         ensure           => present,
         target           => '%%REJECT%%',
+        interfaces       => [],
         purge_rich_rules => true,
         purge_services   => true,
         purge_ports      => true,
@@ -24,12 +25,12 @@ Puppet::Type.newtype(:firewalld_zone) do
   }
 
   ensurable
-  
+
 
   def generate
-  
+
     resources = Array.new
-  
+
     if self.purge_rich_rules?
       resources.concat(purge_rich_rules())
     end
@@ -39,9 +40,9 @@ Puppet::Type.newtype(:firewalld_zone) do
     if self.purge_ports?
       resources.concat(purge_ports())
     end
-    
+
     return resources
-    
+
   end
 
 
@@ -56,7 +57,27 @@ Puppet::Type.newtype(:firewalld_zone) do
   newproperty(:target) do
     desc "Specify the target for the zone"
   end
-  
+
+  newproperty(:interfaces, :array_matching => :all) do
+    desc "Specify the interfaces for the zone"
+
+    def insync?(is)
+        case should
+            when String then should.lines.sort == is
+            when Array then should.sort == is
+            else raise Puppet::Error, "parameter interfaces must be a string or array of strings!"
+        end
+    end
+
+    def is_to_s(value = [])
+      '[' + value.join(", ") + ']'
+    end
+
+    def should_to_s(value = [])
+      '[' + value.join(", ") + ']'
+    end
+  end
+
   newproperty(:icmp_blocks, :array_matching => :all) do
     desc "Specify the icmp-blocks for the zone. Can be a single string specifying one icmp type,
           or an array of strings specifying multiple icmp types. Any blocks not specified here will be removed
@@ -76,14 +97,14 @@ Puppet::Type.newtype(:firewalld_zone) do
          "
     defaultto :false
   end
-  
+
   newparam(:purge_services, :boolean => true, :parent => Puppet::Parameter::Boolean) do
     desc "When set to true any services associated with this zone
           that are not managed by Puppet will be removed.
          "
     defaultto :false
   end
-  
+
   newparam(:purge_ports, :boolean => true, :parent => Puppet::Parameter::Boolean) do
     desc "When set to true any ports associated with this zone
           that are not managed by Puppet will be removed."
@@ -109,13 +130,13 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
     return purge_rules
   end
-  
+
   def purge_services
     return Array.new unless provider.exists?
     purge_services = Array.new
     puppet_services = Array.new
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_service) }.each do |fws|
-      if fws[:zone] == self[:name]        
+      if fws[:zone] == self[:name]
         self.debug("not purging puppet controlled service #{fws[:service]}")
         puppet_services << "#{fws[:service]}"
       end

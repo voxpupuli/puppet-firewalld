@@ -30,6 +30,10 @@ class firewalld (
   $package_ensure = 'installed',
   $service_ensure = 'running',
   $service_enable = true,
+  $zones          = {},
+  $ports          = {},
+  $services       = {},
+  $rich_rules     = {},
 ) {
     # Type Validation
     validate_array(
@@ -62,11 +66,16 @@ class firewalld (
       enable => $service_enable,
     }
 
-    exec{ 'firewalld::reload':
+    exec { 'firewalld::reload':
       path        =>'/usr/bin:/bin',
       command     => 'firewall-cmd --complete-reload',
       refreshonly => true,
     }
+
+    create_resources('firewalld_port',      $ports)
+    create_resources('firewalld_zone',      $zones)
+    create_resources('firewalld_service',   $services)
+    create_resources('firewalld_rich_rule', $rich_rules)
 
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']

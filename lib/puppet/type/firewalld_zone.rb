@@ -182,7 +182,6 @@ Puppet::Type.newtype(:firewalld_zone) do
         :name     => "#{self[:name]}-#{purge['port']}-#{purge['protocol']}-purge",
         :port     => purge["port"],
         :ensure   => :absent,
-        :port     => purge["port"],
         :protocol => purge["protocol"],
         :zone     => self[:name]
       )

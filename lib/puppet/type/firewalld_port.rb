@@ -27,6 +27,9 @@ Puppet::Type.newtype(:firewalld_port) do
   
   newparam(:port) do
     desc "Specify the element as a port"
+    munge do |value|
+      value.to_s
+    end
   end
 
   newparam(:protocol) do

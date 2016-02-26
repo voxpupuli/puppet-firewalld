@@ -26,7 +26,7 @@
 #
 #
 class firewalld (
-  $packages       = [ 'firewalld', 'firewall-config' ],
+  $packages       = [ 'firewalld' ],
   $package_ensure = 'installed',
   $service_ensure = 'running',
   $service_enable = true,
@@ -34,6 +34,7 @@ class firewalld (
   $ports          = {},
   $services       = {},
   $rich_rules     = {},
+  $default_zone   = 'public',
 ) {
     # Type Validation
     validate_array(
@@ -48,13 +49,13 @@ class firewalld (
     )
 
     # Further validation of string parameters
-    if !($package_ensure in ['present','absent','latest','installed']) {
-      fail("Parameter package_ensure not set to valid value in module firewalld. Valid values are: present, absent, latest, installed. Value set: ${package_ensure}")
+    unless $package_ensure =~ /^(present|absent|latest|installed|([0-9]+\.){1,})$/ {
+      fail("Parameter package_ensure not set to valid value in module firewalld. Valid values are: present, absent, latest, installed, version. Value set: ${package_ensure}")
     }
     
-    if !($service_ensure in ['stopped','running',]) {
-    fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: ${service_ensure}")
-  }
+    unless $service_ensure =~ /^(stopped|running)$/ {
+      fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: ${service_ensure}")
+    }
 
     package { $packages:
       ensure => $package_ensure,
@@ -72,10 +73,20 @@ class firewalld (
       refreshonly => true,
     }
 
-    create_resources('firewalld_port',      $ports)
-    create_resources('firewalld_zone',      $zones)
-    create_resources('firewalld_service',   $services)
-    create_resources('firewalld_rich_rule', $rich_rules)
+    $defaults = { zone => $default_zone }
+
+    if $zones {
+      create_resources('firewalld_zone', $zones)
+    }
+    if $ports {
+      create_resources('firewalld_port', $ports, $defaults)
+    }
+    if $services {
+      create_resources('firewalld_service', $services, $defaults)
+    }
+    if $rich_rules {
+      create_resources('firewalld_rich_rule', $rich_rules, $defaults)
+    }
 
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']

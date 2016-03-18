@@ -6,7 +6,7 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
 
 
   commands :firewall_cmd => 'firewall-cmd'
-
+  commands :firewall_offline_cmd => 'firewall-offline-cmd'
 
   def exec_firewall(*extra_args)
     args=[]
@@ -16,13 +16,20 @@ Puppet::Type.type(:firewalld_zone).provide :firewall_cmd do
     firewall_cmd(args)
   end
 
+  def exec_offline_firewall(*extra_args)
+    args=[]
+    args << extra_args
+    args.flatten!
+    firewall_offline_cmd(args)
+  end
+
   def zone_exec_firewall(*extra_args)
     args = [ "--zone=#{@resource[:name]}" ]
     exec_firewall(args, extra_args)
   end
 
   def exists?
-    exec_firewall('--get-zones').split(" ").include?(@resource[:name])
+    exec_offline_firewall('--get-zones').split(" ").include?(@resource[:name])
   end
 
   def create

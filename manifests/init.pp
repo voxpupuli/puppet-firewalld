@@ -12,8 +12,13 @@
 #
 #  Command line only, no GUI components:
 #    class{'firewalld':
-#      packages => ['firewalld']
 #    }
+#
+#  With GUI components
+#    class{'firewalld':
+#      install_gui => true,
+#    }
+#    
 #
 #
 # === Authors
@@ -26,9 +31,11 @@
 #
 #
 class firewalld (
-  $packages       = [ 'firewalld', 'firewall-config' ],
+  $package       = 'firewalld',
   $package_ensure = 'installed',
   $service_ensure = 'running',
+  $config_package = 'firewall-config',
+  $install_gui    = false,
   $service_enable = true,
   $zones          = {},
   $ports          = {},
@@ -36,8 +43,8 @@ class firewalld (
   $rich_rules     = {},
 ) {
     # Type Validation
-    validate_array(
-      $packages,
+    validate_string(
+      $package,
     )
     validate_string(
       $package_ensure,
@@ -56,9 +63,15 @@ class firewalld (
     fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: ${service_ensure}")
   }
 
-    package { $packages:
+    package { $package:
       ensure => $package_ensure,
       notify => Service['firewalld']
+    }
+
+    if $install_gui {
+      package { $config_package:
+        ensure => installed,
+      }
     }
 
     service { 'firewalld':

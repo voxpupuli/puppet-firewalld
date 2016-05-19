@@ -198,7 +198,7 @@ _Example_:
   firewalld_service { 'Allow SSH from the external zone':
     ensure  => 'present',
     service => 'ssh',
-    zone    => 'external
+    zone    => 'external',
   }
 ```
 

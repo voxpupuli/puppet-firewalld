@@ -31,16 +31,17 @@
 #
 #
 class firewalld (
-  $package       = 'firewalld',
-  $package_ensure = 'installed',
-  $service_ensure = 'running',
-  $config_package = 'firewall-config',
-  $install_gui    = false,
-  $service_enable = true,
-  $zones          = {},
-  $ports          = {},
-  $services       = {},
-  $rich_rules     = {},
+  $package         = 'firewalld',
+  $package_ensure  = 'installed',
+  $service_ensure  = 'running',
+  $config_package  = 'firewall-config',
+  $install_gui     = false,
+  $service_enable  = true,
+  $zones           = {},
+  $ports           = {},
+  $services        = {},
+  $rich_rules      = {},
+  $custom_services = {},
 ) {
     # Type Validation
     validate_string(
@@ -89,6 +90,7 @@ class firewalld (
     create_resources('firewalld_zone',      $zones)
     create_resources('firewalld_service',   $services)
     create_resources('firewalld_rich_rule', $rich_rules)
+    create_resources('firewalld::custom_service', hiera('firewalld::custom_service', $custom_services))
 
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']

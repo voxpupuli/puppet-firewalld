@@ -179,7 +179,7 @@ firewalld::custom_services:
     description: 'Puppet Client access Puppet Server'
     port:
       - port: 8140
-      - protocol: 'tcp'
+        protocol: 'tcp'
     module: 'nf_conntrack_netbios_ns'
     destination:
       - ipv4: '127.0.0.1'

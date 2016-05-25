@@ -90,7 +90,7 @@ class firewalld (
     create_resources('firewalld_zone',      $zones)
     create_resources('firewalld_service',   $services)
     create_resources('firewalld_rich_rule', $rich_rules)
-    create_resources('firewalld::custom_service', hiera('firewalld::custom_service', $custom_services))
+    create_resources('firewalld::custom_service', $custom_services)
 
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']

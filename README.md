@@ -173,7 +173,7 @@ _Example in Class_:
 _Example in Hiera_:
 
 ```yaml
-firewalld::custom_service:
+firewalld::custom_services:
   puppet:
     short: 'puppet'
     description: 'Puppet Client access Puppet Server'

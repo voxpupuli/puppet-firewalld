@@ -14,7 +14,7 @@ The firewalld module contains types and providers to manage zones, services, por
 
 Firewalld zones can be managed with the `firewalld_zone` resource type.
 
-_Example_:
+_Example in Class_:
 
 ```puppet
   firewalld_zone { 'restricted':
@@ -24,6 +24,18 @@ _Example_:
     purge_services   => true,
     purge_ports      => true,
   }
+```
+
+_Example in Hiera_:
+
+```yaml
+firewalld::zones:
+  restricted:
+    ensure: present
+    target: '%%REJECT%%'
+    purge_rich_rules: true
+    purge_services: true
+    purge_ports: true
 ```
 
 #### Parameters
@@ -39,7 +51,7 @@ Firewalld rich rules are managed using the `firewalld_rich_rule` resource type
 
 firewalld_rich_rules will `autorequire` the firewalld_zone specified in the `zone` parameter so there is no need to add dependencies for this
 
-_Example_:
+_Example in Class_:
 
 ```puppet
   firewalld_rich_rule { 'Accept SSH from barny':
@@ -49,6 +61,17 @@ _Example_:
     service => 'ssh',
     action  => 'accept',
   }
+```
+
+_Example in Hiera_:
+
+```yaml
+firewalld::rich_rules:
+  restricted:
+    ensure: present
+    source: '192.168.1.2/32'
+    service: 'ssh'
+    action: 'accept'
 ```
 
 #### Parameters
@@ -123,7 +146,7 @@ The following paramters are the element of the rich rule, only _one_ may be used
 
 The `firewalld::custom_service` defined type creates and manages custom services. It makes the service usable by firewalld, but does not add it to any zones. To do that, use the firewalld::service type.
 
-_Example_:
+_Example in Class_:
 
 ```puppet
     firewalld::custom_service{'Custom service for application XYZ':
@@ -145,6 +168,22 @@ _Example_:
         'ipv6' => '::1'
       }
     }
+```
+
+_Example in Hiera_:
+
+```yaml
+firewalld::custom_services:
+  puppet:
+    short: 'puppet'
+    description: 'Puppet Client access Puppet Server'
+    port:
+      - port: 8140
+        protocol: 'tcp'
+    module: 'nf_conntrack_netbios_ns'
+    destination:
+      - ipv4: '127.0.0.1'
+      - ipv6: '::1'
 ```
 
 This resource will create the following XML service definition in /etc/firewalld/services/XZY.xml
@@ -192,7 +231,7 @@ The `firewalld_service` type is used to add or remove both built in and custom s
 firewalld_service will `autorequire` the firewalld_zone specified in the `zone` parameter and the firewalld::custom_service
 specified in the `service` parameter, so there is no need to add dependencies for this
 
-_Example_:
+_Example in Class_:
 
 ```puppet
   firewalld_service { 'Allow SSH from the external zone':
@@ -200,6 +239,20 @@ _Example_:
     service => 'ssh',
     zone    => 'external',
   }
+```
+
+_Example in Hiera_:
+
+```yaml
+firewalld::services:
+  dhcp:
+    ensure: 'absent'
+    service: 'dhcp'
+    zone: 'public'
+  dhcpv6-client:
+    ensure: 'present'
+    service: 'dhcpv6-client'
+    zone: 'public'
 ```
 
 #### Parameters
@@ -223,6 +276,16 @@ _Example_:
     port     => 8080,
     protocol => 'tcp',
   }
+```
+
+_Example in Hiera_:
+
+```yaml
+firewalld::ports:
+  public:
+    ensure: present
+    port: 8080
+    protocol: 'tcp'
 ```
 
 #### Parameters

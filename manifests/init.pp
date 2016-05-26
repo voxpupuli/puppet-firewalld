@@ -84,14 +84,50 @@ class firewalld (
       command     => 'firewall-cmd --complete-reload',
       refreshonly => true,
     }
+    
+    # create ports
+    $ports.each |String $key, Hash $attrs| {
+      firewalld_port { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Exec['firewalld::reload'],
+      }
+    }
 
-    create_resources('firewalld_port',      $ports)
-    create_resources('firewalld_zone',      $zones)
-    create_resources('firewalld_service',   $services)
-    create_resources('firewalld_rich_rule', $rich_rules)
+    #...zones
+    $zones.each | String $key, Hash $attrs| {
+      firewalld_zone { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Exec['firewalld::reload'],
+      }
+    }
 
-    Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
-    Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
-    Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
-    Service['firewalld'] -> Firewalld_port <||> ~> Exec['firewalld::reload']
+    #...services
+    $services.each | String $key, Hash $attrs| {
+      firewalld_service { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Exec['firewalld::reload'],
+      }
+    }
+
+    #...rich rules
+    $rich_rules.each | String $key, Hash $attrs| {
+      firewalld_rich_rule { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Exec['firewalld::reload'],
+      }
+    }    
+
+    #create_resources('firewalld_port',      $ports)
+    #create_resources('firewalld_zone',      $zones)
+    #create_resources('firewalld_service',   $services)
+    #create_resources('firewalld_rich_rule', $rich_rules)
+
+    #Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
+    #Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
+    #Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
+    #Service['firewalld'] -> Firewalld_port <||> ~> Exec['firewalld::reload']
 }

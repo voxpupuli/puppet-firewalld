@@ -1,0 +1,7 @@
+HOSTS:
+  centos-7-x64:
+    platform: el-7-x86_64 
+    #box: ecmwf/CentOS_storage_7.2.1511 
+    box: puppetlabs/centos-7.0-64-nocm
+    hypervisor: vagrant
+

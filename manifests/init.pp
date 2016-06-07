@@ -120,8 +120,14 @@ class firewalld (
         require => Service['firewalld'],
         notify  => Exec['firewalld::reload'],
       }
-    }    
+    }
 
+    #...custom services
+    $custom_services.each | String $key, Hash $attrs| {
+      firewalld::custom_service { $key:
+        *       => $attrs,
+      }
+    }
 
     #create_resources('firewalld_port',      $ports)
     #create_resources('firewalld_zone',      $zones)

@@ -104,4 +104,32 @@ describe 'firewalld' do
         .that_requires('Service[firewalld]')
     end
   end
+
+  context 'with parameter custom_service' do
+    let(:params) do
+      {
+        'custom_services' =>
+        {
+          'MyService' =>
+            {
+              'ensure' => 'present',
+              'short' => 'MyService',
+              'description' => 'My Custom service',
+              'port' => [
+                { 'port' => '1234', 'protocol' => 'tcp' },
+                { 'port' => '1234', 'protocol' => 'udp' }
+              ]
+            }
+        }
+      }
+    end
+
+    it do
+      should contain_firewalld__custom_service('MyService')
+        .with_ensure('present')
+        .with_short('MyService')
+        .with_port([{ 'port' => '1234', 'protocol' => 'tcp' }, { 'port' => '1234', 'protocol' => 'udp' }])
+    end
+  end
+
 end

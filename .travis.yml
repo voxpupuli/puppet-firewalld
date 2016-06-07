@@ -16,8 +16,8 @@ script: bundle exec rake test
 matrix:
   exclude:
     - rvm: 2.2
-      env: PUPPET_VERSION="~> 3.7.0"
+      env: PUPPET_VERSION="~> 3.7.0" FUTURE_PARSER=yes
     - rvm: 2.2
-      env: PUPPET_VERSION="~> 3.7.5"
+      env: PUPPET_VERSION="~> 3.7.5" FUTURE_PARSER=yes
     - rvm: 2.2
-      env: PUPPET_VERSION="~> 3.8.0"
+      env: PUPPET_VERSION="~> 3.8.0" FUTURE_PARSER=yes

@@ -41,6 +41,10 @@ class firewalld (
   $ports           = {},
   $services        = {},
   $rich_rules      = {},
+  $direct_rules    = {},
+  $direct_chains   = {},
+  $direct_passt    = {},
+  $direct_purges   = {},
   $custom_services = {},
 ) {
     # Type Validation
@@ -90,10 +94,18 @@ class firewalld (
     create_resources('firewalld_zone',      $zones)
     create_resources('firewalld_service',   $services)
     create_resources('firewalld_rich_rule', $rich_rules)
+    create_resources('firewalld_direct_rule', $direct_rules)
+    create_resources('firewalld_direct_chain', $direct_chains)
+    create_resources('firewalld_direct_passt', $direct_passt)
+    create_resources('firewalld_direct_purge', $direct_purges)
     create_resources('firewalld::custom_service', $custom_services)
 
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_port <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_direct_rule <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_direct_chain <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_direct_passt <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_direct_purge <||> ~> Exec['firewalld::reload']
 }

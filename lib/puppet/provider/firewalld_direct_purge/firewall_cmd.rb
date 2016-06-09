@@ -18,14 +18,6 @@ Puppet::Type.type(:firewalld_direct_purge).provide :firewall_cmd do
     end
   end
 
-#  def create
-#      self.debug("create: not purging puppet controlled direct rule #{fwr[:name]}")
-#  end
-
-  def destroy
-      self.debug("destroy: not purging puppet controlled direct rule")
-  end
-
   def get_direct_rules
     args=['--permanent', '--direct', '--get-all-rules'].join(' ')
     output = %x{ /usr/bin/firewall-cmd #{args} 2>&1}
@@ -33,13 +25,13 @@ Puppet::Type.type(:firewalld_direct_purge).provide :firewall_cmd do
   end
 
   def get_direct_chains
-    args=['--permanent', '--direct', '--get-chains'].join(' ')
+    args=['--permanent', '--direct', '--get-all-chains'].join(' ')
     output = %x{ /usr/bin/firewall-cmd #{args} 2>&1}
     return output.split(/\n/)
   end
 
   def get_direct_passt
-    args=['--permanent', '--direct', '--get-passthroughs'].join(' ')
+    args=['--permanent', '--direct', '--get-all-passthroughs'].join(' ')
     output = %x{ /usr/bin/firewall-cmd #{args} 2>&1}
     return output.split(/\n/)
   end

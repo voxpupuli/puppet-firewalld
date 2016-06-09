@@ -63,24 +63,47 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
     purge_d_rules = Array.new
     puppet_d_rules = Array.new
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_direct_rule) }.each do |fwdr|
-#      puppet_d_rules << "#{fwdr[:inet_protocol]} #{fwdr[:table]} #{fwdr[:chain]} #{fwdr[:priority]} #{fwdr[:args]}"
       puppet_d_rules << fwdr.provider.build_direct_rule.join(' ')
-      #self.debug("purge_direct_rules: #{puppet_d_rules}")
     end
     provider.get_direct_rules.reject { |p| puppet_d_rules.include?(p) }.each do |purge|
       self.debug("purge_direct_rules: should purge direct rule #{purge}")
-      purge_d_rules << Puppet::Type.type(:firewalld_direct_rule).new(
-        #:name          => self[:name],
-        :name          => "#{self[:name]}-#{purge}",
-        :inet_protocol => purge,
-        :table         => purge,
-        :chain         => purge,
-        :priority      => purge,
-        :args          => purge,
-        :ensure        => :absent
-      )
+      args=['--permanent', '--direct', '--remove-rule', "#{purge}"].join(' ')
+      %x{ /usr/bin/firewall-cmd #{args} 2>&1}
+      %x{ /usr/bin/firewall-cmd --reload 2>&1}
     end
-    return purge_d_rules
+    purge_d_rules
+  end
+
+  def purge_direct_chains
+    return Array.new unless provider.exists?
+    purge_d_chains = Array.new
+    puppet_d_chains = Array.new
+    catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_direct_chain) }.each do |fwdr|
+      puppet_d_chains << fwdr.provider.build_direct_chain.join(' ')
+    end
+    provider.get_direct_chains.reject { |p| puppet_d_chains.include?(p) }.each do |purge|
+      self.debug("purge_direct_chains: should purge direct chain #{purge}")
+      args=['--permanent', '--direct', '--remove-chain', "#{purge}"].join(' ')
+      %x{ /usr/bin/firewall-cmd #{args} 2>&1}
+      %x{ /usr/bin/firewall-cmd --reload 2>&1}
+    end
+    purge_d_chains
+  end
+
+  def purge_direct_passt
+    return Array.new unless provider.exists?
+    purge_d_passt = Array.new
+    puppet_d_passt = Array.new
+    catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_direct_passt) }.each do |fwdr|
+      puppet_d_passt << fwdr.provider.build_direct_passt.join(' ')
+    end
+    provider.get_direct_passt.reject { |p| puppet_d_passt.include?(p) }.each do |purge|
+      self.debug("purge_direct_passt: should purge direct passthrough #{purge}")
+      args=['--permanent', '--direct', '--remove-passthrough', "#{purge}"].join(' ')
+      %x{ /usr/bin/firewall-cmd #{args} 2>&1}
+      %x{ /usr/bin/firewall-cmd --reload 2>&1}
+    end
+    purge_d_passt
   end
 
 end

@@ -182,8 +182,8 @@ firewalld::custom_services:
         protocol: 'tcp'
     module: 'nf_conntrack_netbios_ns'
     destination:
-      - ipv4: '127.0.0.1'
-      - ipv6: '::1'
+      ipv4: '127.0.0.1'
+      ipv6: '::1'
 ```
 
 This resource will create the following XML service definition in /etc/firewalld/services/XZY.xml

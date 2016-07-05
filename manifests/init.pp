@@ -64,6 +64,38 @@ class firewalld (
     fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: ${service_ensure}")
   }
 
+    # Merge hashes from multiple layer of hierarchy in hiera
+    # ports
+    $hiera_ports = hiera_hash("${module_name}::ports",undef)
+    $fin_ports = $hiera_ports ? {
+      undef   => $ports,
+      default => $hiera_ports,
+    }
+    # zones
+    $hiera_zones = hiera_hash("${module_name}::zones",undef)
+    $fin_zones = $hiera_zones ? {
+      undef   => $zones,
+      default => $hiera_zones,
+    }
+    # services
+    $hiera_services = hiera_hash("${module_name}::services",undef)
+    $fin_services = $hiera_services ? {
+      undef   => $services,
+      default => $hiera_services,
+    }
+    # rich rules
+    $hiera_rich_rules = hiera_hash("${module_name}::rich_rules",undef)
+    $fin_rich_rules = $hiera_rich_rules ? {
+      undef   => $rich_rules,
+      default => $hiera_rich_rules,
+    }
+    # custom services
+    $hiera_custom_services = hiera_hash("${module_name}::custom_services",undef)
+    $fin_custom_services = $hiera_custom_services ? {
+      undef   => $custom_services,
+      default => $hiera_custom_services,
+    }
+
     package { $package:
       ensure => $package_ensure,
       notify => Service['firewalld']
@@ -86,11 +118,11 @@ class firewalld (
       refreshonly => true,
     }
 
-    create_resources('firewalld_port',      $ports)
-    create_resources('firewalld_zone',      $zones)
-    create_resources('firewalld_service',   $services)
-    create_resources('firewalld_rich_rule', $rich_rules)
-    create_resources('firewalld::custom_service', $custom_services)
+    create_resources('firewalld_port',      $fin_ports)
+    create_resources('firewalld_zone',      $fin_zones)
+    create_resources('firewalld_service',   $fin_services)
+    create_resources('firewalld_rich_rule', $fin_rich_rules)
+    create_resources('firewalld::custom_service', $fin_custom_services)
 
     Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']

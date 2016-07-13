@@ -1,0 +1,12 @@
+---
+firewalld::ports:
+  'Open redis port':
+    ensure: present      
+    zone: public
+    port: 6379
+    protocol: tcp        
+  'Open nrpe port':
+    ensure: present
+    zone: public
+    port: 5666
+    protocol: tcp          

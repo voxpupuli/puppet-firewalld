@@ -82,8 +82,15 @@ class firewalld (
 
     exec { 'firewalld::reload':
       path        =>'/usr/bin:/bin',
+      command     => 'firewall-cmd --reload',
+      refreshonly => true,
+    }
+
+    exec { 'firewalld::complete-reload':
+      path        =>'/usr/bin:/bin',
       command     => 'firewall-cmd --complete-reload',
       refreshonly => true,
+      require     => Exec['firewalld::reload'],
     }
     
     # create ports

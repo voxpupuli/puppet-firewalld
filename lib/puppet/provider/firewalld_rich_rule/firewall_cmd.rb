@@ -68,6 +68,8 @@ Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
       args << quote_keyval('protocol', @resource[:forward_port]['protocol'])
       args << quote_keyval('to-port',  @resource[:forward_port]['to_port'])
       args << quote_keyval('to-addr',  @resource[:forward_port]['to_addr'])
+    when :protocol
+      args << quote_keyval('value', @resource[:protocol])
     end
     args
   end

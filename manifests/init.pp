@@ -12,8 +12,13 @@
 #
 #  Command line only, no GUI components:
 #    class{'firewalld':
-#      packages => ['firewalld']
 #    }
+#
+#  With GUI components
+#    class{'firewalld':
+#      install_gui => true,
+#    }
+#    
 #
 #
 # === Authors
@@ -26,18 +31,21 @@
 #
 #
 class firewalld (
-  $packages       = [ 'firewalld', 'firewall-config' ],
-  $package_ensure = 'installed',
-  $service_ensure = 'running',
-  $service_enable = true,
-  $zones          = {},
-  $ports          = {},
-  $services       = {},
-  $rich_rules     = {},
+  $package         = 'firewalld',
+  $package_ensure  = 'installed',
+  $service_ensure  = 'running',
+  $config_package  = 'firewall-config',
+  $install_gui     = false,
+  $service_enable  = true,
+  $zones           = {},
+  $ports           = {},
+  $services        = {},
+  $rich_rules      = {},
+  $custom_services = {},
 ) {
     # Type Validation
-    validate_array(
-      $packages,
+    validate_string(
+      $package,
     )
     validate_string(
       $package_ensure,
@@ -56,9 +64,15 @@ class firewalld (
     fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: ${service_ensure}")
   }
 
-    package { $packages:
+    package { $package:
       ensure => $package_ensure,
       notify => Service['firewalld']
+    }
+
+    if $install_gui {
+      package { $config_package:
+        ensure => installed,
+      }
     }
 
     service { 'firewalld':
@@ -68,17 +82,68 @@ class firewalld (
 
     exec { 'firewalld::reload':
       path        =>'/usr/bin:/bin',
-      command     => 'firewall-cmd --complete-reload',
+      command     => 'firewall-cmd --reload',
       refreshonly => true,
     }
 
-    create_resources('firewalld_port',      $ports)
-    create_resources('firewalld_zone',      $zones)
-    create_resources('firewalld_service',   $services)
-    create_resources('firewalld_rich_rule', $rich_rules)
+    exec { 'firewalld::complete-reload':
+      path        =>'/usr/bin:/bin',
+      command     => 'firewall-cmd --complete-reload',
+      refreshonly => true,
+      require     => Exec['firewalld::reload'],
+    }
+    
+    # create ports
+    $ports.each |String $key, Hash $attrs| {
+      firewalld_port { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Exec['firewalld::reload'],
+      }
+    }
 
-    Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
-    Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
-    Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
-    Service['firewalld'] -> Firewalld_port <||> ~> Exec['firewalld::reload']
+    #...zones
+    $zones.each | String $key, Hash $attrs| {
+      firewalld_zone { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Exec['firewalld::reload'],
+      }
+    }
+
+    #...services
+    $services.each | String $key, Hash $attrs| {
+      firewalld_service { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Exec['firewalld::reload'],
+      }
+    }
+
+    #...rich rules
+    $rich_rules.each | String $key, Hash $attrs| {
+      firewalld_rich_rule { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Exec['firewalld::reload'],
+      }
+    }
+
+    #...custom services
+    $custom_services.each | String $key, Hash $attrs| {
+      firewalld::custom_service { $key:
+        *       => $attrs,
+      }
+    }
+
+    #create_resources('firewalld_port',      $ports)
+    #create_resources('firewalld_zone',      $zones)
+    #create_resources('firewalld_service',   $services)
+    #create_resources('firewalld_rich_rule', $rich_rules)
+    #create_resources('firewalld::custom_service', $custom_services)
+
+    #Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
+    #Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
+    #Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
+    #Service['firewalld'] -> Firewalld_port <||> ~> Exec['firewalld::reload']
 }

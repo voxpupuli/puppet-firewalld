@@ -98,10 +98,13 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
 
 
  
-  ELEMENTS ||= [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
+  def elements
+    [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
+  end
+
   validate do
-    errormsg = "Only one element (#{ELEMENTS.join(',')}) may be specified."
-    self.fail errormsg if ELEMENTS.select { |e| self[e] }.size > 1
+    errormsg = "Only one element (#{elements.join(',')}) may be specified."
+    self.fail errormsg if elements.select { |e| self[e] }.size > 1
   end
 
   autorequire(:firewalld_zone) do

@@ -27,16 +27,18 @@ Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
   def eval_source
     args=[]
     return [] unless addr = @resource[:source]
-    args << quote_keyval('source address', addr['address'])
-    args << quote_keyval('invert', addr['invert'])
+    invert = addr['invert']  ? ' NOT' : ''
+    args << "source#{invert}"
+    args << quote_keyval('address', addr['address'])
     args
   end
-  
+
   def eval_dest
     args=[]
     return [] unless addr = @resource[:dest]
-    args << quote_keyval('destination address',addr['address'])
-    args << quote_keyval('invert', addr['invert'])
+    invert = addr['invert']  ? ' NOT' : ''
+    args << "destination#{invert}"
+    args << quote_keyval('address', addr['address'])
     args
   end
 

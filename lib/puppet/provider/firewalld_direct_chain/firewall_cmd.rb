@@ -6,7 +6,7 @@ Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, :parent => Pup
 
   def exists?
     @chain_args ||= generate_raw
-    output=execute_firewall_cmd(['--direct', '--query-chain', @chain_args], nil)
+    output=execute_firewall_cmd(['--direct', '--query-chain', @chain_args], nil, true, false)
     output.include?('yes')
   end
 

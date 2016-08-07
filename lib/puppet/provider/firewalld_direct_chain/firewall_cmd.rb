@@ -1,46 +1,31 @@
 require 'puppet'
+require 'puppet/provider/firewalld'
 
-Puppet::Type.type(:firewalld_direct_chain).provide :firewall_cmd do
-  desc "Interact with firewall-cmd"
-
-
-  commands :firewall_cmd => 'firewall-cmd'
+Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, :parent => Puppet::Provider::Firewalld) do
+  desc "Provider for managing firewalld direct chains using firewall-cmd"
 
   def exists?
-    @chain_args ||= build_direct_chain
-    args=['--permanent', '--direct', '--query-chain', @chain_args].join(' ')
-    output = %x{ /usr/bin/firewall-cmd #{args} 2>&1}
-    self.debug("Querying the firewalld direct interface for existing chain with: #{args}")
-    if output.include?('yes')
-      true
-    else
-      false
-    end
+    @chain_args ||= generate_raw
+    output=execute_firewall_cmd(['--direct', '--query-chain', @chain_args], nil)
+    output.include?('yes')
   end
 
   def create
-    self.debug("Adding new custom chain to firewalld: #{@resource[:name]}")
-    @chain_args ||= build_direct_chain
-    args=['--permanent', '--direct', '--add-chain', @chain_args].join(' ')
-    %x{ /usr/bin/firewall-cmd #{args} 2>&1}
-    firewall_cmd(['--reload'])
+    @chain_args ||= generate_raw
+    execute_firewall_cmd(['--direct', '--add-chain', @chain_args], nil)
   end
 
   def destroy
-    self.debug("Removing custom chain from firewalld: #{@resource[:name]}")
-    @chain_args ||= build_direct_chain
-    args=['--permanent', '--direct', '--remove-chain', @chain_args].join(' ')
-    %x{ /usr/bin/firewall-cmd #{args} 2>&1}
-    firewall_cmd(['--reload'])
+    @chain_args ||= generate_raw
+    execute_firewall_cmd(['--direct', '--remove-chain', @chain_args], nil)
   end
 
-  def build_direct_chain
-     chain = []
-     chain << [
-	@resource[:inet_protocol],
-	@resource[:table],
-	@resource[:custom_chain]
-     ]
+  def generate_raw
+    chain = []
+    chain << [
+	    @resource[:inet_protocol],
+	    @resource[:table],
+	    @resource[:name]
+    ]
   end
-
 end

@@ -17,20 +17,32 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
 
   ensurable
 
+  def self.title_patterns
+    identity = lambda { |x| x }
+    [
+      [
+        /^([^:]+):([^:]+):([^:]+)$/,
+        [ [:inet_protocol, identity], [:table, identity], [:name, identity] ]
+      ],
+      [
+        /^([^:]+)$/,
+        [[ :name, identity ]]
+      ]
+    ]
+  end
+
   newparam(:name, :namevar => :true) do
-    desc "Name of the chain resource in Puppet"
+    desc "Name of the chain eg: LOG_DROPS"
   end
 
   newparam(:inet_protocol) do
     desc "Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)"
+    isnamevar
   end
 
   newparam(:table) do
     desc "Name of the table type to add (e.g: filter, nat, mangle, raw)"
-  end
-
-  newparam(:custom_chain) do
-    desc "Name of the chain type to add (e.g: LOG_DROPS)"
+    isnamevar
   end
 
 end

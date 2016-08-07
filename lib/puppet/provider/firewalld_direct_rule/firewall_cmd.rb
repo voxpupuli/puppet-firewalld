@@ -1,48 +1,37 @@
 require 'puppet'
+require 'puppet/provider/firewalld'
 
-Puppet::Type.type(:firewalld_direct_rule).provide :firewall_cmd do
+Puppet::Type.type(:firewalld_direct_rule).provide(
+  :firewall_cmd,
+  :parent => Puppet::Provider::Firewalld
+) do
   desc "Interact with firewall-cmd"
 
-
-  commands :firewall_cmd => 'firewall-cmd'
-
   def exists?
-    @rule_args ||= build_direct_rule
-    args=['--permanent', '--direct', '--query-rule', @rule_args].join(' ')
-    output = %x{ /usr/bin/firewall-cmd #{args} 2>&1}
-    self.debug("Querying the firewalld direct interface for existing rules with: #{args}")
-    if output.include?('yes')
-      true
-    else
-      false
-    end
+    @rule_args ||= generate_raw
+    output=execute_firewall_cmd(['--direct', '--query-rule', @rule_args], nil)
+    output.include?('yes')
   end
 
   def create
-    self.debug("Adding new rule to firewalld: #{@resource[:name]}")
-    @rule_args ||= build_direct_rule
-    args=['--permanent', '--direct', '--add-rule', @rule_args].join(' ')
-    %x{ /usr/bin/firewall-cmd #{args} 2>&1}
-    firewall_cmd(['--reload'])
+    @rule_args ||= generate_raw
+    execute_firewall_cmd(['--direct', '--add-rule', @rule_args], nil)
   end
 
   def destroy
-    self.debug("Removing rule from firewalld: #{@resource[:name]}")
-    @rule_args ||= build_direct_rule
-    args=['--permanent', '--direct', '--remove-rule', @rule_args].join(' ')
-    %x{ /usr/bin/firewall-cmd #{args} 2>&1}
-    firewall_cmd(['--reload'])
+    @rule_args ||= generate_raw
+    execute_firewall_cmd(['--direct', '--remove-rule', @rule_args], nil)
   end
 
-  def build_direct_rule
-     rule = []
-     rule << [
-	@resource[:inet_protocol],
-	@resource[:table],
-	@resource[:chain],
-	@resource[:priority],
-	@resource[:args],
-     ]
+  def generate_raw
+    rule = []
+    rule << [
+	    @resource[:inet_protocol],
+	    @resource[:table],
+	    @resource[:chain],
+	    @resource[:priority],
+	    @resource[:args],
+    ]
   end
 
 end

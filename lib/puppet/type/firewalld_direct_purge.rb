@@ -1,8 +1,8 @@
 require 'puppet'
 require 'puppet/parameter/boolean'
-require File.dirname(__FILE__).concat('/firewalld_direct_rule.rb')
-require File.dirname(__FILE__).concat('/firewalld_direct_chain.rb')
-require File.dirname(__FILE__).concat('/firewalld_direct_passt.rb')
+require 'puppet/type/firewalld_direct_chain'
+require 'puppet/type/firewalld_direct_rule'
+require 'puppet/type/firewalld_direct_passthrough'
 
 Puppet::Type.newtype(:firewalld_direct_purge) do
 
@@ -10,100 +10,81 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
 
     Example:
 
-        firewalld_direct_purge {'Purge all direct rules':
-            purge_direct_rules  => true,
-            purge_direct_chains => true,
-            purge_direct_passt  => true
-        }
+        firewalld_direct_purge {'chain': }
+        firewalld_direct_purge {'passthrough': }
+        firewalld_direct_purge {'rule': }
 
   }
 
-  ensurable
+  ensurable do
+    defaultto(:purged)
+    newvalue(:purgable) do
+    end
+    newvalue(:purged) do
+      true 
+    end
+
+      
+
+    def retrieve
+      if @resource.purge?
+        :purgable
+      else
+        :purged
+      end
+    end
+
+  end
 
   def generate
-    resources = Array.new
+    purge_resources
+    []
+  end
 
-    if self.purge_direct_rules?
-      resources.concat(purge_direct_rules())
-    end
-    if self.purge_direct_chains?
-      resources.concat(purge_direct_chains())
-    end
-    if self.purge_direct_passt?
-      resources.concat(purge_direct_passt())
-    end
-
-   return resources
+  newparam(:purge) do
+    newvalues(:true, :false)
+    defaultto(:true)
   end
 
   newparam(:name, :namevar => true) do
-    desc "Name of the resource in Puppet"
+    desc "Type of resource to purge, valid values are 'chain', 'passthrough' and 'rule'"
+    newvalues('chain','passthrough','rule')
   end
 
-  newparam(:purge_direct_rules, :boolean => true, :parent => Puppet::Parameter::Boolean) do
-    desc "When set to true any direct rules that are not managed
-          by Puppet will be removed."
-    defaultto :false
+  def purge?
+    @purge_resources.length > 0
   end
 
-  newparam(:purge_direct_chains, :boolean => true, :parent => Puppet::Parameter::Boolean) do
-    desc "When set to true any direct chains that are not managed
-          by Puppet will be removed."
-    defaultto :false
-  end
+  def purge_resources
+    @purge_resources = []
+    resources = []
+    resource_type = self[:name].to_sym
+    klass = nil
 
-  newparam(:purge_direct_passt, :boolean => true, :parent => Puppet::Parameter::Boolean) do
-    desc "When set to true any direct passthrough that are not
-          manage by Puppet will be removed."
-    defaultto :false
-  end
-
-  def purge_direct_rules
-    return Array.new unless provider.exists?
-    purge_d_rules = Array.new
-    puppet_d_rules = Array.new
-    catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_direct_rule) }.each do |fwdr|
-      puppet_d_rules << fwdr.provider.build_direct_rule.join(' ')
+    case resource_type
+    when :chain
+      klass = Puppet::Type::Firewalld_direct_chain
+    when :passthrough
+      klass = Puppet::Type::Firewalld_direct_passthrough
+    when :rule
+      klass = Puppet::Type::Firewalld_direct_rule
     end
-    provider.get_direct_rules.reject { |p| puppet_d_rules.include?(p) }.each do |purge|
-      self.debug("purge_direct_rules: should purge direct rule #{purge}")
-      args=['--permanent', '--direct', '--remove-rule', "#{purge}"].join(' ')
-      %x{ /usr/bin/firewall-cmd #{args} 2>&1}
-      %x{ /usr/bin/firewall-cmd --reload 2>&1}
-    end
-    purge_d_rules
-  end
 
-  def purge_direct_chains
-    return Array.new unless provider.exists?
-    purge_d_chains = Array.new
-    puppet_d_chains = Array.new
-    catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_direct_chain) }.each do |fwdr|
-      puppet_d_chains << fwdr.provider.build_direct_chain.join(' ')
-    end
-    provider.get_direct_chains.reject { |p| puppet_d_chains.include?(p) }.each do |purge|
-      self.debug("purge_direct_chains: should purge direct chain #{purge}")
-      args=['--permanent', '--direct', '--remove-chain', "#{purge}"].join(' ')
-      %x{ /usr/bin/firewall-cmd #{args} 2>&1}
-      %x{ /usr/bin/firewall-cmd --reload 2>&1}
-    end
-    purge_d_chains
-  end
+    purge_rules = []
+    puppet_rules = []
 
-  def purge_direct_passt
-    return Array.new unless provider.exists?
-    purge_d_passt = Array.new
-    puppet_d_passt = Array.new
-    catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_direct_passt) }.each do |fwdr|
-      puppet_d_passt << fwdr.provider.build_direct_passt.join(' ')
+    catalog.resources.select { |r| r.is_a?(klass) }.each do |res|
+      unless res.provider.respond_to?(:generate_raw)
+        raise Puppet::Error, "Provider for #{resource_type} doesnt support generate_raw method"
+      end
+      puppet_rules << res.provider.generate_raw.join(' ')
     end
-    provider.get_direct_passt.reject { |p| puppet_d_passt.include?(p) }.each do |purge|
-      self.debug("purge_direct_passt: should purge direct passthrough #{purge}")
-      args=['--permanent', '--direct', '--remove-passthrough', "#{purge}"].join(' ')
-      %x{ /usr/bin/firewall-cmd #{args} 2>&1}
-      %x{ /usr/bin/firewall-cmd --reload 2>&1}
-    end
-    purge_d_passt
-  end
 
+    provider.get_instances_of(resource_type).reject { |i|
+      puppet_rules.include?(i)
+    }.each do |inst|
+      @purge_resources << inst
+      provider.purge_resources(resource_type, inst.split(/ /))
+    end
+  end
 end

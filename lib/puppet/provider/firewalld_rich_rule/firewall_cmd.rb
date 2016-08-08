@@ -1,19 +1,19 @@
 require 'puppet'
+require 'puppet/provider/firewalld'
 
-Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
+Puppet::Type.type(:firewalld_rich_rule).provide(
+  :firewall_cmd,
+  :parent => Puppet::Provider::Firewalld
+) do
   desc "Interact with firewall-cmd"
 
 
-  commands :firewall_cmd => 'firewall-cmd'
-
   mk_resource_methods
 
-  
   def exists?
     @rule_args ||= build_rich_rule
-    args=['--permanent', '--zone',@resource[:zone],'--query-rich-rule',"'#{@rule_args}'"].join(' ')
-    %x{ /usr/bin/firewall-cmd #{args} }
-    $?.success?
+    output=execute_firewall_cmd(['--query-rich-rule', @rule_args], @resource[:zone], true, false)
+    output.exitstatus == 0
   end
 
   def quote_keyval(key,val)
@@ -117,25 +117,12 @@ Puppet::Type.type(:firewalld_rich_rule).provide :firewall_cmd do
     @resource[:raw_rule]
   end
 
-  def firewall_cmd_run(opt)
-      args = []
-      args << [ '--permanent', '--zone', @resource[:zone] ]
-      args << opt
-      args << "'#{@resource[:raw_rule]}'"
-      output = %x{/usr/bin/firewall-cmd #{args.flatten.join(' ')} 2>&1}
-      raise Puppet::Error, "Failed to run firewall rule: #{output}" unless $?.success?
-      output = %x{/usr/bin/firewall-cmd --reload 2>&1}
-      raise Puppet::Error, "Failed to reload firewall rule: #{output}" unless $?.success?
-  end
-
   def create
-    firewall_cmd_run('--add-rich-rule')
+    execute_firewall_cmd(['--add-rich-rule', build_rich_rule])
   end
 
   def destroy
-    firewall_cmd_run('--remove-rich-rule')
+    execute_firewall_cmd(['--remove-rich-rule', build_rich_rule])
   end
 
-
 end
-

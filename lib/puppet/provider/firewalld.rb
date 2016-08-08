@@ -12,6 +12,11 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     cmd_args << [ '--zone', zone ] unless zone.nil?
     cmd_args << args
 
+    # We can't use the commands short cut as some things, like exists? methods need to
+    # allow for the command to fail, and there is no way to override that.  So instead
+    # we interact with Puppet::Provider::Command directly to enable us to override
+    # the failonfail option
+    #
     firewall_cmd = Puppet::Provider::Command.new(
       :firewall_cmd,
       shell_cmd,
@@ -25,13 +30,26 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   def execute_firewall_cmd(args, zone=@resource[:zone], perm=true, failonfail=true)
     begin
       self.class.execute_firewall_cmd(args, zone, perm, failonfail)
-    rescue Puppet::ExecutionFailure
+    rescue Puppet::ExecutionFailure => e
       # Last ditch effort to see if we're seeing an error becuse firewalld is offline.
       # This could be the case if we're calling providers from the generate method
       # of firewalld_zone before we can manage the service.
       #
-      self.class.execute_firewall_cmd(args, zone, false, true, 'firewall-offline-cmd')
+      # This addresses https://github.com/crayfishx/puppet-firewalld/pull/46
+      #
+      if e.message.include?("FirewallD is not running")
+        self.class.execute_firewall_cmd(args, zone, false, true, 'firewall-offline-cmd')
+      else
+        raise e
+      end
     end
+  end
+
+  # Occasionally we need to restart firewalld in a transient way between resources
+  # (eg: services) so the provider needs an an-hoc way of doing this since we can't
+  # do it from the puppet level by notifying the service.
+  def reload_firewall
+    execute_firewall_cmd(['--reload'], nil, false)
   end
 
 end

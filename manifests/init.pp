@@ -31,38 +31,32 @@
 #
 #
 class firewalld (
-  $package         = 'firewalld',
-  $package_ensure  = 'installed',
-  $service_ensure  = 'running',
-  $config_package  = 'firewall-config',
-  $install_gui     = false,
-  $service_enable  = true,
-  $zones           = {},
-  $ports           = {},
-  $services        = {},
-  $rich_rules      = {},
-  $custom_services = {},
+  Enum[
+    'present',
+    'absent',
+    'latest',
+    'installed'
+  ]       $package_ensure            = 'installed',
+  String  $package                   = 'firewalld',
+  Enum[
+    'stopped',
+    'running'
+  ]       $service_ensure            = 'running',
+  String  $config_package            = 'firewall-config',
+  Boolean $install_gui               = false,
+  Boolean $service_enable            = true,
+  Hash    $zones                     = {},
+  Hash    $ports                     = {},
+  Hash    $services                  = {},
+  Hash    $rich_rules                = {},
+  Hash    $custom_services           = {},
+  Hash    $direct_rules              = {},
+  Hash    $direct_chains             = {},
+  Hash    $direct_passthroughs       = {},
+  Boolean $purge_direct_rules        = false,
+  Boolean $purge_direct_chains       = false,
+  Boolean $purge_direct_passthroughs = false
 ) {
-    # Type Validation
-    validate_string(
-      $package,
-    )
-    validate_string(
-      $package_ensure,
-      $service_ensure,
-    )
-    validate_bool(
-      $service_enable,
-    )
-
-    # Further validation of string parameters
-    if !($package_ensure in ['present','absent','latest','installed']) {
-      fail("Parameter package_ensure not set to valid value in module firewalld. Valid values are: present, absent, latest, installed. Value set: ${package_ensure}")
-    }
-    
-    if !($service_ensure in ['stopped','running',]) {
-    fail("Parameter service_ensure not set to valid value in module firewalld. Valid values are: stopped, running. Value set: ${service_ensure}")
-  }
 
     package { $package:
       ensure => $package_ensure,
@@ -136,14 +130,39 @@ class firewalld (
       }
     }
 
-    #create_resources('firewalld_port',      $ports)
-    #create_resources('firewalld_zone',      $zones)
-    #create_resources('firewalld_service',   $services)
-    #create_resources('firewalld_rich_rule', $rich_rules)
-    #create_resources('firewalld::custom_service', $custom_services)
+    # Direct rules, chains and passthroughs
+    $direct_chains.each | String $key, Hash $attrs| {
+      firewalld_direct_chain { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Service['firewalld::reload'],
+      }
+    }
 
-    #Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
-    #Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
-    #Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
-    #Service['firewalld'] -> Firewalld_port <||> ~> Exec['firewalld::reload']
+    $direct_rules.each | String $key, Hash $attrs| {
+      firewalld_direct_rule { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Service['firewalld::reload'],
+      }
+    }
+
+    $direct_passthroughs.each | String $key, Hash $attrs| {
+      firewalld_direct_passthrough { $key:
+        *       => $attrs,
+        require => Service['firewalld'],
+        notify  => Service['firewalld::reload'],
+      }
+    }
+
+    if $purge_direct_chains {
+      firewalld_direct_purge { 'chain': }
+    }
+    if $purge_direct_rules {
+      firewalld_direct_purge { 'rule': }
+    }
+    if $purge_direct_passthroughs {
+      firewalld_direct_purge { 'passthrough': }
+    }
+
 }

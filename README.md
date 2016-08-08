@@ -8,6 +8,32 @@ This module manages firewalld, the userland interface that replaces iptables and
 
 ## Usage
 
+```puppet
+class { 'firewalld': }
+```
+
+#### Parameters
+* `package`: Name of the package to install (default firewalld)
+* `package_ensure`: Default 'installed', can be any supported ensure type for the package resource
+* `config_package`: Name of the GUI package, default firewall-config
+* `install_gui`: Whether or not to install the config_package (default: false)
+* `service_enable`: Whether to enable the service
+* `zones`: A hash of [firewalld zones](#firewalld-zones) to configure
+* `ports`: A hash of [firewalld ports](#firewalld-ports) to configure
+* `services`: A hash of [firewalld services](#firewalld-service) to configure 
+* `rich_rules`: A hash of [firewalld rich rules](#firewalld-rich-rules) to configure 
+* `custom_services`: A hash of [firewalld custom services](#firewalld-custom-service) to configure
+* `direct_rules`: A hash of [firewalld direct rules](#firewalld-direct-rules) to configure
+* `direct_chains`: A hash of [firewalld direct chains](#firewalld-direct-chains) to configure
+* `direct_passthroughs`: A hash of [firewalld direct passthroughs](#firewalld-direct-passthroughs) to configure
+* `purge_direct_rules`: True or false, whether to purge [firewalld direct rules](#firewalld-direct-rules)
+* `purge_direct_chains`: True or false, whether to purge [firewalld direct chains](#firewalld-direct-chains)
+* `purge_direct_passthroughs`: True or false, whether to purge [firewalld direct passthroughs](#firewalld-direct-passthroughs)
+
+
+
+## Resource Types
+
 The firewalld module contains types and providers to manage zones, services, ports, and rich rules by interfacing with the `firewall-cmd` command.  The following types are currently supported.  Note that all zone, service, port, and rule management is done in `--permanent` mode, and a complete reload will be triggered anytime something changes.
 
 ### Firewalld Zones
@@ -41,9 +67,13 @@ firewalld::zones:
 #### Parameters
 
 * `target`: Specify the target of the zone.
+* `interfaces`: An array of interfaces for this zone
+* `sources`: An array of sources for the zone
+* `icmp_blocks`: An array of ICMP blocks for the zone
 * `purge_rich_rules`: Optional, and defaulted to false.  When true any configured rich rules found in the zone that do not match what is in the Puppet catalog will be purged.
 * `purge_services`: Optional, and defaulted to false.  When true any configured services found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* This includes the default ssh service, if you need SSH to access the box, make sure you add the service through either a rich firewall rule, port, or service (see below) or you will lock yourself out!
 * `purge_ports`: Optional, and defaulted to false. When true any configured ports found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* As with services, this includes the default ssh port. If you fail to specify the appropriate port, rich rule, or service, you will lock yourself out.
+
 
 ### Firewalld rich rules
 
@@ -299,6 +329,121 @@ firewalld::ports:
     'protocol' => 'tcp',
   },
 ```
+
+### Firewalld Direct Chains
+
+Direct chains can be managed with the `firewalld_direct_chain` type
+
+_Example_:
+
+```puppet
+firewalld_direct_chain {'Add custom chain LOG_DROPS':
+ensure         => present,
+inet_protocol  => 'ipv4',
+table          => 'filter',
+custom_chain   => 'LOG_DROPS',
+}
+```
+
+The title can also be mapped to the types namevars using a colon delimited string, so the above can also be represented as
+
+```puppet
+firewall_direct_chain { 'ipv4:filter:LOG_DROPS':
+  ensure => present,
+}
+```
+
+_Example in hiera_
+```
+firewalld::direct_chains:
+  'Add custom chain LOG_DROPS':
+    ensure: present
+    inet_protocol: ipv4
+    table: filter
+    custom_chain: LOG_DROPS
+```
+
+#### Parameters
+* `name`: name of the chain, eg `LOG_DROPS`  (namevar)
+* `inet_protocol`: ipv4 or ipv6, defaults to ipv4 (namevar)
+* `table`: The table (eg: filter) to apply the chain (namevar)
+
+
+### Firewalld Direct Rules
+
+Direct rules can be applied using the `firewalld_direct_rule` type
+
+_Example_:
+
+```puppet
+
+  firewalld_direct_rule {'Allow outgoing SSH connection':
+      ensure         => 'present',
+      inet_protocol  => 'ipv4',
+      table          => 'filter',
+      chain          => 'OUTPUT',
+      priority       => 1,
+      args           => '-p tcp --dport=22 -j ACCEPT',
+  }
+```
+
+_Example in hiera_
+
+```yaml
+firewalld::direct_rules:
+  'Allow outgoing SSH connection':
+    ensure: present
+    inet_protocol: ipv4
+    table: filter
+    chain: OUTPUT
+    priority: 1
+    args: -p tcp --dport=22 -j ACCEPT'
+```
+
+#### Parameters
+
+* `name`: Resource name in Puppet
+* `ensure`: present or absent
+* `inet_protocol`: ipv4 or ipv6, defaults to ipv4
+* `table`: Table (eg: filter) which to apply the rule
+* `chain`: Chain (eg: OUTPUT) which to apply the rule
+* `priority`: The priority number of the rule (e.g: 0, 1, 2, ... 99)
+* `args`: Any  iptables, ip6tables and ebtables command line arguments
+
+### Firewalld Direct Passthroughs
+
+Direct passthroughs can be applied using the `firewalld_direct_passthrough` type
+
+_Example_:
+
+```puppet
+
+  firewalld_direct_passthrough {'Forward traffic from OUTPUT to OUTPUT_filter':
+      ensure         => 'present',
+      inet_protocol  => 'ipv4',
+      args           => '-A OUTPUT -j OUTPUT_filter'
+  }
+```
+
+_Example in hiera_
+
+```yaml
+firewalld::direct_passthroughs:
+  'Forward traffic from OUTPUT to OUTPUT_filter':
+    ensure: present
+    inet_protocol: ipv4
+    args: -A OUTPUT -j OUTPUT_filter
+```
+
+#### Parameters
+
+* `name`: Resource name in Puppet
+* `ensure`: present or absent
+* `inet_protocol`: ipv4 or ipv6, defaults to ipv4
+* `args`: Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)
+
+
+
 
 ## Limitations / TODO (PR's welcome!)
 

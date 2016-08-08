@@ -142,6 +142,7 @@ Puppet::Type.newtype(:firewalld_zone) do
       )
     end
     return purge_rules
+
   end
 
   def purge_services

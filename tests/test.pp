@@ -1,7 +1,7 @@
 
 include firewalld
 
-firewalld_zone { 'testcraig':
+firewalld_zone { 'restricted':
   ensure => present,
   target => '%%REJECT%%',
   purge_rich_rules => true,

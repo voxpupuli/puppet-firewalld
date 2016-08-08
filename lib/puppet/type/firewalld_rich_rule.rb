@@ -21,6 +21,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   ensurable
 
   newparam(:name) do
+    isnamevar
     desc "Name of the rule resource in Puppet"
   end
 
@@ -32,6 +33,9 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     desc "IP family, one of ipv4 or ipv6, defauts to ipv4"
     newvalues(:ipv4, :ipv6)
     defaultto :ipv4
+    munge do |value|
+      value.to_s
+    end
   end
 
   newparam(:source) do

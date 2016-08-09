@@ -42,26 +42,26 @@ define firewalld::custom_service (
 ) {
 
   validate_string($short)
-  
+
   if $description != undef {validate_string($description)}
   if $module      != undef {validate_array($module)}
   if $port        != undef {validate_array($port)}
   if $destination != undef {
     validate_hash($destination)
-    
+
     if !has_key($destination, 'ipv4') and !has_key($destination, 'ipv6'){
       fail('Parameter destination must contain at least one of "ipv4" and/or "ipv6" as keys in the hash')
     }
   }
   validate_absolute_path($config_dir)
-  
+
   file{"${config_dir}/${short}.xml":
     ensure  => $ensure,
     content => template('firewalld/service.xml.erb'),
     mode    => '0644',
     notify  => Exec["firewalld::custom_service::reload-${name}"],
   }
-  
+
   exec{ "firewalld::custom_service::reload-${name}":
     path        =>'/usr/bin:/bin',
     command     => 'firewall-cmd --reload',

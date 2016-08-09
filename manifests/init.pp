@@ -86,7 +86,7 @@ class firewalld (
       refreshonly => true,
       require     => Exec['firewalld::reload'],
     }
-    
+
     # create ports
     $ports.each |String $key, Hash $attrs| {
       firewalld_port { $key:

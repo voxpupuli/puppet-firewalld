@@ -1,5 +1,6 @@
 ---
 language: ruby
+script: "bundle exec rake validate SPEC_OPTS='--format documentation'"
 env:
   - PUPPET_VERSION="~> 3.7.0" FUTURE_PARSER=yes
   - PUPPET_VERSION="~> 3.7.5" FUTURE_PARSER=yes
@@ -14,7 +15,6 @@ rvm:
   - 2.0
   - 2.1
   - 2.2
-script: bundle exec rake test
 matrix:
   exclude:
     - rvm: 2.2

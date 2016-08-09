@@ -26,4 +26,4 @@ task :syntax_validate do
 
 end
 
-task :default => [:syntax_validate, :lint, :spec]
+task :test => [:syntax_validate, :lint, :spec]

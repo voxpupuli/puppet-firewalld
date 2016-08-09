@@ -16,3 +16,9 @@
 #     alias :must :should
 # end
 require 'puppetlabs_spec_helper/module_spec_helper'
+
+if ENV['FUTURE_PARSER'] == 'yes'
+  RSpec.configure do |c|
+    c.parser = 'future'
+  end
+end

@@ -1,3 +1,6 @@
+## 3.0.1
+* Puppet forge metadata changes, no functional changes.
+
 # 3.0.0
 
 * BREAK: Puppet manifests now written for the new parser, must use Puppet 4 or 3.x + Future parser

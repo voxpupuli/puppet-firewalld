@@ -135,7 +135,7 @@ class firewalld (
       firewalld_direct_chain { $key:
         *       => $attrs,
         require => Service['firewalld'],
-        notify  => Service['firewalld::reload'],
+        notify  => Exec['firewalld::reload'],
       }
     }
 
@@ -143,7 +143,7 @@ class firewalld (
       firewalld_direct_rule { $key:
         *       => $attrs,
         require => Service['firewalld'],
-        notify  => Service['firewalld::reload'],
+        notify  => Exec['firewalld::reload'],
       }
     }
 
@@ -151,7 +151,7 @@ class firewalld (
       firewalld_direct_passthrough { $key:
         *       => $attrs,
         require => Service['firewalld'],
-        notify  => Service['firewalld::reload'],
+        notify  => Exec['firewalld::reload'],
       }
     }
 

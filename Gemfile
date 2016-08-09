@@ -16,4 +16,5 @@ end
 # JSON must be 1.x on Ruby 1.9
 if RUBY_VERSION < '2.0'
   gem 'json', '~> 1.8'
+  gem 'json_pure', '~> 1.8'
 end

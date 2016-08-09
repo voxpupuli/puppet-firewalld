@@ -32,11 +32,22 @@ class { 'firewalld': }
 
 
 
-## Resource Types
+# Resource Types
 
 The firewalld module contains types and providers to manage zones, services, ports, and rich rules by interfacing with the `firewall-cmd` command.  The following types are currently supported.  Note that all zone, service, port, and rule management is done in `--permanent` mode, and a complete reload will be triggered anytime something changes.
 
-### Firewalld Zones
+
+This module supports a number of resource types
+
+* [firewalld_zone](#firewalld-zones)
+* [firewalld_port](#firewalld-ports)
+* [firewalld_service](#firewalld-service)
+* [firewalld_rich_rule](#firewalld-rich-rules)
+* [firewalld_direct_chain](#firewalld-direct-chains)
+* [firewalld_direct_rule](#firewalld-direct-rules)
+* [firewalld_direct_passthrough](#firewalld-direct-passthroughs)
+
+## Firewalld Zones
 
 Firewalld zones can be managed with the `firewalld_zone` resource type.
 
@@ -75,7 +86,7 @@ firewalld::zones:
 * `purge_ports`: Optional, and defaulted to false. When true any configured ports found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* As with services, this includes the default ssh port. If you fail to specify the appropriate port, rich rule, or service, you will lock yourself out.
 
 
-### Firewalld rich rules
+## Firewalld rich rules
 
 Firewalld rich rules are managed using the `firewalld_rich_rule` resource type
 
@@ -172,7 +183,7 @@ The following paramters are the element of the rich rule, only _one_ may be used
      },
   ```
 
-### Firewalld Custom Service
+## Firewalld Custom Service
 
 The `firewalld::custom_service` defined type creates and manages custom services. It makes the service usable by firewalld, but does not add it to any zones. To do that, use the firewalld::service type.
 
@@ -254,7 +265,7 @@ and you will also see 'XZY' in the service list when you issue ```firewall-cmd -
 
 * `config_dir`: The location where the service definition XML files will be stored. Defaults to /etc/firewalld/services
 
-### Firewalld Service
+## Firewalld Service
 
 The `firewalld_service` type is used to add or remove both built in and custom services from zones.
 
@@ -291,7 +302,7 @@ firewalld::services:
 
 * `zone`: Name of the zone in which you want to manage the service
 
-### Firewalld Ports
+## Firewalld Ports
 
 Firewalld ports can be managed with the `firewalld_port` resource type.
 
@@ -330,7 +341,7 @@ firewalld::ports:
   },
 ```
 
-### Firewalld Direct Chains
+## Firewalld Direct Chains
 
 Direct chains can be managed with the `firewalld_direct_chain` type
 
@@ -369,7 +380,7 @@ firewalld::direct_chains:
 * `table`: The table (eg: filter) to apply the chain (namevar)
 
 
-### Firewalld Direct Rules
+## Firewalld Direct Rules
 
 Direct rules can be applied using the `firewalld_direct_rule` type
 
@@ -410,7 +421,7 @@ firewalld::direct_rules:
 * `priority`: The priority number of the rule (e.g: 0, 1, 2, ... 99)
 * `args`: Any  iptables, ip6tables and ebtables command line arguments
 
-### Firewalld Direct Passthroughs
+## Firewalld Direct Passthroughs
 
 Direct passthroughs can be applied using the `firewalld_direct_passthrough` type
 
@@ -445,12 +456,8 @@ firewalld::direct_passthroughs:
 
 
 
-## Limitations / TODO (PR's welcome!)
 
-* Currently only _target_ and _icmp_blocks_ are managable properties for a zone
-* services can only be assigned to one zone per resource declaration. We would like to add support for specifying multiple zones as an array.
+# Author
 
-## Author
-
-* Written and maintained by Craig Dunn <craig@craigdunn.org> @crayfisx
+* Written and maintained by Craig Dunn <craig@craigdunn.org> @crayfishx
 * Sponsered by Baloise Group [http://baloise.github.io](http://baloise.github.io)

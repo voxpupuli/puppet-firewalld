@@ -408,7 +408,7 @@ firewalld::direct_rules:
     table: filter
     chain: OUTPUT
     priority: 1
-    args: -p tcp --dport=22 -j ACCEPT'
+    args: '-p tcp --dport=22 -j ACCEPT'
 ```
 
 #### Parameters
@@ -443,7 +443,7 @@ firewalld::direct_passthroughs:
   'Forward traffic from OUTPUT to OUTPUT_filter':
     ensure: present
     inet_protocol: ipv4
-    args: -A OUTPUT -j OUTPUT_filter
+    args: '-A OUTPUT -j OUTPUT_filter'
 ```
 
 #### Parameters

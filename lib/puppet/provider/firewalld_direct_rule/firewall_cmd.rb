@@ -29,9 +29,10 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
 	    @resource[:inet_protocol],
 	    @resource[:table],
 	    @resource[:chain],
-	    @resource[:priority],
-	    @resource[:args],
+	    @resource[:priority].to_s,
+	    @resource[:args].split(" "),
     ]
+    rule.flatten
   end
 
 end

@@ -28,4 +28,26 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
     end
 
   end
+
+  describe "provider" do
+    let(:resource) {
+      described_class.new(
+        :name => 'Forward OUTPUT',
+        :ensure => 'present',
+        :inet_protocol => 'ipv4',
+        :args => '-A OUTPUT -j OUTPUT_filter'
+      )
+    }
+
+    let(:provider) { resource.provider }
+
+    it "should create" do
+      provider.expects(:execute_firewall_cmd).with(['--direct','--add-passthrough', [ 'ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
+      provider.create
+    end
+    it "should destroy" do
+      provider.expects(:execute_firewall_cmd).with(['--direct','--remove-passthrough', [ 'ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
+      provider.destroy
+    end
+  end
 end

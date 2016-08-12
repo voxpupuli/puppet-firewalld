@@ -35,6 +35,31 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
       end
 
     end
+  end
 
+  describe "provider" do
+    let(:resource) {
+      described_class.new(
+          :name           => 'allow ssh',
+          :ensure         => 'present',
+          :inet_protocol  => 'ipv4',
+          :table          => 'filter',
+          :chain          => 'OUTPUT',
+          :priority       => 4,
+          :args           => '-p tcp --dport=22 -j ACCEPT',
+      )
+    }
+
+    let(:provider) { resource.provider }
+
+    it "should create" do
+      provider.expects(:execute_firewall_cmd).with(['--direct', '--add-rule', [ 'ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
+      provider.create
+    end
+
+    it "should destroy" do
+      provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-rule', [  'ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
+      provider.destroy
+    end
   end
 end

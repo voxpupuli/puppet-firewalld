@@ -1,3 +1,7 @@
+## 3.0.2
+* Bugfix release
+* Fixed issue #68, direct_rules and passthroughs badly configured
+
 ## 3.0.1
 * Puppet forge metadata changes, no functional changes.
 

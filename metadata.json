@@ -1,6 +1,6 @@
 {
   "name": "crayfishx-firewalld",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "author": "Craig Dunn",
   "summary": "Configure firewalld zones, services, and rich rules",
   "license": "Apache-2.0",

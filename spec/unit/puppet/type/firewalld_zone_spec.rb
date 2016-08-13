@@ -33,7 +33,8 @@ describe Puppet::Type.type(:firewalld_zone) do
       described_class.new(
         :name => 'restricted', 
         :target => '%%REJECT%%',
-        :interfaces => ['eth0'])
+        :interfaces => ['eth0'],
+        :sources    => ['192.168.2.2', '10.72.1.100'])
     }
     let(:provider) {
       resource.provider
@@ -52,6 +53,10 @@ describe Puppet::Type.type(:firewalld_zone) do
     it "should create" do
       provider.expects(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
       provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
+
+      provider.expects(:sources).returns([])
+      provider.expects(:execute_firewall_cmd).with(['--add-source', '192.168.2.2'])
+      provider.expects(:execute_firewall_cmd).with(['--add-source', '10.72.1.100'])
 
       provider.expects(:interfaces).returns([])
       provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])

@@ -155,6 +155,10 @@ class firewalld (
       }
     }
 
+    Firewalld_direct_purge {
+      notify => Exec['firewalld::reload'],
+    }
+
     if $purge_direct_chains {
       firewalld_direct_purge { 'chain': }
     }

@@ -131,15 +131,22 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def get_rules
-    execute_firewall_cmd(['--list-rich-rules']).split(/\n/)
+    perm = execute_firewall_cmd(['--list-rich-rules']).split(/\n/)
+    curr = execute_firewall_cmd(['--list-rich-rules'], @resource[:name], false).split(/\n/)
+    [ perm, curr ].flatten.uniq
   end
 
   def get_services
-    execute_firewall_cmd(['--list-services']).split(' ')
+    perm = execute_firewall_cmd(['--list-services']).split(' ')
+    curr = execute_firewall_cmd(['--list-services'], @resource[:name], false).split(' ')
+    [ perm, curr ].flatten.uniq
   end
 
   def get_ports
-    execute_firewall_cmd(['--list-ports']).split(' ').map do |entry|
+    perm = execute_firewall_cmd(['--list-ports']).split(' ')
+    curr = execute_firewall_cmd(['--list-ports'], @resource[:name], false).split(' ')
+
+    [ perm, curr ].flatten.uniq.map do |entry|
       port,protocol = entry.split(/\//)
       self.debug("get_ports() Found port #{port} protocol #{protocol}")
       { "port" => port, "protocol" => protocol }

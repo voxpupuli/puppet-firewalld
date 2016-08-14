@@ -36,21 +36,10 @@ Puppet::Type.newtype(:firewalld_zone) do
   attr_reader :ports_purgable
 
   def generate
-
-    resources = Array.new
-
-    if self[:purge_rich_rules] == :true
-      resources.concat(purge_rich_rules())
-    end
-    if self[:purge_services] == :true
-      resources.concat(purge_services())
-    end
-    if self[:purge_ports] == :true
-      resources.concat(purge_ports())
-    end
-
-    return resources
-
+    purge_rich_rules if self[:purge_rich_rules] == :true
+    purge_services if self[:purge_services] == :true
+    purge_ports if self[:purge_ports] == :true
+    []
   end
 
 
@@ -176,7 +165,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
       # If the rule exists in --permanent then we should purge it
       #  
-      purge_rules << res_type if res_type.provider.exists?
+      res_type.provider.destroy if res_type.provider.exists?
  
       # Even if it doesn't exist, it may be a running rule, so we
       # flag purge_rich_rules as changed so Puppet will reload
@@ -186,7 +175,6 @@ Puppet::Type.newtype(:firewalld_zone) do
       
 
     end
-    return purge_rules
   end
 
   def purge_services
@@ -208,10 +196,9 @@ Puppet::Type.newtype(:firewalld_zone) do
         :zone     => self[:name]
       )
 
-      purge_services << res_type if res_type.provider.exists?
+      res_type.provider.destroy if res_type.provider.exists?
       @services_purgable = true
     end
-    return purge_services
   end
 
   def purge_ports
@@ -233,10 +220,9 @@ Puppet::Type.newtype(:firewalld_zone) do
         :protocol => purge["protocol"],
         :zone     => self[:name]
       )
-      purge_ports << res_type if res_type.provider.exists?
+      res_type.provider.destroy if res_type.provider.exists?
       @ports_purgable = true
     end
-    return purge_ports
   end
 
 end

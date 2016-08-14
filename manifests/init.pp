@@ -91,8 +91,6 @@ class firewalld (
     $ports.each |String $key, Hash $attrs| {
       firewalld_port { $key:
         *       => $attrs,
-        require => Service['firewalld'],
-        notify  => Exec['firewalld::reload'],
       }
     }
 
@@ -100,8 +98,6 @@ class firewalld (
     $zones.each | String $key, Hash $attrs| {
       firewalld_zone { $key:
         *       => $attrs,
-        require => Service['firewalld'],
-        notify  => Exec['firewalld::reload'],
       }
     }
 
@@ -109,8 +105,6 @@ class firewalld (
     $services.each | String $key, Hash $attrs| {
       firewalld_service { $key:
         *       => $attrs,
-        require => Service['firewalld'],
-        notify  => Exec['firewalld::reload'],
       }
     }
 
@@ -118,8 +112,6 @@ class firewalld (
     $rich_rules.each | String $key, Hash $attrs| {
       firewalld_rich_rule { $key:
         *       => $attrs,
-        require => Service['firewalld'],
-        notify  => Exec['firewalld::reload'],
       }
     }
 
@@ -134,24 +126,18 @@ class firewalld (
     $direct_chains.each | String $key, Hash $attrs| {
       firewalld_direct_chain { $key:
         *       => $attrs,
-        require => Service['firewalld'],
-        notify  => Exec['firewalld::reload'],
       }
     }
 
     $direct_rules.each | String $key, Hash $attrs| {
       firewalld_direct_rule { $key:
         *       => $attrs,
-        require => Service['firewalld'],
-        notify  => Exec['firewalld::reload'],
       }
     }
 
     $direct_passthroughs.each | String $key, Hash $attrs| {
       firewalld_direct_passthrough { $key:
         *       => $attrs,
-        require => Service['firewalld'],
-        notify  => Exec['firewalld::reload'],
       }
     }
 
@@ -164,5 +150,18 @@ class firewalld (
     if $purge_direct_passthroughs {
       firewalld_direct_purge { 'passthrough': }
     }
+
+    # Set dependencies using resource chaining so that resource declarations made
+    # outside of this class (eg: from the profile) also get their dependencies set
+    # automatically, this addresses various issues found in
+    # https://github.com/crayfishx/puppet-firewalld/issues/38
+    #
+    Service['firewalld'] -> Firewalld_zone <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_port <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_direct_chain <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_direct_rule <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_direct_passthrough <||> ~> Exec['firewalld::reload']
 
 }

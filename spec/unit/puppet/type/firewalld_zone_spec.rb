@@ -6,7 +6,7 @@ describe Puppet::Type.type(:firewalld_zone) do
     context 'with no params' do
       describe 'when validating attributes' do
         [  
-          :name, :purge_rich_rules, :purge_services, :purge_ports
+          :name
         ].each do |param|
           it "should have a #{param} parameter" do
             expect(described_class.attrtype(param)).to eq(:param)
@@ -15,7 +15,7 @@ describe Puppet::Type.type(:firewalld_zone) do
       
   
         [  
-          :target, :icmp_blocks, :sources
+          :target, :icmp_blocks, :sources, :purge_rich_rules, :purge_services, :purge_ports
         ].each do |param|
           it "should have a #{param} parameter" do
             expect(described_class.attrtype(param)).to eq(:property)

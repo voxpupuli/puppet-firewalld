@@ -55,7 +55,7 @@ define firewalld::custom_service (
   }
   validate_absolute_path($config_dir)
 
-  file{"${config_dir}/${short}.xml":
+  file{"${config_dir}/${name}.xml":
     ensure  => $ensure,
     content => template('firewalld/service.xml.erb'),
     mode    => '0644',

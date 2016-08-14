@@ -20,6 +20,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     execute_firewall_cmd(['--new-zone', @resource[:name]], nil)
 
     self.target=(@resource[:target]) if @resource[:target]
+    self.sources=(@resource[:sources]) if @resource[:sources]
     self.interfaces=@resource[:interfaces]
   end
 

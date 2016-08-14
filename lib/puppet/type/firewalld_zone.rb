@@ -28,17 +28,24 @@ Puppet::Type.newtype(:firewalld_zone) do
   ensurable
 
 
+  # When set to 1 these variables cause the purge_* options to indicate to Puppet
+  # that we are in a changed state
+  #
+  attr_reader :rich_rules_purgable
+  attr_reader :services_purgable
+  attr_reader :ports_purgable
+
   def generate
 
     resources = Array.new
 
-    if self.purge_rich_rules?
+    if self[:purge_rich_rules] == :true
       resources.concat(purge_rich_rules())
     end
-    if self.purge_services?
+    if self[:purge_services] == :true
       resources.concat(purge_services())
     end
-    if self.purge_ports?
+    if self[:purge_ports] == :true
       resources.concat(purge_ports())
     end
 
@@ -104,24 +111,50 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
   end
 
-  newparam(:purge_rich_rules, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+  newproperty(:purge_rich_rules) do
     desc "When set to true any rich_rules associated with this zone
           that are not managed by Puppet will be removed.
          "
-    defaultto :false
+    newvalue(:false)
+    newvalue(:true) do
+      true
+    end
+
+    def retrieve
+      return :false if @resource[:purge_rich_rules] == :false
+      provider.resource.rich_rules_purgable ? :purgable : :true
+    end
+     
   end
 
-  newparam(:purge_services, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+  newproperty(:purge_services) do
+
     desc "When set to true any services associated with this zone
           that are not managed by Puppet will be removed.
          "
-    defaultto :false
+    newvalue(:false)
+    newvalue(:true) do
+      true
+    end
+
+    def retrieve
+      return :false if @resource[:purge_services] == :false
+      provider.resource.services_purgable ? :purgable : :true
+    end
   end
 
-  newparam(:purge_ports, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+  newproperty(:purge_ports) do
     desc "When set to true any ports associated with this zone
           that are not managed by Puppet will be removed."
-    defaultto :false
+    newvalue (:false)
+    newvalue(:true) do
+      true
+    end
+
+    def retrieve 
+      return :false if @resource[:purge_ports] == :false
+      provider.resource.ports_purgable  ? :purgable : :true
+    end
   end
 
   def purge_rich_rules
@@ -134,15 +167,26 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
     provider.get_rules.reject { |p| puppet_rules.include?(p) }.each do |purge|
       self.debug("should purge rich rule #{purge}")
-      purge_rules << Puppet::Type.type(:firewalld_rich_rule).new(
+      res_type = Puppet::Type.type(:firewalld_rich_rule).new(
         :name     => purge,
         :raw_rule => purge,
         :ensure   => :absent,
         :zone     => self[:name]
       )
+
+      # If the rule exists in --permanent then we should purge it
+      #  
+      purge_rules << res_type if res_type.provider.exists?
+ 
+      # Even if it doesn't exist, it may be a running rule, so we
+      # flag purge_rich_rules as changed so Puppet will reload
+      # the firewall and drop orphaned running rules
+      #
+      @rich_rules_purgable = true
+      
+
     end
     return purge_rules
-
   end
 
   def purge_services
@@ -157,12 +201,15 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
     provider.get_services.reject { |p| puppet_services.include?(p) }.each do |purge|
       self.debug("should purge service #{purge}")
-      purge_services << Puppet::Type.type(:firewalld_service).new(
+      res_type = Puppet::Type.type(:firewalld_service).new(
         :name     => "#{self[:name]}-#{purge}",
         :ensure   => :absent,
         :service  => purge,
         :zone     => self[:name]
       )
+
+      purge_services << res_type if res_type.provider.exists?
+      @services_purgable = true
     end
     return purge_services
   end
@@ -179,13 +226,15 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
     provider.get_ports.reject { |p| puppet_ports.include?(p) }.each do |purge|
       self.debug("Should purge port #{purge['port']} proto #{purge['protocol']}")
-      purge_ports << Puppet::Type.type(:firewalld_port).new(
+      res_type = Puppet::Type.type(:firewalld_port).new(
         :name     => "#{self[:name]}-#{purge['port']}-#{purge['protocol']}-purge",
         :port     => purge["port"],
         :ensure   => :absent,
         :protocol => purge["protocol"],
         :zone     => self[:name]
       )
+      purge_ports << res_type if res_type.provider.exists?
+      @ports_purgable = true
     end
     return purge_ports
   end

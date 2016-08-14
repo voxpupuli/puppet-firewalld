@@ -47,6 +47,8 @@ This module supports a number of resource types
 * [firewalld_direct_rule](#firewalld-direct-rules)
 * [firewalld_direct_passthrough](#firewalld-direct-passthroughs)
 
+Note, it is always recommended to include the `::firewalld` class if you are going to  use any of these resources from another Puppet class (eg: a profile)  as it sets up the relationships between the `firewalld` service resource and the exec resource to reload the firewall upon change.  Without the `firewalld` class included then the firewall will not be reloaded upon change.  The recommended pattern is to put all resources into hiera and let the `firewalld` class set them up.  Examples of both forms are presented for the resource types below.
+
 ## Firewalld Zones
 
 Firewalld zones can be managed with the `firewalld_zone` resource type.

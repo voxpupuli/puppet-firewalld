@@ -37,11 +37,17 @@ define firewalld::custom_service (
   $port                 = undef, # Should be an array of hashes
   $module               = undef, # Should be an array of strings
   $destination          = undef,
+  $filename             = undef,
   $config_dir           = '/etc/firewalld/services',
   $ensure               = 'present',
 ) {
 
   validate_string($short)
+  
+  $x_filename = $filename ? {
+    undef   => $short,
+    default => $filename,
+  }
 
   if $description != undef {validate_string($description)}
   if $module      != undef {validate_array($module)}
@@ -55,7 +61,7 @@ define firewalld::custom_service (
   }
   validate_absolute_path($config_dir)
 
-  file{"${config_dir}/${short}.xml":
+  file{"${config_dir}/${x_filename}.xml":
     ensure  => $ensure,
     content => template('firewalld/service.xml.erb'),
     mode    => '0644',

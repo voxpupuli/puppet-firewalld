@@ -43,7 +43,7 @@ define firewalld::custom_service (
 ) {
 
   validate_string($short)
-  
+
   $x_filename = $filename ? {
     undef   => $short,
     default => $filename,

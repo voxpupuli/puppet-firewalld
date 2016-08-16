@@ -1,5 +1,5 @@
 require 'puppet'
-require 'puppet/provider/firewalld'
+require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
 Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, :parent => Puppet::Provider::Firewalld) do
   desc "Provider for managing firewalld direct chains using firewall-cmd"

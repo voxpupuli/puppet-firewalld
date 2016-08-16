@@ -1,6 +1,6 @@
 require 'puppet'
 require 'puppet/type'
-require 'puppet/provider/firewalld'
+require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
 
 Puppet::Type.type(:firewalld_zone).provide(

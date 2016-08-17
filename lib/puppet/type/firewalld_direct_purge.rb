@@ -1,8 +1,8 @@
 require 'puppet'
 require 'puppet/parameter/boolean'
-require 'puppet/type/firewalld_direct_chain'
-require 'puppet/type/firewalld_direct_rule'
-require 'puppet/type/firewalld_direct_passthrough'
+require File.dirname(__FILE__).concat('/firewalld_direct_chain.rb')
+require File.dirname(__FILE__).concat('/firewalld_direct_rule.rb')
+require File.dirname(__FILE__).concat('/firewalld_direct_passthrough.rb')
 
 Puppet::Type.newtype(:firewalld_direct_purge) do
 

@@ -1,8 +1,8 @@
 require 'puppet'
 require 'puppet/parameter/boolean'
-require File.dirname(__FILE__).concat('/firewalld_rich_rule.rb')
-require File.dirname(__FILE__).concat('/firewalld_service.rb')
-require File.dirname(__FILE__).concat('/firewalld_port.rb')
+require File.join(File.dirname(__FILE__),'firewalld_rich_rule.rb')
+require File.join(File.dirname(__FILE__),'firewalld_service.rb')
+require File.join(File.dirname(__FILE__),'firewalld_port.rb')
 
 Puppet::Type.newtype(:firewalld_zone) do
 

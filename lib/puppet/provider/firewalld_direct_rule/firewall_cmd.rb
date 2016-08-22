@@ -30,8 +30,10 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
 	    @resource[:table],
 	    @resource[:chain],
 	    @resource[:priority].to_s,
-	    @resource[:args].split(" "),
+	    @resource[:args].split(/([^\s]*\'[^\']*\'| )/).delete_if(&:empty?).reject { |r| r == " " }.map { |x| x.gsub("\'", "") }
     ]
+    puts rule.flatten
+    p rule.flatten
     rule.flatten
   end
 

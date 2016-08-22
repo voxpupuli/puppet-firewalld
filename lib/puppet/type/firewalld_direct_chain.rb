@@ -7,10 +7,10 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
     Example:
 
         firewalld_direct_chain {'Add custom chain LOG_DROPS':
+            name           => 'LOG_DROPS',
             ensure         => 'present',
             inet_protocol  => 'ipv4',
-            table          => 'filter',
-            custom_chain   => 'LOG_DROPS',
+            table          => 'filter'
         }
 
   }

@@ -351,10 +351,10 @@ _Example_:
 
 ```puppet
 firewalld_direct_chain {'Add custom chain LOG_DROPS':
+name           => 'LOG_DROPS',
 ensure         => present,
 inet_protocol  => 'ipv4',
 table          => 'filter',
-custom_chain   => 'LOG_DROPS',
 }
 ```
 
@@ -370,10 +370,10 @@ _Example in hiera_
 ```
 firewalld::direct_chains:
   'Add custom chain LOG_DROPS':
+    name: LOG_DROPS
     ensure: present
     inet_protocol: ipv4
     table: filter
-    custom_chain: LOG_DROPS
 ```
 
 #### Parameters
@@ -462,4 +462,4 @@ firewalld::direct_passthroughs:
 # Author
 
 * Written and maintained by Craig Dunn <craig@craigdunn.org> @crayfishx
-* Sponsered by Baloise Group [http://baloise.github.io](http://baloise.github.io)
+* Sponsored by Baloise Group [http://baloise.github.io](http://baloise.github.io)

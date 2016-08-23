@@ -56,7 +56,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     if args.is_a?(Array)
       args = args.flatten.join(" ")
     end
-    args_array = args.split(/(\'[^\']*\'| )/).reject { |r| [ "", " "].include?(r) }
+    args.split(/(\'[^\']*\'| )/).reject { |r| [ "", " "].include?(r) }
   end
 
   # Occasionally we need to restart firewalld in a transient way between resources

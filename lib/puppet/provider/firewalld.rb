@@ -53,6 +53,9 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   # in one element
   #
   def parse_args(args)
+    if args.is_a?(Array)
+      args = args.flatten.join(" ")
+    end
     args_array = args.split(/(\'[^\']*\'| )/).reject { |r| [ "", " "].include?(r) }
   end
 

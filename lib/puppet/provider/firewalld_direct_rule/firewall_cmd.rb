@@ -23,6 +23,11 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
     execute_firewall_cmd(['--direct', '--remove-rule', @rule_args], nil)
   end
 
+  def parse_args(args)
+    args_array = args.split(/(\'[^\']*\'| )/).reject { |r| [ "", " "].include?(r) }
+    args_array.map { |a| a.delete("'") }
+  end
+
   def generate_raw
     rule = []
     rule << [
@@ -30,10 +35,8 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
 	    @resource[:table],
 	    @resource[:chain],
 	    @resource[:priority].to_s,
-	    @resource[:args].split(/([^\s]*\'[^\']*\'| )/).delete_if(&:empty?).reject { |r| r == " " }.map { |x| x.gsub("\'", "") }
+      parse_args(@resource[:args])
     ]
-    puts rule.flatten
-    p rule.flatten
     rule.flatten
   end
 

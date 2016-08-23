@@ -146,6 +146,16 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
   end
 
+  def purge_resource(res_type)
+    if Puppet.settings[:noop] || self[:noop]
+      Puppet.debug "Would have purged #{res_type.ref}, (noop)"
+    else
+      Puppet.debug "Purging #{res_type.ref}"
+      res_type.provider.destroy if res_type.provider.exists?
+    end
+  end
+
+
   def purge_rich_rules
     return Array.new unless provider.exists?
     purge_rules = Array.new
@@ -165,7 +175,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
       # If the rule exists in --permanent then we should purge it
       #  
-      res_type.provider.destroy if res_type.provider.exists?
+      purge_resource(res_type)
  
       # Even if it doesn't exist, it may be a running rule, so we
       # flag purge_rich_rules as changed so Puppet will reload
@@ -196,7 +206,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         :zone     => self[:name]
       )
 
-      res_type.provider.destroy if res_type.provider.exists?
+      purge_resource(res_type)
       @services_purgable = true
     end
   end
@@ -220,7 +230,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         :protocol => purge["protocol"],
         :zone     => self[:name]
       )
-      res_type.provider.destroy if res_type.provider.exists?
+      purge_resource(res_type)
       @ports_purgable = true
     end
   end

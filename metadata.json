@@ -1,10 +1,10 @@
 {
   "name": "crayfishx-firewalld",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "author": "Craig Dunn",
-  "summary": "Configure firewalld zones, services, and rich rules",
+  "summary": "Configure firewalld zones, services, and rich rules and direct config",
   "license": "Apache-2.0",
-  "tags": [ "firewalld", "firewall" ],
+  "tags": [ "firewalld", "firewall", "redhat", "centos", "rhel", "security", "network", "networking" ],
   "requirements": [
    {
       "name": "puppet",
@@ -14,6 +14,10 @@
   "operatingsystem_support": [
     {
     "operatingsystem":"RedHat",
+    "operatingsystemrelease":[ "7" ]
+    },
+    {
+    "operatingsystem":"CentOS",
     "operatingsystemrelease":[ "7" ]
     }
    ],

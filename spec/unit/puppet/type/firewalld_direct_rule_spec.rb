@@ -61,5 +61,19 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
       provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-rule', [  'ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
       provider.destroy
     end
+
+    context "parsing arguments" do
+      it "should correctly parse arguments into an array" do
+        args="-p tcp --dport=22 -j ACCEPT"
+        expect(provider.parse_args(args)).to eq(['-p', 'tcp', '--dport=22', '-j', 'ACCEPT'])
+      end
+
+      it "should correctly parse arguments in quotes" do
+        args="-j LOG --log-prefix '# IPTABLES DROPPED:'"
+        expect(provider.parse_args(args)).to eq(['-j', 'LOG', '--log-prefix', '\'# IPTABLES DROPPED:\''])
+      end
+    end
+
+
   end
 end

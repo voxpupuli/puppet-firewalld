@@ -10,7 +10,10 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     cmd_args = []
     cmd_args << '--permanent' if perm
     cmd_args << [ '--zone', zone ] unless zone.nil?
-    cmd_args << args
+
+    # Add the arguments to our command string, removing any quotes, the command
+    # provider will sort the quotes out.
+    cmd_args << args.flatten.map { |a| a.delete("'") }
 
     # We can't use the commands short cut as some things, like exists? methods need to
     # allow for the command to fail, and there is no way to override that.  So instead
@@ -43,6 +46,17 @@ class Puppet::Provider::Firewalld < Puppet::Provider
         raise e
       end
     end
+  end
+
+  # Arguments should be parsed as separate array entities, but quoted arg
+  # eg --log-prefix 'IPTABLES DROPPED' should include the whole quoted part
+  # in one element
+  #
+  def parse_args(args)
+    if args.is_a?(Array)
+      args = args.flatten.join(" ")
+    end
+    args.split(/(\'[^\']*\'| )/).reject { |r| [ "", " "].include?(r) }
   end
 
   # Occasionally we need to restart firewalld in a transient way between resources

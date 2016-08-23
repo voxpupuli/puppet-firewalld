@@ -23,14 +23,15 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
     execute_firewall_cmd(['--direct', '--remove-rule', @rule_args], nil)
   end
 
+
   def generate_raw
     rule = []
     rule << [
-	    @resource[:inet_protocol],
-	    @resource[:table],
-	    @resource[:chain],
-	    @resource[:priority].to_s,
-	    @resource[:args].split(" "),
+      @resource[:inet_protocol],
+      @resource[:table],
+      @resource[:chain],
+      @resource[:priority].to_s,
+      parse_args(@resource[:args])
     ]
     rule.flatten
   end

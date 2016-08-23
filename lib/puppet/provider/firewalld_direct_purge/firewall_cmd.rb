@@ -16,7 +16,7 @@ Puppet::Type.type(:firewalld_direct_purge).provide(
 
   def purge_resources(restype, args)
     raise Puppet::Error, "Unknown type #{restype}" unless [:chain, :passthrough, :rule].include?(restype)
-    execute_firewall_cmd(['--direct', "--remove-#{restype.to_s}", args], nil)
+    execute_firewall_cmd(['--direct', "--remove-#{restype.to_s}", parse_args(args)], nil)
   end
 
 end

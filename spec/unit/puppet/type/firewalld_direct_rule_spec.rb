@@ -70,7 +70,7 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
 
       it "should correctly parse arguments in quotes" do
         args="-j LOG --log-prefix '# IPTABLES DROPPED:'"
-        expect(provider.parse_args(args)).to eq(['-j', 'LOG', '--log-prefix', '# IPTABLES DROPPED:'])
+        expect(provider.parse_args(args)).to eq(['-j', 'LOG', '--log-prefix', '\'# IPTABLES DROPPED:\''])
       end
     end
 

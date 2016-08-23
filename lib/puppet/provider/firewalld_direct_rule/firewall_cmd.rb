@@ -23,15 +23,6 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
     execute_firewall_cmd(['--direct', '--remove-rule', @rule_args], nil)
   end
 
-  # Arguments should be parsed as separate array entities, but quoted arg
-  # eg --log-prefix 'IPTABLES DROPPED' should include the whole quoted part
-  # in one element without the quotes.
-  #
-  def parse_args(args)
-    args_array = args.split(/(\'[^\']*\'| )/).reject { |r| [ "", " "].include?(r) }
-    args_array.map { |a| a.delete("'") }
-  end
-
 
   def generate_raw
     rule = []

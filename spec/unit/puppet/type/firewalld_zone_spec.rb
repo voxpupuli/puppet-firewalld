@@ -102,5 +102,10 @@ describe Puppet::Type.type(:firewalld_zone) do
       expect(provider.icmp_blocks).to eq(['val'])
     end
 
+    it "should list icmp types" do
+      provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns("echo-reply echo-request")
+      expect(provider.get_icmp_types).to eq(['echo-reply', 'echo-request'])
+    end
+
   end
 end

@@ -1,6 +1,6 @@
 ### 3.1.4
 
-Bugfix: `--get-icmptypes` running against `--zone` when it is a global option. https://github.com/crayfishx/puppet-firewalld/issues/86
+* Bugfix: `--get-icmptypes` running against `--zone` when it is a global option. https://github.com/crayfishx/puppet-firewalld/issues/86
 
 ### 3.1.3
 

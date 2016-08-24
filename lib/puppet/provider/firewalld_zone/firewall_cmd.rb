@@ -159,7 +159,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def get_icmp_types
-    execute_firewall_cmd(['--get-icmptypes']).split(' ')
+    execute_firewall_cmd(['--get-icmptypes'], nil).split(' ')
   end
 
 end

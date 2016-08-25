@@ -1,6 +1,6 @@
 # Module: firewalld
 
-[![Build Status](https://travis-ci.org/crayfishx/puppet-firewalld.svg?branch=master)](https://travis-ci.org/crayfishx/puppet-firewalld)  [![Join the chat at https://gitter.im/crayfishx/puppet-firewalld](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/crayfishx/puppet-firewalld?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/crayfishx/puppet-firewalld.svg?branch=master)](https://travis-ci.org/crayfishx/puppet-firewalld)  [![GitHub version](https://badge.fury.io/gh/crayfishx%2Fpuppet-firewalld.svg)](https://badge.fury.io/gh/crayfishx%2Fpuppet-firewalld)
 
 ## Description
 

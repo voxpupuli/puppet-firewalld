@@ -1,6 +1,6 @@
 # Module: firewalld
 
-[![Build Status](https://travis-ci.org/crayfishx/puppet-firewalld.svg?branch=master)](https://travis-ci.org/crayfishx/puppet-firewalld)  [![GitHub version](https://badge.fury.io/gh/crayfishx%2Fpuppet-firewalld.svg)](https://badge.fury.io/gh/crayfishx%2Fpuppet-firewalld) [![Endorsement](https://img.shields.io/puppetforge/e/crayfishx/firewalld.svg)](https://forge.puppet.com/approved) [![Downloads](https://img.shields.io/puppetforge/dt/puppet/firewalld.svg)] [![Version](https://img.shields.io/puppetforge/v/crayfishx/firewalld.svg)]
+[![Build Status](https://travis-ci.org/crayfishx/puppet-firewalld.svg?branch=master)](https://travis-ci.org/crayfishx/puppet-firewalld)  [![Endorsement](https://img.shields.io/puppetforge/e/crayfishx/firewalld.svg)](https://forge.puppet.com/approved) [![Downloads](https://img.shields.io/puppetforge/dt/puppet/firewalld.svg)](https://forge.puppet.com/crayfishx/firewalld) [![Version](https://img.shields.io/puppetforge/v/crayfishx/firewalld.svg)](https://forge.puppet.com/crayfishx/firewalld) 
 
 
 ## Description

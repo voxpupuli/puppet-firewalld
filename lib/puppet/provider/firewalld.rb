@@ -4,7 +4,16 @@ require 'puppet/provider'
 class Puppet::Provider::Firewalld < Puppet::Provider
 
 
- 
+  attr_reader :running
+
+  def initialize(*args)
+    if running.nil?
+      ret = self.class.execute_firewall_cmd(['--state'], nil, false, false)
+      @running = ret.exitstatus == 0 ? true : false
+    end
+    super
+  end
+
   # v3.0.0
   def self.execute_firewall_cmd(args,  zone=nil, perm=true, failonfail=true, shell_cmd='firewall-cmd')
     cmd_args = []
@@ -30,21 +39,13 @@ class Puppet::Provider::Firewalld < Puppet::Provider
    firewall_cmd.execute(cmd_args.flatten)
   end
 
+
+
   def execute_firewall_cmd(args, zone=@resource[:zone], perm=true, failonfail=true)
-    begin
+    if online?
       self.class.execute_firewall_cmd(args, zone, perm, failonfail)
-    rescue Puppet::ExecutionFailure => e
-      # Last ditch effort to see if we're seeing an error becuse firewalld is offline.
-      # This could be the case if we're calling providers from the generate method
-      # of firewalld_zone before we can manage the service.
-      #
-      # This addresses https://github.com/crayfishx/puppet-firewalld/pull/46
-      #
-      if e.message.include?("FirewallD is not running")
-        self.class.execute_firewall_cmd(args, zone, false, true, 'firewall-offline-cmd')
-      else
-        raise e
-      end
+    else
+      self.class.execute_firewall_cmd(args, zone, false, true, 'firewall-offline-cmd')
     end
   end
 
@@ -63,7 +64,16 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   # (eg: services) so the provider needs an an-hoc way of doing this since we can't
   # do it from the puppet level by notifying the service.
   def reload_firewall
-    execute_firewall_cmd(['--reload'], nil, false)
+    execute_firewall_cmd(['--reload'], nil, false) if online?
   end
+
+  def offline?
+    @running == false
+  end
+
+  def online?
+    @running == true
+  end
+
 
 end

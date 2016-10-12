@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_direct_chain) do
+  before do
+    Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true)
+  end
+
   context 'with no params' do
     describe 'when validating attributes' do
       [:name, :inet_protocol, :table].each do |param|

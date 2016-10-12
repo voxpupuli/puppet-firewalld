@@ -2,6 +2,10 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_zone) do
 
+  before do
+    Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true)
+  end
+
   describe "type" do
     context 'with no params' do
       describe 'when validating attributes' do
@@ -29,6 +33,7 @@ describe Puppet::Type.type(:firewalld_zone) do
   ## Provider tests for the firewalld_zone type
   #
   describe "provider" do
+
     let(:resource) {
       described_class.new(
         :name => 'restricted', 

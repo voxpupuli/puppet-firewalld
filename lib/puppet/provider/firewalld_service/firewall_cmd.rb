@@ -19,7 +19,14 @@ Puppet::Type.type(:firewalld_service).provide(
 
   def destroy
     self.debug("Removing service from firewalld: #{@resource[:service]}")
-    execute_firewall_cmd(['--remove-service', @resource[:service]])
+
+    if online?
+      flag = '--remove-service'
+    else
+      flag = '--remove-service-from-zone'
+    end
+
+    execute_firewall_cmd([flag, @resource[:service]])
     reload_firewall
   end
 

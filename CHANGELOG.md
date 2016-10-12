@@ -1,3 +1,9 @@
+### 3.1.5
+
+* Bugfix: #90 - `firewalld_service` fails to remove services in offline mode.
+* Internal: Provider tests for the state of firewalld on initiation to decide which command to use (`firewall-cmd` or `firewall-offline-cmd`) rather than relying on catching an exception in `execute_firewall()`
+
+
 ### 3.1.4
 
 * Bugfix: `--get-icmptypes` running against `--zone` when it is a global option. https://github.com/crayfishx/puppet-firewalld/issues/86

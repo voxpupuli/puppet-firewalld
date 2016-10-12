@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_direct_passthrough) do
+  before do
+    Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true)
+  end
+
   context 'with no params' do
     describe 'when validating attributes' do
       [:inet_protocol, :args].each do |param|
@@ -30,6 +34,7 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
   end
 
   describe "provider" do
+
     let(:resource) {
       described_class.new(
         :name => 'Forward OUTPUT',

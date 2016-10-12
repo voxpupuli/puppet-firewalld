@@ -7,7 +7,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   attr_reader :running
 
   def initialize(*args)
-    if @running.nil?
+    if running.nil?
       ret = self.class.execute_firewall_cmd(['--state'], nil, false, false)
       @running = ret.exitstatus == 0 ? true : false
     end

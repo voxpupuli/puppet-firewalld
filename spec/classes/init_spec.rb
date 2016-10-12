@@ -1,6 +1,13 @@
 require 'spec_helper'
+require 'puppet/provider/firewalld'
 
 describe 'firewalld' do
+
+
+  before do
+    Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true)
+  end
+
   context 'with defaults for all parameters' do
     it { should contain_class('firewalld') }
   end

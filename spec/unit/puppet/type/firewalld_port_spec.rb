@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_port) do
+
+  before do
+    Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true)
+  end
+
   context 'with no params' do
     describe 'when validating attributes' do
       [:name, :zone, :port].each do |param|

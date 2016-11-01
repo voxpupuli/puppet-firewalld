@@ -18,15 +18,14 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
   ensurable
 
   def self.title_patterns
-    identity = lambda { |x| x }
     [
       [
         /^([^:]+):([^:]+):([^:]+)$/,
-        [ [:inet_protocol, identity], [:table, identity], [:name, identity] ]
+        [ [:inet_protocol], [:table], [:name] ]
       ],
       [
         /^([^:]+)$/,
-        [[ :name, identity ]]
+        [[ :name ]]
       ]
     ]
   end

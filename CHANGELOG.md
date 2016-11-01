@@ -1,3 +1,14 @@
+### 3.1.6
+
+* Bugfix: #94.  puppet types generate failed with the following error
+
+```
+Error: /etc/puppetlabs/code/environments/production/modules/firewalld/lib/puppet/type/firewalld_direct_chain.rb: title patterns that use procs are not supported.
+```
+
+Since procs are not actually needed in this title pattern they have been removed to stop this error.
+
+
 ### 3.1.5
 
 * Bugfix: #90 - `firewalld_service` fails to remove services in offline mode. see https://github.com/crayfishx/puppet-firewalld/issues/90

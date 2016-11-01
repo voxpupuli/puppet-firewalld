@@ -1,5 +1,6 @@
 ---
 language: ruby
+bundler_args: --without acceptance
 script: "bundle exec rake test SPEC_OPTS='--format documentation'"
 env:
   - PUPPET_VERSION="~> 3.7.0" FUTURE_PARSER=yes
@@ -10,6 +11,8 @@ env:
   - PUPPET_VERSION="~> 4.3.0"
   - PUPPET_VERSION="~> 4.4.0"
   - PUPPET_VERSION="~> 4.5.0"
+  - PUPPET_VERSION="~> 4.6.1"
+  - PUPPET_VERSION="~> 4.7.0"
 rvm:
   - 1.9.3
   - 2.0

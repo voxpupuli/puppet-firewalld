@@ -12,6 +12,15 @@ Puppet::Type.type(:firewalld_zone).provide(
 
   def exists?
     @resource[:zone] = @resource[:name]
+
+    # If running is still set to nil then firewalld might not be installed yet,
+    # and we are probably calling this method from the generate method of the
+    # firewalld_zone type.  We should just politely return false here as the
+    # module should install the package later in the puppet run, related to
+    # issue #96
+    #
+    return false if running.nil?
+
     execute_firewall_cmd(['--get-zones'], nil).split(" ").include?(@resource[:name])
   end
 

@@ -1,3 +1,7 @@
+### 3.1.7
+
+* Bugfix: This release addresses an issue configuring firewalld on a system where the package is not yet installed.  The logic used to determine the state of the firewall is run before the package provider can install the package causing catalog application to fail. Fixed https://github.com/crayfishx/puppet-firewalld/issues/96
+
 ### 3.1.6
 
 * Bugfix: #94.  puppet types generate failed with the following error

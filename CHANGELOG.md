@@ -1,3 +1,8 @@
+### 3.1.8
+
+* Bugfix: Change how types and providers reference other providers by referencing the `Puppet::Type` API rather than trying to load them with `require`.  This addresses some intermitent problems with Puppets autoloading and registering of types that caused exceptions in Puppet 4.5.0+ in some circumstances, depending on the ordering of the manifest evaluation.  See https://github.com/crayfishx/puppet-firewalld/issues/93 and https://tickets.puppetlabs.com/browse/PUP-6922
+
+
 ### 3.1.7
 
 * Bugfix: This release addresses an issue configuring firewalld on a system where the package is not yet installed.  The logic used to determine the state of the firewall is run before the package provider can install the package causing catalog application to fail. Fixed https://github.com/crayfishx/puppet-firewalld/issues/96

@@ -1,10 +1,13 @@
 require 'puppet'
 require 'puppet/parameter/boolean'
-require File.join(File.dirname(__FILE__),'firewalld_rich_rule.rb')
-require File.join(File.dirname(__FILE__),'firewalld_service.rb')
-require File.join(File.dirname(__FILE__),'firewalld_port.rb')
 
 Puppet::Type.newtype(:firewalld_zone) do
+
+  # Reference the types here so we know they are loaded
+  #
+  Puppet::Type.type(:firewalld_rich_rule)
+  Puppet::Type.type(:firewalld_service)
+  Puppet::Type.type(:firewalld_port)
 
   @doc =%q{Creates and manages firewald zones.
     Note that setting ensure => 'absent' to the built in firewalld zones will

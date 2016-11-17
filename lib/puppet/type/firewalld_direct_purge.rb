@@ -1,10 +1,14 @@
 require 'puppet'
 require 'puppet/parameter/boolean'
-require File.join(File.dirname(__FILE__),'firewalld_direct_chain.rb')
-require File.join(File.dirname(__FILE__),'firewalld_direct_rule.rb')
-require File.join(File.dirname(__FILE__),'firewalld_direct_passthrough.rb')
 
 Puppet::Type.newtype(:firewalld_direct_purge) do
+
+
+  # Reference the types here so we know they are loaded.
+  #
+  Puppet::Type.type(:firewalld_direct_chain)
+  Puppet::Type.type(:firewalld_direct_rule)
+  Puppet::Type.type(:firewalld_direct_passthrough)
 
   @doc =%q{Allow to purge direct rules in iptables/ip6tables/ebtables using firewalld direct interface.
 

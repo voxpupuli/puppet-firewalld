@@ -111,8 +111,9 @@ _Example in Hiera_:
 
 ```yaml
 firewalld::rich_rules:
-  restricted:
+  'Accept SSH from barny':
     ensure: present
+    zone: restricted
     source: '192.168.1.2/32'
     service: 'ssh'
     action: 'accept'
@@ -193,16 +194,16 @@ The `firewalld::custom_service` defined type creates and manages custom services
 _Example in Class_:
 
 ```puppet
-    firewalld::custom_service{'Custom service for application XYZ':
-      short       => 'XZY',
-      description => 'XZY is a daemon that does whatever',
+    firewalld::custom_service{'puppet':
+      short       => 'puppet,
+      description => 'Puppet Client access Puppet Server',
       port        => [
         {
-            'port'     => '1234',
+            'port'     => '8140',
             'protocol' => 'tcp',
         },
         {
-            'port'     => '1234',
+            'port'     => '8140',
             'protocol' => 'udp',
         },
       ],
@@ -234,15 +235,15 @@ This resource will create the following XML service definition in /etc/firewalld
 ```
     <?xml version="1.0" encoding="utf-8"?>
     <service>
-      <short>XZY</short>
-      <description>XZY is a daemon that does whatever</description>
-      <port protocol="tcp" port="1234" />
-      <port protocol="udp" port="1234" />
+      <short>puppet</short>
+      <description>Puppet Client access Puppet Server</description>
+      <port protocol="tcp" port="8140" />
+      <port protocol="udp" port="8140" />
       <module name="nf_conntrack_netbios_ns"/>
       <destination ipv4="127.0.0.1" ipv6="::1"/>
     </service>
 ```
-and you will also see 'XZY' in the service list when you issue ```firewall-cmd --permanent --get-services```
+and you will also see 'puppet' in the service list when you issue ```firewall-cmd --permanent --get-services```
 
 #### Parameters
 
@@ -289,14 +290,18 @@ _Example in Hiera_:
 
 ```yaml
 firewalld::services:
+  'Allow SSH from the external zone':
+    ensure: present
+    service: ssh
+    zone: external
   dhcp:
-    ensure: 'absent'
-    service: 'dhcp'
-    zone: 'public'
+    ensure: absent
+    service: dhcp'
+    zone: public
   dhcpv6-client:
-    ensure: 'present'
-    service: 'dhcpv6-client'
-    zone: 'public'
+    ensure: present
+    service: dhcpv6-client
+    zone: public
 ```
 
 #### Parameters
@@ -326,8 +331,9 @@ _Example in Hiera_:
 
 ```yaml
 firewalld::ports:
-  public:
+  'Open port 8080 in the public zone':
     ensure: present
+    zone: public
     port: 8080
     protocol: 'tcp'
 ```

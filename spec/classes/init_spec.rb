@@ -12,6 +12,28 @@ describe 'firewalld' do
     it { should contain_class('firewalld') }
   end
 
+  context 'with purge options' do
+    let(:params) do
+      {
+        :purge_direct_rules => true,
+        :purge_direct_chains => true,
+        :purge_direct_passthroughs => true,
+      }
+    end
+
+    it do
+      should contain_firewalld_direct_purge('rule')
+    end
+
+    it do
+      should contain_firewalld_direct_purge('passthrough')
+    end
+
+    it do
+      should contain_firewalld_direct_purge('chain')
+    end
+  end
+
   context 'with parameter ports' do
     let(:params) do
       {

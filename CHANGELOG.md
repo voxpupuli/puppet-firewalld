@@ -2,6 +2,7 @@
 
 * Bugfix: Change how types and providers reference other providers by referencing the `Puppet::Type` API rather than trying to load them with `require`.  This addresses some intermitent problems with Puppets autoloading and registering of types that caused exceptions in Puppet 4.5.0+ in some circumstances, depending on the ordering of the manifest evaluation.  See https://github.com/crayfishx/puppet-firewalld/issues/93 and https://tickets.puppetlabs.com/browse/PUP-6922
 
+* Documentation fixes (#100)
 
 ### 3.1.7
 

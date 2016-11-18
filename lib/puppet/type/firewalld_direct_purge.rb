@@ -41,7 +41,8 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
   end
 
   def generate
-    purge_resources
+    @purge_resources = []
+    purge_resources if Puppet::Provider::Firewalld.available?
     []
   end
 
@@ -60,7 +61,6 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
   end
 
   def purge_resources
-    @purge_resources = []
     resources = []
     resource_type = self[:name].to_sym
     klass = nil

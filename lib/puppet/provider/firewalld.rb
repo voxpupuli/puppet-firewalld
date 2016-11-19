@@ -111,7 +111,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def online?
-    check_running_state if state.nil?
+    check_running_state unless state == true
     state == true
   end
 

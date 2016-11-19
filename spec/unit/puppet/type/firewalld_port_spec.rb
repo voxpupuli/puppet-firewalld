@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Puppet::Type.type(:firewalld_port) do
 
   before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true)
+    Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true)
   end
 
   context 'with no params' do

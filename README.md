@@ -7,6 +7,10 @@
 
 This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones, ports, and rich rules.
 
+## Compatibility
+
+Latest versions of this module (3.0+) are only supported on Puppet 4.0+.  2.2.0 is the latest version to run on Puppet 3.x, important patches (security bugs..etc) will be accepted in the 2.x until Puppet 3.x is offically end-of-life, but new features will only be accepted in 3.x.
+
 ## Usage
 
 ```puppet

@@ -1,4 +1,5 @@
 ---
+
 language: ruby
 bundler_args: --without acceptance
 script: "bundle exec rake test SPEC_OPTS='--format documentation'"

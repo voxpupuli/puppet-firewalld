@@ -7,7 +7,10 @@
     
     <%- if @port -%>
     <%- @port.each do |i| -%>
-    <port<% if i['protocol'] -%> protocol="<%= i['protocol'] %>"<% end -%><% if i['port'] -%> port="<%= i['port'] %>"<% end -%> />
+      <%- range = i['port'].split(/:/).map { |p| p.to_i } -%>
+      <%- (range[0]..range[1] || range[0]).each do |p| -%>
+    <port<% if i['protocol'] -%> protocol="<%= i['protocol'] %>"<% end -%> port="<%= p %>" />
+      <%- end -%>
     <%- end -%>
     
     <%- end -%>

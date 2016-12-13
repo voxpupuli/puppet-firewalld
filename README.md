@@ -1,6 +1,6 @@
 # Module: firewalld
 
-[![Build Status](https://travis-ci.org/crayfishx/puppet-firewalld.svg?branch=master)](https://travis-ci.org/crayfishx/puppet-firewalld)  [![Endorsement](https://img.shields.io/puppetforge/e/crayfishx/firewalld.svg)](https://forge.puppet.com/approved) [![Version](https://img.shields.io/puppetforge/v/crayfishx/firewalld.svg)](https://forge.puppet.com/crayfishx/firewalld) 
+[![Build Status](https://travis-ci.org/crayfishx/puppet-firewalld.svg?branch=master)](https://travis-ci.org/crayfishx/puppet-firewalld)  [![Endorsement](https://img.shields.io/puppetforge/e/crayfishx/firewalld.svg)](https://forge.puppet.com/approved) [![Version](https://img.shields.io/puppetforge/v/crayfishx/firewalld.svg)](https://forge.puppet.com/crayfishx/firewalld)
 
 
 ## Description
@@ -25,8 +25,8 @@ class { 'firewalld': }
 * `service_enable`: Whether to enable the service
 * `zones`: A hash of [firewalld zones](#firewalld-zones) to configure
 * `ports`: A hash of [firewalld ports](#firewalld-ports) to configure
-* `services`: A hash of [firewalld services](#firewalld-service) to configure 
-* `rich_rules`: A hash of [firewalld rich rules](#firewalld-rich-rules) to configure 
+* `services`: A hash of [firewalld services](#firewalld-service) to configure
+* `rich_rules`: A hash of [firewalld rich rules](#firewalld-rich-rules) to configure
 * `custom_services`: A hash of [firewalld custom services](#firewalld-custom-service) to configure
 * `direct_rules`: A hash of [firewalld direct rules](#firewalld-direct-rules) to configure
 * `direct_chains`: A hash of [firewalld direct chains](#firewalld-direct-chains) to configure
@@ -300,7 +300,7 @@ firewalld::services:
     zone: external
   dhcp:
     ensure: absent
-    service: dhcp'
+    service: dhcp
     zone: public
   dhcpv6-client:
     ensure: present

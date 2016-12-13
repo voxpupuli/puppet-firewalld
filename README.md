@@ -268,7 +268,7 @@ and you will also see 'puppet' in the service list when you issue ```firewall-cm
   ```puppet
      destination => {'ipv4' => '127.0.0.1', 'ipv6' => '::1'},
 
-     destination => {'ipv4' => 192.168.0.0/24'},
+     destination => {'ipv4' => '192.168.0.0/24'},
   ```
 
 * `config_dir`: The location where the service definition XML files will be stored. Defaults to /etc/firewalld/services

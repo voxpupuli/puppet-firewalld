@@ -61,7 +61,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     if online?
       self.class.execute_firewall_cmd(args, zone, perm, failonfail)
     else
-      self.class.execute_firewall_cmd(args, zone, false, true, 'firewall-offline-cmd')
+      self.class.execute_firewall_cmd(args, zone, false, failonfail, 'firewall-offline-cmd')
     end
   end
 

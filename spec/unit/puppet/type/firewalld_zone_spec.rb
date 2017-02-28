@@ -55,6 +55,16 @@ describe Puppet::Type.type(:firewalld_zone) do
       expect(provider.exists?).to be_falsey
     end
 
+    it "should evalulate target" do
+      provider.expects(:execute_firewall_cmd).with(['--get-target']).returns('%%REJECT%%')
+      expect(provider.target).to eq('%%REJECT%%')
+    end
+
+    it "should evalulate target correctly when not surrounded with %%" do
+      provider.expects(:execute_firewall_cmd).with(['--get-target']).returns('REJECT')
+      expect(provider.target).to eq('%%REJECT%%')
+    end
+
     it "should create" do
       provider.expects(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
       provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])

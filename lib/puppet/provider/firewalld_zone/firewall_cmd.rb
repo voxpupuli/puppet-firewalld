@@ -30,7 +30,12 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def target
-    execute_firewall_cmd(['--get-target']).chomp
+    zone_target=execute_firewall_cmd(['--get-target']).chomp
+    # The firewall-cmd may or may not return the target surrounded by
+    # %% depending on the version. See:
+    # https://github.com/crayfishx/puppet-firewalld/issues/111
+    return @resource[:target] if @resource[:target].delete('%') == zone_target
+    zone_target
   end
 
   def target=(t)

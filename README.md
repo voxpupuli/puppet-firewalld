@@ -263,6 +263,20 @@ and you will also see 'puppet' in the service list when you issue ```firewall-cm
      port => [{'port' => '4321', 'protocol' => 'udp'}, {'protocol' => 'rdp'}],
   ```
 
+The `port` parameter can also take a range of ports separated by a colon, for example:
+
+```puppet
+   port => [ {'port' => '8000:8002', 'protocol' => 'tcp']} ]
+```
+
+will produce;
+
+```xml
+    <port protocol="tcp" port="8000" />
+    <port protocol="tcp" port="8001" />
+    <port protocol="tcp" port="8002" />
+```
+
 * `module`: (Optional) An array of strings specifying netfilter kernel helper modules associated with this service
 
 * `destination`: (Optional) A hash specifying the destination network as a network IP address (optional with /mask), or a plain IP address. Valid hash keys are 'ipv4' and 'ipv6', with values corresponding to the IP / mask associated with each of those protocols. The use of hostnames is possible but not recommended, because these will only be resolved at service activation and transmitted to the kernel.

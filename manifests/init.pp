@@ -55,7 +55,8 @@ class firewalld (
   Hash    $direct_passthroughs       = {},
   Boolean $purge_direct_rules        = false,
   Boolean $purge_direct_chains       = false,
-  Boolean $purge_direct_passthroughs = false
+  Boolean $purge_direct_passthroughs = false,
+  Optional[String]  $default_zone     = undef
 ) {
 
     package { $package:
@@ -69,19 +70,21 @@ class firewalld (
       }
     }
 
+    Exec {
+      path => '/usr/bin:/bin',
+    }
+
     service { 'firewalld':
       ensure => $service_ensure,
       enable => $service_enable,
     }
 
     exec { 'firewalld::reload':
-      path        =>'/usr/bin:/bin',
       command     => 'firewall-cmd --reload',
       refreshonly => true,
     }
 
     exec { 'firewalld::complete-reload':
-      path        =>'/usr/bin:/bin',
       command     => 'firewall-cmd --complete-reload',
       refreshonly => true,
       require     => Exec['firewalld::reload'],
@@ -155,6 +158,15 @@ class firewalld (
       firewalld_direct_purge { 'passthrough': }
     }
 
+    if $default_zone {
+      exec { 'firewalld::set_default_zone':
+        command   => "firewall-cmd --set-default-zone ${default_zone}",
+        unless    => "[ $(firewall-cmd --get-default-zone) == ${default_zone} ]",
+        subscribe => Service['firewalld']
+      }
+    }
+
+
     # Set dependencies using resource chaining so that resource declarations made
     # outside of this class (eg: from the profile) also get their dependencies set
     # automatically, this addresses various issues found in
@@ -169,3 +181,4 @@ class firewalld (
     Service['firewalld'] -> Firewalld_direct_passthrough <||> ~> Exec['firewalld::reload']
 
 }
+

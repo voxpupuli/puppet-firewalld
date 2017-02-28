@@ -23,6 +23,7 @@ class { 'firewalld': }
 * `config_package`: Name of the GUI package, default firewall-config
 * `install_gui`: Whether or not to install the config_package (default: false)
 * `service_enable`: Whether to enable the service
+* `default_zone`: Optional, set the default zone for interfaces (default: undef)
 * `zones`: A hash of [firewalld zones](#firewalld-zones) to configure
 * `ports`: A hash of [firewalld ports](#firewalld-ports) to configure
 * `services`: A hash of [firewalld services](#firewalld-service) to configure
@@ -261,6 +262,20 @@ and you will also see 'puppet' in the service list when you issue ```firewall-cm
 
      port => [{'port' => '4321', 'protocol' => 'udp'}, {'protocol' => 'rdp'}],
   ```
+
+The `port` parameter can also take a range of ports separated by a colon, for example:
+
+```puppet
+   port => [ {'port' => '8000:8002', 'protocol' => 'tcp']} ]
+```
+
+will produce;
+
+```xml
+    <port protocol="tcp" port="8000" />
+    <port protocol="tcp" port="8001" />
+    <port protocol="tcp" port="8002" />
+```
 
 * `module`: (Optional) An array of strings specifying netfilter kernel helper modules associated with this service
 

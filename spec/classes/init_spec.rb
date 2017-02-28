@@ -12,6 +12,21 @@ describe 'firewalld' do
     it { should contain_class('firewalld') }
   end
 
+  context 'when defining a default zone' do
+    let(:params) do
+      {
+        :default_zone => 'restricted',
+      }
+    end
+
+    it do
+      should contain_exec('firewalld::set_default_zone').with(
+        :command => 'firewall-cmd --set-default-zone restricted',
+        :unless  => '[ $(firewall-cmd --get-default-zone) == restricted ]',
+      ).that_subscribes_to('Service[firewalld]')
+    end
+  end
+
   context 'with purge options' do
     let(:params) do
       {

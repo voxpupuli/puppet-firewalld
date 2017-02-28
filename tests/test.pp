@@ -1,5 +1,7 @@
 
-include firewalld
+class { 'firewalld':
+  default_zone => 'restricted',
+}
 
 firewalld_zone { 'restricted':
   ensure           => present,

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+    <short>myservice</short>
+    <description>My multi port service</description>
+
+    <port protocol="tcp" port="8000" />
+    <port protocol="udp" port="8000" />
+    <port protocol="tcp" port="8001" />
+    <port protocol="udp" port="8001" />
+    <port protocol="tcp" port="8002" />
+    <port protocol="udp" port="8002" />
+
+    <module name="nf_conntrack_netbios_ns" />
+
+    <destination ipv4="127.0.0.1" ipv6="::1" />
+</service>

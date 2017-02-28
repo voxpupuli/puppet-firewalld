@@ -39,6 +39,7 @@ Puppet::Type.newtype(:firewalld_zone) do
   attr_reader :ports_purgable
 
   def generate
+    return [] unless Puppet::Provider::Firewalld.available?
     purge_rich_rules if self[:purge_rich_rules] == :true
     purge_services if self[:purge_services] == :true
     purge_ports if self[:purge_ports] == :true

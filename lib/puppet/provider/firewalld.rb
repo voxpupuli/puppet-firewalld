@@ -4,19 +4,39 @@ require 'puppet/provider'
 class Puppet::Provider::Firewalld < Puppet::Provider
 
 
-  attr_reader :running
+  @running = nil
+  @runstate = nil
+
+  class << self
+    attr_accessor :running
+    attr_accessor :runstate
+  end
 
   def initialize(*args)
-    if running.nil?
+    if state.nil?
       check_running_state
     end
     super
   end
 
+  def state
+    self.class.state
+  end
+
+  def self.state
+    Puppet::Provider::Firewalld.runstate
+  end
+
   def check_running_state
+    self.class.check_running_state
+  end
+
+  def self.check_running_state
     begin
-      ret = self.class.execute_firewall_cmd(['--state'], nil, false, false)
-      @running = ret.exitstatus == 0 ? true : false
+      self.debug("Executing --state command - current value #{@state}")
+      ret = execute_firewall_cmd(['--state'], nil, false, false)
+      Puppet::Provider::Firewalld.runstate = ret.exitstatus == 0 ? true : false
+      
     rescue Puppet::MissingCommand => e
       # This exception is caught in case the module is being run before
       # the package provider has installed the firewalld package, if we
@@ -27,6 +47,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
       # See: https://github.com/crayfishx/puppet-firewalld/issues/96
       #
       self.debug('Could not determine state of firewalld because the executable is not available')
+      return nil
     end
   end
 
@@ -83,15 +104,32 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     execute_firewall_cmd(['--reload'], nil, false) if online?
   end
 
+
   def offline?
-    check_running_state if running.nil?
-    @running == false || @running.nil?
+    check_running_state if state.nil?
+    state == false || state.nil?
   end
 
   def online?
-    check_running_state if running.nil?
-    @running == true
+    check_running_state unless state == true
+    state == true
   end
 
+  # available? returns a true or false response as to whether firewalld is availabe.
+  # unlike online? it will only return false if it is unable to determine the status
+  # of firewalld, normally due to the fact that the package isn't installed yet.
+  #
+  def available?
+    self.class.available?
+  end
+
+  def self.available?
+    check_running_state if state.nil?
+    if state.nil?
+      return false
+    else
+      return true
+    end
+  end
 
 end

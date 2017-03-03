@@ -22,6 +22,7 @@ class { 'firewalld': }
 * `package_ensure`: Default 'installed', can be any supported ensure type for the package resource
 * `config_package`: Name of the GUI package, default firewall-config
 * `install_gui`: Whether or not to install the config_package (default: false)
+* `service_ensure`: Whether the service should be running or not (default: running)
 * `service_enable`: Whether to enable the service
 * `default_zone`: Optional, set the default zone for interfaces (default: undef)
 * `zones`: A hash of [firewalld zones](#firewalld-zones) to configure

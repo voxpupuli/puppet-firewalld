@@ -1,4 +1,9 @@
 
+### 3.2.1
+
+* Bugfix: Fix for when custom_service ports are defined as integers, (https://github.com/crayfishx/puppet-firewalld/issues/122)
+* Documentation fixes
+
 ## 3.2.0
 
 * Feature: allow for port ranges to be defined with `custom_service` declarations (https://github.com/crayfishx/puppet-firewalld/issues/107)

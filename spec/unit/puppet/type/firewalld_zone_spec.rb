@@ -140,6 +140,11 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.masquerade=(:true)
       end
 
+      it "should disable masquerading" do
+        provider.expects(:execute_firewall_cmd).with(['--remove-masquerade'])
+        provider.masquerade=(:false)
+      end
+
       it "should get masquerading state as false when not set" do
         provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).returns("no\n")
         expect(provider.masquerade).to eq(:false)

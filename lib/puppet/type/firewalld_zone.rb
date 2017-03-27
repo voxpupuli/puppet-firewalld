@@ -71,6 +71,12 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
   end
 
+  newproperty(:masquerade) do
+    desc "Can be set to true or false, specifies whether to add or remove masquerading from the zone"
+    newvalue(:true)
+    newvalue(:false)
+  end
+
   newproperty(:sources, :array_matching => :all) do
     desc "Specify the sources for the zone"
 

@@ -17,7 +17,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
     args << ["--type=#{@resource[:type]}"]
     args << ["--option=#{@resource[:options].map { |a,b| "#{a}=#{b}" }.join(',')}"] if @resource[:options]
     execute_firewall_cmd(args.flatten, nil)
-    reload_firewall
+    @resource[:entries].each { |e| add_entry(e) }
   end
 
   def entries
@@ -38,6 +38,9 @@ Puppet::Type.type(:firewalld_ipset).provide(
     add_entries = should_entries-cur_entries
     delete_entries.each { |e| remove_entry(e) }
     add_entries.each { |e| add_entry(e) }
-    reload_firewall
+  end
+
+  def destroy
+    execute_firewall_cmd(["--delete-ipset=#{@resource[:name]}"], nil)
   end
 end

@@ -123,5 +123,9 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     self[:zone]
   end
 
+  autorequire(:ipset) do
+    self[:source]["ipset"] if self[:source].is_a?(Hash)
+  end
+
 
 end

@@ -49,6 +49,7 @@ This module supports a number of resource types
 * [firewalld_zone](#firewalld-zones)
 * [firewalld_port](#firewalld-ports)
 * [firewalld_service](#firewalld-service)
+* [firewalld_ipset](#firewalld-ipsets)
 * [firewalld_rich_rule](#firewalld-rich-rules)
 * [firewalld_direct_chain](#firewalld-direct-chains)
 * [firewalld_direct_rule](#firewalld-direct-rules)
@@ -333,6 +334,38 @@ firewalld::services:
 * `service`: Name of the service to manage
 
 * `zone`: Name of the zone in which you want to manage the service
+
+
+## Firewalld Ipsets
+
+Firewalld IPsets (on supported versions of firewalld) can be managed using the `firewalld_ipset` resource type
+
+_Example_:
+```
+  firewalld_ipset { 'whitelist':
+    ensure => present,
+    entries => [ '192.168.0.1', '192.168.0.2' ]
+  }
+```
+
+_Example in Hiera_:
+
+```yaml
+firewalld::ipsets:
+  whitelist:
+    entries:
+      - 192.168.0.1
+      - 192.168.0.2
+```
+
+#### Parameters
+
+* `entries`: An array of entries for the IPset
+* `type`: Type of ipset (default: `hash:ip`)
+* `options`: A hash of options for the IPset (eg: `{ "family" => "ipv6"}`)
+
+Note that `type` and `options` are parameters used when creating the IPset and are not managed after creation - to change the type or options of an ipset you must delete the existing ipset first.
+
 
 ## Firewalld Ports
 

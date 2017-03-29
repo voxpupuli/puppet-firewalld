@@ -177,6 +177,8 @@ The following paramters are the element of the rich rule, only _one_ may be used
 
 * `service`: Name of the service
 
+* `protocol`: Protocol of the rich rule
+
 * `port`: A hash containing `port` and `protocol` values
   ```puppet
      port => {

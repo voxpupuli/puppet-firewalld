@@ -132,18 +132,22 @@ firewalld::rich_rules:
 
 * `family`: Protocol family, defaults to `ipv4`
 
-* `source`: Source address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
+* `source`: Source address information. This can be a hash containing the keys `address or ipset` and `invert`, or a string containing just the IP address
   ```puppet
      source => '192.168.2.1',
 
      source => { 'address' => '192.168.1.1', 'invert' => true }
+     source => { 'ipset' => 'whitelist', 'invert' => true }
+     source => { 'ipset' => 'blacklist' }
   ```
 
-* `dest`: Destination address information. This can be a hash containing the keys `address` and `invert`, or a string containing just the IP address
+* `dest`: Destination address information. This can be a hash containing the keys `address or ipset` and `invert`, or a string containing just the IP address
   ```puppet
      dest => '192.168.2.1',
 
      dest => { 'address' => '192.168.1.1', 'invert' => true }
+     dest => { 'ipset' => 'whitelist', 'invert' => true }
+     dest => { 'ipset' => 'blacklist' }
   ```
 
 * `log`: When set to `true` will enable logging, optionally this can be hash with `prefix`, `level` and `limit`

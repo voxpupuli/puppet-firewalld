@@ -1,3 +1,9 @@
+## 3.3.0
+
+* Feature: added the `firewalld_ipset` type to manage IPsets (https://github.com/crayfishx/puppet-firewalld/issues/108)
+* Feature: added `masquerade` attribute to `firewalld_zone` to manage masquerading on zones (https://github.com/crayfishx/puppet-firewalld/issues/129)
+* Feature: added `ipset` option to rich rules source option
+* Various documentation bugfixes
 
 ### 3.2.1
 

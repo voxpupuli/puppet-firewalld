@@ -78,6 +78,23 @@ Puppet::Type.type(:firewalld_zone).provide(
     end
   end
 
+  def masquerade
+    if execute_firewall_cmd(['--query-masquerade'], @resource[:name], true, false).chomp == 'yes'
+      return :true
+    else
+      return :false
+    end
+  end
+
+  def masquerade=(bool)
+    case bool
+    when :true
+      execute_firewall_cmd(['--add-masquerade'])
+    when :false
+      execute_firewall_cmd(['--remove-masquerade'])
+    end
+  end
+
   def icmp_blocks
     get_icmp_blocks()
   end

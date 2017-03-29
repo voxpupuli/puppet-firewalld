@@ -90,6 +90,7 @@ firewalld::zones:
 * `interfaces`: An array of interfaces for this zone
 * `sources`: An array of sources for the zone
 * `icmp_blocks`: An array of ICMP blocks for the zone
+* `masquerade`: If set to `true` or `false` specifies whether or not to add masquerading to the zone
 * `purge_rich_rules`: Optional, and defaulted to false.  When true any configured rich rules found in the zone that do not match what is in the Puppet catalog will be purged.
 * `purge_services`: Optional, and defaulted to false.  When true any configured services found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* This includes the default ssh service, if you need SSH to access the box, make sure you add the service through either a rich firewall rule, port, or service (see below) or you will lock yourself out!
 * `purge_ports`: Optional, and defaulted to false. When true any configured ports found in the zone that do not match what is in the Puppet catalog will be purged. *Warning:* As with services, this includes the default ssh port. If you fail to specify the appropriate port, rich rule, or service, you will lock yourself out.

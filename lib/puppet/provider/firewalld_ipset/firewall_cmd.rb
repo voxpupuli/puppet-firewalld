@@ -40,7 +40,4 @@ Puppet::Type.type(:firewalld_ipset).provide(
     add_entries.each { |e| add_entry(e) }
     reload_firewall
   end
-
-
-
 end

@@ -50,6 +50,7 @@ class firewalld (
   Hash    $services                  = {},
   Hash    $rich_rules                = {},
   Hash    $custom_services           = {},
+  Hash    $ipsets                    = {},
   Hash    $direct_rules              = {},
   Hash    $direct_chains             = {},
   Hash    $direct_passthroughs       = {},
@@ -125,6 +126,13 @@ class firewalld (
       }
     }
 
+    #...ipsets
+    $ipsets.each | String $key, Hash $attrs| {
+      firewalld_ipset { $key:
+        *       => $attrs,
+      }
+    }
+
     # Direct rules, chains and passthroughs
     $direct_chains.each | String $key, Hash $attrs| {
       firewalld_direct_chain { $key:
@@ -176,6 +184,7 @@ class firewalld (
     Service['firewalld'] -> Firewalld_rich_rule <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_service <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_port <||> ~> Exec['firewalld::reload']
+    Service['firewalld'] -> Firewalld_ipset <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_direct_chain <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_direct_rule <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_direct_passthrough <||> ~> Exec['firewalld::reload']

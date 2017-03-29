@@ -79,6 +79,17 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         :log     => { "level" => "debug" },
         :action  => "accept",
       } => 'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept',
+      ## Test ipset
+      {
+        :name => 'accept ssh',
+        :ensure => 'present',
+        :family => 'ipv4',
+        :zone   => 'restricted',
+        :source => { "ipset" => "whitelist" },
+        :service => "ssh",
+        :log     => { "level" => "debug" },
+        :action  => "accept",
+      } => 'rule family="ipv4" source ipset="whitelist" service name="ssh" log level="debug" accept',
 
       ## Test destination
       {

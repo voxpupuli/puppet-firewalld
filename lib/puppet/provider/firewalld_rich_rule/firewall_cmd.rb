@@ -30,6 +30,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     invert = addr['invert']  ? ' NOT' : ''
     args << "source#{invert}"
     args << quote_keyval('address', addr['address'])
+    args << quote_keyval('ipset', addr['ipset'])
     args
   end
 
@@ -39,6 +40,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     invert = addr['invert']  ? ' NOT' : ''
     args << "destination#{invert}"
     args << quote_keyval('address', addr['address'])
+    args << quote_keyval('ipset', addr['ipset'])
     args
   end
 

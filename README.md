@@ -344,7 +344,7 @@ firewalld::services:
 Firewalld IPsets (on supported versions of firewalld) can be managed using the `firewalld_ipset` resource type
 
 _Example_:
-```
+```puppet
   firewalld_ipset { 'whitelist':
     ensure => present,
     entries => [ '192.168.0.1', '192.168.0.2' ]

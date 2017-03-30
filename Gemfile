@@ -16,5 +16,6 @@ end
 if RUBY_VERSION < '2.0'
   gem 'json', '~> 1.8'
   gem 'json_pure', '~> 1.8'
+  gem 'parallel_tests', '~> 1.9'
 end
 

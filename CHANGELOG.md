@@ -13,6 +13,7 @@
 ## 3.2.0
 
 * Feature: allow for port ranges to be defined with `custom_service` declarations (https://github.com/crayfishx/puppet-firewalld/issues/107)
+* Feature: added `default_zone` to the firewalld base class to allow for a default zone to be defined (https://github.com/crayfishx/puppet-firewalld/pull/118)
 * Bugfix: Fix to `firewalld_rich_rule` types when firewalld is in a down state (https://github.com/crayfishx/puppet-firewalld/issues/112)
 * Bugfix: Better service  availability checking when purging rules (https://github.com/crayfishx/puppet-firewalld/issues/101)
 * Bugfix: Handle later versions of firewalld where the target is returned as `REJECT` instead of `%%REJECT%%` - this is a backwards compatible fix (https://github.com/crayfishx/puppet-firewalld/issues/111)

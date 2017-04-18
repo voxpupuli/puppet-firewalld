@@ -44,6 +44,12 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     args
   end
 
+  def eval_protocol
+    return [] unless protocol = @resource[:protocol]
+    args=[]
+    args << quote_keyval('value', @resource[:protocol])
+  end
+
   def elements
    [ :service, :port, :protocol, :icmp_block, :masquerade, :forward_port ]
   end
@@ -115,6 +121,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
       eval_element,
       eval_log,
       eval_audit,
+      eval_protocol,
       eval_action,
     ]
     @resource[:raw_rule] = rule.flatten.reject { |r| r.empty? }.join(" ")

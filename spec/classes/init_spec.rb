@@ -23,7 +23,7 @@ describe 'firewalld' do
       should contain_exec('firewalld::set_default_zone').with(
         :command => 'firewall-cmd --set-default-zone restricted',
         :unless  => '[ $(firewall-cmd --get-default-zone) == restricted ]',
-      ).that_subscribes_to('Service[firewalld]')
+      ).that_requires('Exec[firewalld::reload]')
     end
   end
 

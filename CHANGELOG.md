@@ -1,3 +1,7 @@
+### 3.3.1
+
+* Bugfix: Dependency fix for adding a default zone in the same puppet run as creating the zone. This solves the issue of firewalld failing to set the default zone because firewalld hasn't reloaded yet and it can't see the zone as active. (https://github.com/crayfishx/puppet-firewalld/issues/135)
+
 ## 3.3.0
 
 * Feature: added the `firewalld_ipset` type to manage IPsets (https://github.com/crayfishx/puppet-firewalld/issues/108)

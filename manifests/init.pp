@@ -170,7 +170,7 @@ class firewalld (
       exec { 'firewalld::set_default_zone':
         command   => "firewall-cmd --set-default-zone ${default_zone}",
         unless    => "[ $(firewall-cmd --get-default-zone) == ${default_zone} ]",
-        subscribe => Service['firewalld']
+        require   => Exec['firewalld::reload'],
       }
     }
 

@@ -168,9 +168,9 @@ class firewalld (
 
     if $default_zone {
       exec { 'firewalld::set_default_zone':
-        command   => "firewall-cmd --set-default-zone ${default_zone}",
-        unless    => "[ $(firewall-cmd --get-default-zone) == ${default_zone} ]",
-        require   => Exec['firewalld::reload'],
+        command => "firewall-cmd --set-default-zone ${default_zone}",
+        unless  => "[ $(firewall-cmd --get-default-zone) == ${default_zone} ]",
+        require => Exec['firewalld::reload'],
       }
     }
 

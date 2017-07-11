@@ -79,7 +79,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
 
     catalog.resources.select { |r| r.is_a?(klass) }.each do |res|
       unless res.provider.respond_to?(:generate_raw)
-        raise Puppet::Error, "Provider for #{resource_type} doesnt support generate_raw method"
+        raise Puppet::Error, "Provider for #{resource_type} doesn't support generate_raw method"
       end
       puppet_rules << res.provider.generate_raw.join(' ')
     end

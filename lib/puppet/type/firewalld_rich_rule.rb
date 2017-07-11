@@ -4,7 +4,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
 
   @doc =%q{Manages firewalld rich rules.
 
-    firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependancies for this  
+    firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this  
 
     Example:
     

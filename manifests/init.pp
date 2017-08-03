@@ -18,7 +18,7 @@
 #    class{'firewalld':
 #      install_gui => true,
 #    }
-#    
+#
 #
 #
 # === Authors
@@ -169,7 +169,7 @@ class firewalld (
     if $default_zone {
       exec { 'firewalld::set_default_zone':
         command => "firewall-cmd --set-default-zone ${default_zone}",
-        unless  => "[ $(firewall-cmd --get-default-zone) == ${default_zone} ]",
+        unless  => "[ $(firewall-cmd --get-default-zone) = ${default_zone} ]",
         require => Exec['firewalld::reload'],
       }
     }
@@ -190,4 +190,3 @@ class firewalld (
     Service['firewalld'] -> Firewalld_direct_passthrough <||> ~> Exec['firewalld::reload']
 
 }
-

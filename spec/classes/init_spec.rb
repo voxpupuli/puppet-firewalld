@@ -22,7 +22,7 @@ describe 'firewalld' do
     it do
       should contain_exec('firewalld::set_default_zone').with(
         :command => 'firewall-cmd --set-default-zone restricted',
-        :unless  => '[ $(firewall-cmd --get-default-zone) == restricted ]',
+        :unless  => '[ $(firewall-cmd --get-default-zone) = restricted ]',
       ).that_requires('Exec[firewalld::reload]')
     end
   end

@@ -3,6 +3,7 @@
 * Bugfix: Corrected issue with setting default zones on Debian systems running dash instead of bash (https://github.com/crayfishx/puppet-firewalld/pull/144)
 * Bugfix: Various typos in error messages fixed (https://github.com/crayfishx/puppet-firewalld/pull/145)
 * Bugfix: Fixed issue with `firewalld_zone` provider in later versions of firewalld where the command stops returning a zones sources in alphanumeric order causing issues for Puppet to determine if the resource attribute is in sync (https://github.com/crayfishx/puppet-firewalld/pull/144)
+* Bugfix: Fixed issue where `firewalld_zone` did not add `icmp_block` entires on creation, requiring another Puppet run (https://github.com/crayfishx/puppet-firewalld/issues/139)
 
 
 ### 3.3.1

@@ -62,7 +62,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def sources
-    execute_firewall_cmd(['--list-sources']).chomp.split(" ") || []
+    execute_firewall_cmd(['--list-sources']).chomp.split(" ").sort || []
   end
 
   def sources=(new_sources)

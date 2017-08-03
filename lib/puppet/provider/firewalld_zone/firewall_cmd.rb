@@ -22,6 +22,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     self.target=(@resource[:target]) if @resource[:target]
     self.sources=(@resource[:sources]) if @resource[:sources]
     self.interfaces=@resource[:interfaces]
+    self.icmp_blocks=(@resource[:icmp_blocks]) if @resource[:icmp_blocks]
   end
 
   def destroy

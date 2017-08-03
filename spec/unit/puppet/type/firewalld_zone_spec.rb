@@ -39,6 +39,7 @@ describe Puppet::Type.type(:firewalld_zone) do
           :name => 'restricted',
           :target => '%%REJECT%%',
           :interfaces => ['eth0'],
+          :icmp_blocks => [ 'redirect', 'router-advertisment' ],
           :sources    => ['192.168.2.2', '10.72.1.100'])
       }
       let(:provider) {
@@ -68,6 +69,8 @@ describe Puppet::Type.type(:firewalld_zone) do
       it "should create" do
         provider.expects(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
         provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
+
+        provider.expects(:icmp_blocks=).with(['redirect', 'router-advertisment'])
 
         provider.expects(:sources).returns([])
         provider.expects(:execute_firewall_cmd).with(['--add-source', '192.168.2.2'])

@@ -82,8 +82,8 @@ Puppet::Type.newtype(:firewalld_zone) do
 
     def insync?(is)
       case should
-      when String then should.lines.sort == is
-      when Array then should.sort == is
+      when String then should.lines.sort == is.sort
+      when Array then should.sort == is.sort
       else raise Puppet::Error, "parameter sources must be a string or array of strings!"
       end
     end

@@ -25,6 +25,7 @@ class { 'firewalld': }
 * `service_ensure`: Whether the service should be running or not (default: running)
 * `service_enable`: Whether to enable the service
 * `default_zone`: Optional, set the default zone for interfaces (default: undef)
+* `log_denied`: Optional, (firewalld-0.4.3.2-8+) Log denied packets, can be one of `off`, `all`, `multicast`, `unicast`, `broadcast` (default: undef)
 * `zones`: A hash of [firewalld zones](#firewalld-zones) to configure
 * `ports`: A hash of [firewalld ports](#firewalld-ports) to configure
 * `services`: A hash of [firewalld services](#firewalld-service) to configure

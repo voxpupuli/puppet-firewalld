@@ -57,7 +57,8 @@ class firewalld (
   Boolean $purge_direct_rules        = false,
   Boolean $purge_direct_chains       = false,
   Boolean $purge_direct_passthroughs = false,
-  Optional[String]  $default_zone     = undef
+  Optional[String] $default_zone     = undef,
+  Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied = undef
 ) {
 
     package { $package:
@@ -174,6 +175,12 @@ class firewalld (
       }
     }
 
+    if $log_denied {
+      exec { 'firewalld::set_log_denied':
+        command => "firewall-cmd --set-log-denied ${log_denied} && firewall-cmd --reload",
+        unless  => "[ $(firewall-cmd --get-log-denied) = ${log_denied} ]",
+      }
+    }
 
     # Set dependencies using resource chaining so that resource declarations made
     # outside of this class (eg: from the profile) also get their dependencies set

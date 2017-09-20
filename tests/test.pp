@@ -1,6 +1,6 @@
 
 class { 'firewalld':
-  default_zone => 'restricted',
+  log_denied => 'multicast'
 }
 
 firewalld_zone { 'restricted':
@@ -9,3 +9,13 @@ firewalld_zone { 'restricted':
   purge_rich_rules => true,
 }
 
+firewalld_rich_rule { 'McAffee':
+  ensure => present,
+  source => '10.10.10.50',
+  port   => {
+    'port'     => 8803,
+    'protocol' => 'tcp',
+  },
+  zone   => 'public',
+  action => 'accept',
+}

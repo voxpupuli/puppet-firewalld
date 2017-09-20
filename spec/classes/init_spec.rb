@@ -176,4 +176,36 @@ describe 'firewalld' do
     end
   end
 
+  context 'with default_zone' do
+    let(:params) do
+      {
+        :default_zone => 'public'
+      }
+    end
+
+    it do
+      should contain_exec('firewalld::set_default_zone').with(
+        :command => 'firewall-cmd --set-default-zone public',
+        :unless  => '[ $(firewall-cmd --get-default-zone) = public ]',
+      ).that_requires('Exec[firewalld::reload]')
+    end
+  end
+
+  [ 'unicast', 'broadcast', 'multicast', 'all', 'off' ].each do |cond|
+    context "with log_denied set to #{cond}" do
+      let(:params) do
+        {
+          :log_denied => cond
+        }
+      end
+
+      it do
+        should contain_exec('firewalld::set_log_denied').with(
+          :command => "firewall-cmd --set-log-denied #{cond} && firewall-cmd --reload",
+          :unless => "[ \$\(firewall-cmd --get-log-denied) = #{cond} ]"
+        )
+      end
+    end
+  end
+
 end

@@ -12,10 +12,10 @@ firewalld_zone { 'restricted':
 firewalld_rich_rule { 'McAffee':
   ensure => present,
   source => '10.10.10.50',
-  port => {
-    'port' => 8803,
+  port   => {
+    'port'     => 8803,
     'protocol' => 'tcp',
   },
-  zone => 'public',
+  zone   => 'public',
   action => 'accept',
 }

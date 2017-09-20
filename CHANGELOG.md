@@ -1,3 +1,9 @@
+
+## 3.4.0
+
+* Feature: Added `$log_denied` parameter for configuring the logging of dropped packets using the `--set-log-denied` feature (firewalld 0.4.3.2-8) (https://github.com/crayfishx/puppet-firewalld/issues/153)
+
+
 ### 3.3.2
 
 * Bugfix: Corrected issue with setting default zones on Debian systems running dash instead of bash (https://github.com/crayfishx/puppet-firewalld/pull/144)

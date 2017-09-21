@@ -7,6 +7,14 @@ matrix:
   fast_finish: true
   include:
   - rvm: 2.1.9
+    env: PUPPET_VERSION="~> 4.0.0"
+  - rvm: 2.1.9
+    env: PUPPET_VERSION="~> 4.1.0"
+  - rvm: 2.1.9
+    env: PUPPET_VERSION="~> 4.2.0"
+  - rvm: 2.1.9
+    env: PUPPET_VERSION="~> 4.3.0"
+  - rvm: 2.1.9
     env: PUPPET_VERSION="~> 4.4.0"
   - rvm: 2.1.9
     env: PUPPET_VERSION="~> 4.5.0"

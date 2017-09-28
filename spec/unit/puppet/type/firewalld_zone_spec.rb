@@ -92,7 +92,7 @@ describe Puppet::Type.type(:firewalld_zone) do
       end
 
       it "should get interfaces" do
-        provider.expects(:execute_firewall_cmd).with(['--list-interfaces']).returns("")
+        provider.expects(:execute_firewall_cmd).with(['--list-interfaces'], 'restricted', false).returns("")
         provider.interfaces
       end
 

@@ -45,7 +45,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def interfaces
-    execute_firewall_cmd(['--list-interfaces']).chomp.split(" ") || []
+    execute_firewall_cmd(['--list-interfaces'], @resource[:name], false).chomp.split(" ") || []
   end
 
   def interfaces=(new_interfaces)
@@ -186,4 +186,3 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
 end
-

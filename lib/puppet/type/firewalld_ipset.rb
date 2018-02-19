@@ -3,9 +3,9 @@ Puppet::Type.newtype(:firewalld_ipset) do
 
   @doc =%q{
     Configure IPsets in Firewalld
-    
+
     Example:
-    
+
         firewalld_port {'Open port 8080 in the public Zone':
             ensure   => 'present',
             zone     => 'public',
@@ -13,16 +13,16 @@ Puppet::Type.newtype(:firewalld_ipset) do
             protocol => 'tcp',
         }
   }
-  
+
   ensurable
-  
+
   newparam(:name, :namevar => true) do
     desc "Name of the IPset"
     validate do |val|
       raise Puppet::Error, "IPset name must be a word with no spaces" unless val =~ /^\w+$/
     end
   end
-  
+
   newparam(:type) do
     desc "Type of the ipset (default: hash:ip)"
     defaultto "hash:ip"
@@ -38,9 +38,9 @@ Puppet::Type.newtype(:firewalld_ipset) do
   newproperty(:entries, :array_matching => :all) do
     desc "Array of ipset entries"
     def insync?(is)
-      should.sort == is
+      should.sort == is.sort
     end
   end
 
 end
-  
+

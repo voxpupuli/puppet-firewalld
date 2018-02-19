@@ -64,8 +64,8 @@ Puppet::Type.newtype(:firewalld_zone) do
 
     def insync?(is)
       case should
-      when String then should.lines.sort == is
-      when Array then should.sort == is
+      when String then should.lines.sort == is.sort
+      when Array then should.sort == is.sort
       else raise Puppet::Error, "parameter interfaces must be a string or array of strings!"
       end
     end
@@ -82,8 +82,8 @@ Puppet::Type.newtype(:firewalld_zone) do
 
     def insync?(is)
       case should
-      when String then should.lines.sort == is
-      when Array then should.sort == is
+      when String then should.lines.sort == is.sort
+      when Array then should.sort == is.sort
       else raise Puppet::Error, "parameter sources must be a string or array of strings!"
       end
     end
@@ -102,11 +102,11 @@ Puppet::Type.newtype(:firewalld_zone) do
           or an array of strings specifying multiple icmp types. Any blocks not specified here will be removed
          "
     def insync?(is)
-        case should
-            when String then should.lines.sort == is
-            when Array then should.sort == is
-            else raise Puppet::Error, "parameter icmp_blocks must be a string or array of strings!"
-        end
+      case should
+      when String then should.lines.sort == is.sort
+      when Array then should.sort == is.sort
+      else raise Puppet::Error, "parameter icmp_blocks must be a string or array of strings!"
+      end
     end
   end
 
@@ -123,7 +123,7 @@ Puppet::Type.newtype(:firewalld_zone) do
       return :false if @resource[:purge_rich_rules] == :false
       provider.resource.rich_rules_purgable ? :purgable : :true
     end
-     
+
   end
 
   newproperty(:purge_services) do
@@ -150,7 +150,7 @@ Puppet::Type.newtype(:firewalld_zone) do
       true
     end
 
-    def retrieve 
+    def retrieve
       return :false if @resource[:purge_ports] == :false
       provider.resource.ports_purgable  ? :purgable : :true
     end
@@ -184,15 +184,15 @@ Puppet::Type.newtype(:firewalld_zone) do
       )
 
       # If the rule exists in --permanent then we should purge it
-      #  
+      #
       purge_resource(res_type)
- 
+
       # Even if it doesn't exist, it may be a running rule, so we
       # flag purge_rich_rules as changed so Puppet will reload
       # the firewall and drop orphaned running rules
       #
       @rich_rules_purgable = true
-      
+
 
     end
   end

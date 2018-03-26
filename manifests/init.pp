@@ -58,6 +58,9 @@ class firewalld (
   Boolean $purge_direct_chains       = false,
   Boolean $purge_direct_passthroughs = false,
   Optional[String] $default_zone     = undef,
+  Optional[String] $default_service_zone  = undef,
+  Optional[String] $default_port_zone     = undef,
+  Optional[String] $default_port_protocol = undef,
   Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied = undef
 ) {
 
@@ -93,6 +96,11 @@ class firewalld (
     }
 
     # create ports
+    Firewalld_port {
+      zone      => $default_port_zone,
+      protocol  => $default_port_protocol,
+    }
+
     $ports.each |String $key, Hash $attrs| {
       firewalld_port { $key:
         *       => $attrs,
@@ -107,6 +115,10 @@ class firewalld (
     }
 
     #...services
+    Firewalld_service {
+      zone      => $default_service_zone,
+    }
+
     $services.each | String $key, Hash $attrs| {
       firewalld_service { $key:
         *       => $attrs,

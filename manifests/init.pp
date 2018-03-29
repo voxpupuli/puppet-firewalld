@@ -58,7 +58,11 @@ class firewalld (
   Boolean $purge_direct_chains       = false,
   Boolean $purge_direct_passthroughs = false,
   Optional[String] $default_zone     = undef,
-  Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied = undef
+  Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied = undef,
+  Optional[Enum['yes', 'no']] $cleanup_on_exit = undef,
+  Optional[Integer] $minimal_mark = undef,
+  Optional[Enum['yes', 'no']] $lockdown = undef,
+  Optional[Enum['yes', 'no']] $ipv6_rpfilter = undef,
 ) {
 
     package { $package:
@@ -179,6 +183,48 @@ class firewalld (
       exec { 'firewalld::set_log_denied':
         command => "firewall-cmd --set-log-denied ${log_denied} && firewall-cmd --reload",
         unless  => "[ $(firewall-cmd --get-log-denied) = ${log_denied} ]",
+      }
+    }
+
+    Augeas {
+      lens    => 'Shellvars.lns',
+      incl    => '/etc/firewalld/firewalld.conf',
+      notify => Exec['firewalld::reload'],
+    }
+
+    if $cleanup_on_exit {
+      augeas {
+        'firewalld::cleanup_on_exit':
+          changes => [
+            "set CleanupOnExit \"${cleanup_on_exit}\"",
+          ];
+      }
+    }
+
+    if $minimal_mark {
+      augeas {
+        'firewalld::minimal_mark':
+          changes => [
+            "set MinimalMark \"${minimal_mark}\"",
+          ];
+      }
+    }
+
+    if $lockdown {
+      augeas {
+        'firewalld::lockdown':
+          changes => [
+            "set Lockdown \"${lockdown}\"",
+          ];
+      }
+    }
+
+    if $ipv6_rpfilter {
+      augeas {
+        'firewalld::ipv6_rpfilter':
+          changes => [
+            "set IPv6_rpfilter \"${ipv6_rpfilter}\"",
+          ];
       }
     }
 

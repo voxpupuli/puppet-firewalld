@@ -67,7 +67,7 @@ class firewalld (
 
     package { $package:
       ensure => $package_ensure,
-      notify => Service['firewalld']
+      notify => Service['firewalld'],
     }
 
     if $install_gui {

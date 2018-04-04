@@ -6,11 +6,11 @@ Puppet::Type.newtype(:firewalld_ipset) do
     
     Example:
     
-        firewalld_port {'Open port 8080 in the public Zone':
+        firewalld_ipset {'internal net':
             ensure   => 'present',
-            zone     => 'public',
-            port     => 8080,
-            protocol => 'tcp',
+            type     => 'hash:net',
+            family   => 'inet',
+            entries  => ['192.168.0.0/24']
         }
   }
   

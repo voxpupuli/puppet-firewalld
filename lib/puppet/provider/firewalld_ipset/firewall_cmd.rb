@@ -7,6 +7,37 @@ Puppet::Type.type(:firewalld_ipset).provide(
 ) do
   desc "Interact with firewall-cmd"
 
+  mk_resource_methods
+
+  def self.instances
+    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split(" ")
+    ipset_ids.collect do |ipset_id|
+      ipset_raw = execute_firewall_cmd(["--info-ipset=#{ipset_id}"], nil)
+      raw_options = ipset_raw.match(/options: (.*)/)
+      options = {}
+      if raw_options
+        raw_options[1].split(' ').each { |v|
+          k, v = v.split('=')
+          options[k.to_sym] = v
+        }
+      end
+      new(
+        ensure: :present,
+        name: ipset_id,
+        type: ipset_raw.match(/type: (.*)/)[1],
+        **options
+      )
+    end
+  end
+
+  def self.prefetch(resources)
+    instances.each do |prov|
+      if (resource = resources[prov.name])
+        resource.provider = prov
+      end
+    end
+  end
+
   def exists?
     execute_firewall_cmd(['--get-ipsets'], nil).split(" ").include?(@resource[:name])
   end

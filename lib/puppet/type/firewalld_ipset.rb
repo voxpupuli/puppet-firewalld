@@ -26,6 +26,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
   newparam(:type) do
     desc "Type of the ipset (default: hash:ip)"
     defaultto "hash:ip"
+    newvalues(:'bitmap:ip', :'bitmap:ip,mac', :'bitmap:port', :'hash:ip', :'hash:ip,mark', :'hash:ip,port', :'hash:ip,port,ip', :'hash:ip,port,net', :'hash:mac', :'hash:net', :'hash:net,iface', :'hash:net,net', :'hash:net,port', :'hash:net,port,net', :'list:set')
   end
 
   newparam(:options) do

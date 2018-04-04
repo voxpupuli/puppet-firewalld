@@ -43,6 +43,12 @@ Puppet::Type.newtype(:firewalld_ipset) do
       should.sort == is
     end
 
+
+    munge do |value|
+      value.gsub('/32', '')
+    end
+  end
+
   newproperty(:family) do
     desc "Protocol family of the IPSet"
     newvalues(:inet6, :inet)

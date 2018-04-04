@@ -79,6 +79,18 @@ describe Puppet::Type.type(:firewalld_ipset) do
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.8.8.8'], nil)
       provider.entries=(['192.168.2.2', '10.72.1.100'])
     end
+  end
+  context 'change in ipset members' do
+    let(:resource) do
+      Puppet::Type.type(:firewalld_ipset).new(
+        name: 'white',
+        type: 'hash:net',
+        entries: ['8.8.8.8/32', '9.9.9.9']
+      )
+    end
 
+    it 'removes /32 in set members' do
+      expect(resource[:entries]).to eq ['8.8.8.8', '9.9.9.9']
+    end
   end
 end

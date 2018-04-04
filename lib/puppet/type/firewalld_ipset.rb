@@ -43,6 +43,14 @@ Puppet::Type.newtype(:firewalld_ipset) do
       should.sort == is
     end
 
+    def change_to_s(current, desire)
+      if @resource.value(:keep_in_sync)
+        "removing entries from ipset #{(current - desire).sort.inspect},
+         adding in ipset entries #{(desire - current).sort.inspect}"
+      else
+        "adding in ipset entries #{(desire - current).sort.inspect}"
+      end
+    end
 
     munge do |value|
       value.gsub('/32', '')

@@ -1,3 +1,4 @@
+require_relative '../../puppet_x/firewalld/property/positive_integer'
 
 Puppet::Type.newtype(:firewalld_ipset) do
 
@@ -41,6 +42,22 @@ Puppet::Type.newtype(:firewalld_ipset) do
     def insync?(is)
       should.sort == is
     end
+
+  newproperty(:family) do
+    desc "Protocol family of the IPSet"
+    newvalues(:inet6, :inet)
+  end
+
+  newproperty(:hashsize, :parent => PuppetX::Firewalld::Property::PositiveInteger) do
+    desc "Initial hash size of the IPSet"
+  end
+
+  newproperty(:maxelem, :parent => PuppetX::Firewalld::Property::PositiveInteger) do
+    desc "Maximal number of elements that can be stored in the set"
+  end
+
+  newproperty(:timeout, :parent => PuppetX::Firewalld::Property::PositiveInteger) do
+    desc "Timeout in seconds before entries expiry"
   end
 
 end

@@ -15,9 +15,29 @@ Puppet::Type.type(:firewalld_ipset).provide(
     args = []
     args << ["--new-ipset=#{@resource[:name]}"]
     args << ["--type=#{@resource[:type]}"]
-    args << ["--option=#{@resource[:options].map { |a,b| "#{a}=#{b}" }.join(',')}"] if @resource[:options]
+    options = {
+      :family => @resource[:family],
+      :hashsize => @resource[:hashsize],
+      :maxelem => @resource[:maxelem],
+      :timeout => @resource[:timeout]
+    }
+    options = options.merge(@resource[:options]) if @resource[:options]
+    options.each do |option_name, value|
+      if value
+        args << ["--option=#{option_name}=#{value}"]
+      end
+    end
     execute_firewall_cmd(args.flatten, nil)
     @resource[:entries].each { |e| add_entry(e) }
+  end
+
+  %i[type maxelem family hashsize timeout].each do |method|
+    define_method("#{method}=") do |should|
+      info("Destroying and creating ipset #{@resource[:name]}")
+      destroy
+      create
+      @property_hash[method] = should
+    end
   end
 
   def entries

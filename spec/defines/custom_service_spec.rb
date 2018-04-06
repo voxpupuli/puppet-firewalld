@@ -39,6 +39,10 @@ describe 'firewalld::custom_service' do
             'port'     => '8002',
             'protocol' => 'udp',
         },
+        {
+            'port'     => '',
+            'protocol' => 'vrrp',
+        },
       ],
       :module      => ['nf_conntrack_netbios_ns'],
       :destination => {
@@ -82,6 +86,9 @@ describe 'firewalld::custom_service' do
         {
             'port'     => '8002',
             'protocol' => 'udp',
+        },
+        {
+            'protocol' => 'vrrp',
         },
       ],
       :module      => ['nf_conntrack_netbios_ns'],
@@ -127,6 +134,11 @@ describe 'firewalld::custom_service' do
             'port'     => 8002,
             'protocol' => 'udp',
         },
+        {
+            'port'     => '',
+            'protocol' => 'vrrp',
+        },
+
       ],
       :module      => ['nf_conntrack_netbios_ns'],
       :destination => {

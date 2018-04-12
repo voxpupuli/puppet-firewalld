@@ -59,7 +59,9 @@ Puppet::Type.type(:firewalld_ipset).provide(
       end
     end
     execute_firewall_cmd(args.flatten, nil)
-    @resource[:entries].each { |e| add_entry(e) }
+    if @resource[:manage_entries]
+      @resource[:entries].each { |e| add_entry(e) }
+    end
   end
 
   %i[type maxelem family hashsize timeout].each do |method|
@@ -72,7 +74,11 @@ Puppet::Type.type(:firewalld_ipset).provide(
   end
 
   def entries
-    execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--get-entries"], nil).split("\n").sort
+    if @resource[:manage_entries]
+      execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--get-entries"], nil).split("\n").sort
+    else
+      @resource[:entries]
+    end
   end
 
   def add_entry(entry)
@@ -84,6 +90,10 @@ Puppet::Type.type(:firewalld_ipset).provide(
   end
 
   def entries=(should_entries)
+    unless @resource[:manage_entries]
+      debug("Not managing entries for ipset #{@resource[:name]}")
+      return
+    end
     cur_entries = entries
     delete_entries = cur_entries-should_entries
     add_entries = should_entries-cur_entries

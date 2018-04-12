@@ -93,4 +93,15 @@ describe Puppet::Type.type(:firewalld_ipset) do
       expect(resource[:entries]).to eq ['8.8.8.8', '9.9.9.9']
     end
   end
+
+  context 'validation when not managing ipset entries ' do
+    it 'raises an error if wrong type' do
+      expect do Puppet::Type.type(:firewalld_ipset).new(
+        name: 'white',
+        type: 'hash:net',
+        manage_entries: false,
+        entries: ['8.8.8.8/32', '9.9.9.9']
+      ) end.to raise_error(/Ipset should not declare entries if it doesn't manage entries/)
+    end
+  end
 end

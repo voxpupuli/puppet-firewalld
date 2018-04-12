@@ -50,6 +50,7 @@ describe provider_class do
         resource.expects(:[]).with(:maxelem).returns(65_536).at_least_once
         resource.expects(:[]).with(:timeout).returns(nil).at_least_once
         resource.expects(:[]).with(:options).returns({}).at_least_once
+        resource.expects(:[]).with(:manage_entries).returns(true)
         resource.expects(:[]).with(:entries).returns(['192.168.0/24', '10.0.0/8'])
         provider.expects(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet', '--option=hashsize=1024', '--option=maxelem=65536'], nil)
         provider.expects(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=192.168.0/24'], nil)
@@ -70,6 +71,7 @@ describe provider_class do
         resource.expects(:[]).with(:maxelem).returns(nil).at_least_once
         resource.expects(:[]).with(:timeout).returns(nil).at_least_once
         resource.expects(:[]).with(:options).returns({}).at_least_once
+        resource.expects(:[]).with(:manage_entries).returns(true).at_least_once
         resource.expects(:[]).with(:entries).returns(['192.168.0/24', '10.0.0/8']).at_least_once
         provider.expects(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet'], nil)
         provider.expects(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet', '--option=hashsize=2048'], nil)
@@ -89,6 +91,7 @@ describe provider_class do
         resource.expects(:[]).with(:maxelem).returns(nil).at_least_once
         resource.expects(:[]).with(:timeout).returns(nil).at_least_once
         resource.expects(:[]).with(:options).returns({}).at_least_once
+        resource.expects(:[]).with(:manage_entries).returns(true).at_least_once
         resource.expects(:[]).with(:entries).returns(['192.168.0.0/24', '10.0.0.0/8']).at_least_once
         provider.expects(:entries).returns(['192.168.0.0/24', '10.0.0.0/8'])
         provider.expects(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet'], nil)
@@ -99,6 +102,20 @@ describe provider_class do
         provider.create
         provider.entries = ['192.168.14.0/24', '10.0.0.0/8']
       end
+      it 'should ignore entries when manage_entries is false ' do
+        resource.expects(:[]).with(:name).returns('white').at_least_once
+        resource.expects(:[]).with(:type).returns('hash:net').at_least_once
+        resource.expects(:[]).with(:family).returns('inet').at_least_once
+        resource.expects(:[]).with(:hashsize).returns(nil)
+        resource.expects(:[]).with(:maxelem).returns(nil).at_least_once
+        resource.expects(:[]).with(:timeout).returns(nil).at_least_once
+        resource.expects(:[]).with(:options).returns({}).at_least_once
+        resource.expects(:[]).with(:manage_entries).returns(false).at_least_once
+        provider.expects(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet'], nil)
+        provider.create
+        provider.entries = ['192.168.14.0/24', '10.0.0.0/8']
+      end
+
     end
   end
 end

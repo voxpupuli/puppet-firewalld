@@ -74,5 +74,16 @@ Puppet::Type.newtype(:firewalld_ipset) do
     desc "Timeout in seconds before entries expiry"
   end
 
+  newproperty(:manage_entries, :parent => Puppet::Parameter::Boolean) do
+    desc "Should we manage entries in this ipset or leave another process manage those entries"
+    defaultto true
+  end
+
+  validate do
+    if not self[:manage_entries] and self[:entries]
+      raise(Puppet::Error, "Ipset should not declare entries if it doesn't manage entries")
+    end
+  end
+
 end
   

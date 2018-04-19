@@ -196,4 +196,10 @@ class firewalld (
     Service['firewalld'] -> Firewalld_direct_rule <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_direct_passthrough <||> ~> Exec['firewalld::reload']
 
+    if $purge_unknown_ipsets {
+      Firewalld_ipset <||>
+      ~> resources { 'firewalld_ipset':
+        purge => true,
+      }
+    }
 }

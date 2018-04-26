@@ -58,7 +58,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
       args << ["--option=#{option_name}=#{value}"] if value
     end
     execute_firewall_cmd(args.flatten, nil)
-    @resource[:entries].each { |e| add_entry(e) } if @resource[:manage_entries]
+    add_entries_from_file(@resource[:entries]) if @resource[:manage_entries]
   end
 
   [:type, :maxelem, :family, :hashsize, :timeout].each do |method|
@@ -78,12 +78,18 @@ Puppet::Type.type(:firewalld_ipset).provide(
     end
   end
 
-  def add_entry(entry)
-    execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--add-entry=#{entry}"], nil)
+  def add_entries_from_file(entries)
+    f = Tempfile.new('ipset')
+    entries.each { |e| f.write(e + "\n") }
+    f.close
+    execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--add-entries-from-file=#{f.path}"], nil)
   end
 
-  def remove_entry(entry)
-    execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--remove-entry=#{entry}"], nil)
+  def remove_entries_from_file(entries)
+    f = Tempfile.new('ipset')
+    entries.each { |e| f.write(e + "\n") }
+    f.close
+    execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--remove-entries-from-file=#{f.path}"], nil)
   end
 
   def entries=(should_entries)
@@ -94,8 +100,8 @@ Puppet::Type.type(:firewalld_ipset).provide(
     cur_entries = entries
     delete_entries = cur_entries - should_entries
     add_entries = should_entries - cur_entries
-    delete_entries.each { |e| remove_entry(e) }
-    add_entries.each { |e| add_entry(e) }
+    remove_entries_from_file(delete_entries) if delete_entries
+    add_entries_from_file(add_entries) if add_entries
   end
 
   def destroy

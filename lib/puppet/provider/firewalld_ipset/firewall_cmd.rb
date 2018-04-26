@@ -39,7 +39,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
   end
 
   def exists?
-    execute_firewall_cmd(['--get-ipsets'], nil).split(" ").include?(@resource[:name])
+    @property_hash[:ensure] == :present
   end
 
   def create

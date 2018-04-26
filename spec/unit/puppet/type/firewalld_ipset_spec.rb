@@ -43,16 +43,6 @@ describe Puppet::Type.type(:firewalld_ipset) do
       resource.provider
     }
 
-    it "should check if it exists" do
-      provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns("blacklist whitelist")
-      expect(provider.exists?).to be_truthy
-    end
-
-    it "should check if it doesnt exist" do
-      provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns("blacklist greenlist")
-      expect(provider.exists?).to be_falsey
-    end
-
     it "should create" do
       provider.expects(:execute_firewall_cmd).with(['--new-ipset=whitelist', '--type=hash:ip'], nil)
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)

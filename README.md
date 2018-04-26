@@ -282,18 +282,16 @@ and you will also see 'puppet' in the service list when you issue ```firewall-cm
      port => [{'port' => '4321', 'protocol' => 'udp'}, {'protocol' => 'rdp'}],
   ```
 
-The `port` parameter can also take a range of ports separated by a colon, for example:
+The `port` parameter can also take a range of ports separated by a colon or a dash (colons are replaced by dashes), for example:
 
 ```puppet
    port => [ {'port' => '8000:8002', 'protocol' => 'tcp']} ]
 ```
 
-will produce;
+will produce:
 
 ```xml
-    <port protocol="tcp" port="8000" />
-    <port protocol="tcp" port="8001" />
-    <port protocol="tcp" port="8002" />
+    <port protocol="tcp" port="8000-8002" />
 ```
 
 * `module`: (Optional) An array of strings specifying netfilter kernel helper modules associated with this service

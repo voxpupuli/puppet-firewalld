@@ -8,10 +8,8 @@
     <%- if @port -%>
     <%- @port.each do |i| -%>
       <%- if i['port'] and i['port'] != '' -%>
-        <%- range = sprintf('%s',i['port']).split(/:/).map { |p| p.to_i } -%>
-        <%- (range[0]..range[1] || range[0]).each do |p| -%>
+        <%- p = sprintf('%s',i['port']).sub(/:/, '-') -%>
     <port<% if i['protocol'] -%> protocol="<%= i['protocol'] %>"<% end -%> port="<%= p %>" />
-        <%- end -%>
       <%- else -%>
     <port protocol="<%= i['protocol'] %>" port="" />
       <%- end -%>

@@ -17,7 +17,10 @@ Puppet::Type.newtype(:firewalld_ipset) do
     n.to_s(2).count('1') == 1
   end
 
-  ensurable
+  ensurable do
+    defaultvalues
+    defaultto :present
+  end
 
   newparam(:name, namevar: true) do
     desc 'Name of the IPset'

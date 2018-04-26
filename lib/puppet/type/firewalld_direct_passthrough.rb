@@ -19,7 +19,10 @@ Puppet::Type.newtype(:firewalld_direct_passthrough) do
 
   "
 
-  ensurable
+  ensurable do
+    defaultvalues
+    defaultto :present
+  end
 
   newparam(:inet_protocol) do
     desc 'Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)'

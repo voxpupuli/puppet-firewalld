@@ -34,7 +34,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   def self.check_running_state
     begin
       self.debug("Executing --state command - current value #{@state}")
-      ret = execute_firewall_cmd(['--state'], nil, false, false)
+      ret = execute_firewall_cmd(['--state'], nil, false, false, check_online=false)
       Puppet::Provider::Firewalld.runstate = ret.exitstatus == 0 ? true : false
       
     rescue Puppet::MissingCommand => e
@@ -52,7 +52,13 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   # v3.0.0
-  def self.execute_firewall_cmd(args,  zone=nil, perm=true, failonfail=true, shell_cmd='firewall-cmd')
+  def self.execute_firewall_cmd(args,  zone=nil, perm=true, failonfail=true, check_online=true)
+    if check_online and not online?
+      shell_cmd = 'firewall-offline-cmd'
+      perm = false
+    else
+      shell_cmd = 'firewall-cmd'
+    end
     cmd_args = []
     cmd_args << '--permanent' if perm
     cmd_args << [ '--zone', zone ] unless zone.nil?
@@ -79,11 +85,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
 
 
   def execute_firewall_cmd(args, zone=@resource[:zone], perm=true, failonfail=true)
-    if online?
-      self.class.execute_firewall_cmd(args, zone, perm, failonfail)
-    else
-      self.class.execute_firewall_cmd(args, zone, false, failonfail, 'firewall-offline-cmd')
-    end
+    self.class.execute_firewall_cmd(args, zone, perm, failonfail)
   end
 
   # Arguments should be parsed as separate array entities, but quoted arg
@@ -111,6 +113,10 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def online?
+    self.class.online?
+  end
+
+  def self.online?
     check_running_state unless state == true
     state == true
   end

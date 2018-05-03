@@ -15,7 +15,7 @@ describe provider_class do
   let(:provider) { resource.provider }
   before :each do
     provider.class.stubs(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('white black')
-    provider.class.stubs(:execute_firewall_cmd).with(['--state'], nil, false, false).returns(Object.any_instance.stubs(exitstatus: 0))
+    provider.class.stubs(:execute_firewall_cmd).with(['--state'], nil, false, false, false).returns(Object.any_instance.stubs(exitstatus: 0))
     provider.class.stubs(:execute_firewall_cmd).with(['--info-ipset=white'], nil).returns('white
   type: hash:ip
   options: maxelem=200 family=inet6

@@ -1,4 +1,5 @@
 require 'puppet'
+require_relative '../../puppet_x/firewalld/property/rich_rule_action'
 
 Puppet::Type.newtype(:firewalld_rich_rule) do
 
@@ -99,7 +100,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     desc "doc"
   end
 
-  newparam(:action) do
+  newparam(:action, :parent => PuppetX::Firewalld::Property::RichRuleAction) do
     desc "doc"
   end
 

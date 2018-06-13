@@ -63,6 +63,9 @@ class firewalld (
   Optional[Integer] $minimal_mark = undef,
   Optional[Enum['yes', 'no']] $lockdown = undef,
   Optional[Enum['yes', 'no']] $ipv6_rpfilter = undef,
+  Optional[String] $default_service_zone  = undef,
+  Optional[String] $default_port_zone     = undef,
+  Optional[String] $default_port_protocol = undef,
 ) {
 
     package { $package:
@@ -97,6 +100,11 @@ class firewalld (
     }
 
     # create ports
+    Firewalld_port {
+      zone      => $default_port_zone,
+      protocol  => $default_port_protocol,
+    }
+
     $ports.each |String $key, Hash $attrs| {
       firewalld_port { $key:
         *       => $attrs,
@@ -111,6 +119,10 @@ class firewalld (
     }
 
     #...services
+    Firewalld_service {
+      zone      => $default_service_zone,
+    }
+
     $services.each | String $key, Hash $attrs| {
       firewalld_service { $key:
         *       => $attrs,

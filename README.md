@@ -25,6 +25,9 @@ class { 'firewalld': }
 * `service_ensure`: Whether the service should be running or not (default: running)
 * `service_enable`: Whether to enable the service
 * `default_zone`: Optional, set the default zone for interfaces (default: undef)
+* `default_service_zone`: Optional, set the default zone for services (default: undef)
+* `default_port_zone`: Optional, set the default zone for ports (default: undef)
+* `default_port_protocol`: Optional, set the default protocol for ports (default: undef)
 * `log_denied`: Optional, (firewalld-0.4.3.2-8+) Log denied packets, can be one of `off`, `all`, `multicast`, `unicast`, `broadcast` (default: undef)
 * `zones`: A hash of [firewalld zones](#firewalld-zones) to configure
 * `ports`: A hash of [firewalld ports](#firewalld-ports) to configure
@@ -335,9 +338,11 @@ firewalld::services:
 
 #### Parameters
 
-* `service`: Name of the service to manage
+* `service`: Name of the service to manage, defaults to the resource name.
 
-* `zone`: Name of the zone in which you want to manage the service
+* `zone`: Name of the zone in which you want to manage the service, defaults to parameter `default_service_zone` of class `firewalld` if specified.
+
+* `ensure`: Whether to add (`present`) or remove the service (`absent`), defaults to `present`.
 
 
 ## Firewalld Ipsets
@@ -401,15 +406,13 @@ firewalld::ports:
 
 #### Parameters
 
-* `zone`: Name of the zone this port belongs to
+* `zone`: Name of the zone this port belongs to, defaults to parameter `default_port_zone` of class `firewalld` if specified.
 
-* `port`: A hash containing `port` and `protocol` values
-```puppet
-  port => {
-    'port' => 8080,
-    'protocol' => 'tcp',
-  },
-```
+* `port`: The port to manage, defaults to the resource name.
+
+* `protocol`: The protocol this port uses, e.g. `tcp` or `udp`, defaults to parameter `default_port_protocol` of class `firewalld` if specified.
+
+* `ensure`: Whether to add (`present`) or remove the service (`absent`), defaults to `present`.
 
 ## Firewalld Direct Chains
 

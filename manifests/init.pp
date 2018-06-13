@@ -57,6 +57,7 @@ class firewalld (
   Boolean $purge_direct_rules        = false,
   Boolean $purge_direct_chains       = false,
   Boolean $purge_direct_passthroughs = false,
+  Boolean $purge_unknown_ipsets      = false,
   Optional[String] $default_zone     = undef,
   Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied = undef,
   Optional[Enum['yes', 'no']] $cleanup_on_exit = undef,
@@ -254,4 +255,10 @@ class firewalld (
     Service['firewalld'] -> Firewalld_direct_rule <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_direct_passthrough <||> ~> Exec['firewalld::reload']
 
+    if $purge_unknown_ipsets {
+      Firewalld_ipset <||>
+      ~> resources { 'firewalld_ipset':
+        purge => true,
+      }
+    }
 }

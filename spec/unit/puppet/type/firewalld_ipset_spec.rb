@@ -43,16 +43,6 @@ describe Puppet::Type.type(:firewalld_ipset) do
       resource.provider
     }
 
-    it "should check if it exists" do
-      provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns("blacklist whitelist")
-      expect(provider.exists?).to be_truthy
-    end
-
-    it "should check if it doesnt exist" do
-      provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns("blacklist greenlist")
-      expect(provider.exists?).to be_falsey
-    end
-
     it "should create" do
       provider.expects(:execute_firewall_cmd).with(['--new-ipset=whitelist', '--type=hash:ip'], nil)
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
@@ -79,6 +69,29 @@ describe Puppet::Type.type(:firewalld_ipset) do
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.8.8.8'], nil)
       provider.entries=(['192.168.2.2', '10.72.1.100'])
     end
+  end
+  context 'change in ipset members' do
+    let(:resource) do
+      Puppet::Type.type(:firewalld_ipset).new(
+        name: 'white',
+        type: 'hash:net',
+        entries: ['8.8.8.8/32', '9.9.9.9']
+      )
+    end
 
+    it 'removes /32 in set members' do
+      expect(resource[:entries]).to eq ['8.8.8.8', '9.9.9.9']
+    end
+  end
+
+  context 'validation when not managing ipset entries ' do
+    it 'raises an error if wrong type' do
+      expect do Puppet::Type.type(:firewalld_ipset).new(
+        name: 'white',
+        type: 'hash:net',
+        manage_entries: false,
+        entries: ['8.8.8.8/32', '9.9.9.9']
+      ) end.to raise_error(/Ipset should not declare entries if it doesn't manage entries/)
+    end
   end
 end

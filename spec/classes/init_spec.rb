@@ -33,6 +33,7 @@ describe 'firewalld' do
         :purge_direct_rules => true,
         :purge_direct_chains => true,
         :purge_direct_passthroughs => true,
+        :purge_unknown_ipsets => true
       }
     end
 
@@ -47,6 +48,12 @@ describe 'firewalld' do
     it do
       should contain_firewalld_direct_purge('chain')
     end
+
+    it do
+      should contain_resources('firewalld_ipset')
+        .with_purge(true)
+    end
+
   end
 
   context 'with parameter ports' do

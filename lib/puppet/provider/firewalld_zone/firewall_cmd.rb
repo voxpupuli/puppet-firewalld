@@ -23,6 +23,8 @@ Puppet::Type.type(:firewalld_zone).provide(
     self.sources=(@resource[:sources]) if @resource[:sources]
     self.interfaces=@resource[:interfaces]
     self.icmp_blocks=(@resource[:icmp_blocks]) if @resource[:icmp_blocks]
+    self.description=(@resource[:description]) if @resource[:description]
+    self.short=(@resource[:short]) if @resource[:short]
   end
 
   def destroy
@@ -185,5 +187,20 @@ Puppet::Type.type(:firewalld_zone).provide(
     execute_firewall_cmd(['--get-icmptypes'], nil).split(' ')
   end
 
-end
+  def description
+    execute_firewall_cmd(['--get-description'], @resource[:name], true, false)
+  end
 
+  def description=(new_description)
+    execute_firewall_cmd(['--set-description', new_description], @resource[:name], true, false)
+  end
+
+  def short
+    execute_firewall_cmd(['--get-short'], @resource[:name], true, false)
+  end
+
+  def short=(new_short)
+    execute_firewall_cmd(['--set-short', new_short], @resource[:name], true, false)
+  end
+
+end

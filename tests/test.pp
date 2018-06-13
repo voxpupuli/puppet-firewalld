@@ -1,6 +1,6 @@
 
 class { 'firewalld':
-  log_denied => 'multicast'
+  log_denied => 'multicast',
 }
 
 firewalld_zone { 'restricted':

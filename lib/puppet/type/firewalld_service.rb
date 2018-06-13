@@ -16,7 +16,17 @@ Puppet::Type.newtype(:firewalld_service) do
 
   }
 
-  ensurable
+  ensurable do
+    newvalue(:present) do
+      @resource.provider.create
+    end
+
+    newvalue(:absent) do
+      @resource.provider.destroy
+    end
+
+    defaultto(:present)
+  end
 
   newparam(:name, :namevar => :true) do
     desc "Name of the service resource in Puppet"
@@ -24,6 +34,7 @@ Puppet::Type.newtype(:firewalld_service) do
 
   newparam(:service) do
     desc "Name of the service to add"
+    defaultto { @resource[:name] }
   end
 
   newparam(:zone) do

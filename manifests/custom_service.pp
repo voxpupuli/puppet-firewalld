@@ -32,36 +32,22 @@
 #
 #
 define firewalld::custom_service (
-  $short                = $name,
-  $description          = undef,
-  $port                 = undef, # Should be an array of hashes
-  $module               = undef, # Should be an array of strings
-  $destination          = undef,
-  $filename             = undef,
-  $config_dir           = '/etc/firewalld/services',
-  $ensure               = 'present',
+  String $short                   = $name,
+  Optional[String] $description   = undef,
+  Optional[Array[Hash]] $port     = undef,
+  Optional[Array[String]] $module = undef,
+  Optional[Hash[
+    Enum['ipv4', 'ipv6'],
+    String
+  ]] $destination                 = undef,
+  String $filename                = $short,
+  Stdlib::Unixpath $config_dir    = '/etc/firewalld/services',
+  Enum['present',
+    'absent'
+  ] $ensure                       = 'present',
 ) {
 
-  validate_string($short)
-
-  $x_filename = $filename ? {
-    undef   => $short,
-    default => $filename,
-  }
-
-  if $description != undef {validate_string($description)}
-  if $module      != undef {validate_array($module)}
-  if $port        != undef {validate_array($port)}
-  if $destination != undef {
-    validate_hash($destination)
-
-    if !has_key($destination, 'ipv4') and !has_key($destination, 'ipv6'){
-      fail('Parameter destination must contain at least one of "ipv4" and/or "ipv6" as keys in the hash')
-    }
-  }
-  validate_absolute_path($config_dir)
-
-  file{"${config_dir}/${x_filename}.xml":
+  file{"${config_dir}/${filename}.xml":
     ensure  => $ensure,
     content => template('firewalld/service.xml.erb'),
     mode    => '0644',

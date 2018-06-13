@@ -15,7 +15,17 @@ Puppet::Type.newtype(:firewalld_port) do
         }
   }
   
-  ensurable
+  ensurable do
+    newvalue(:present) do
+      @resource.provider.create
+    end
+
+    newvalue(:absent) do
+      @resource.provider.destroy
+    end
+
+    defaultto(:present)
+  end
   
   newparam(:name, :namevar => true) do
     desc "Name of the port resource in Puppet"
@@ -27,6 +37,7 @@ Puppet::Type.newtype(:firewalld_port) do
   
   newparam(:port) do
     desc "Specify the element as a port"
+    defaultto { @resource[:name] }
     munge do |value|
       value.to_s
     end

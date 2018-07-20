@@ -24,8 +24,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
       new(
         ensure: :present,
         name: ipset_id,
-        type: ipset_raw.match(/type: (.*)/)[1],
-        **options
+        type: ipset_raw.match(/type: (.*)/)[1], **options
       )
     end
   end

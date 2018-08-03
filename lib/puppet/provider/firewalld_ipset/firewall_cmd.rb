@@ -7,21 +7,78 @@ Puppet::Type.type(:firewalld_ipset).provide(
 ) do
   desc "Interact with firewall-cmd"
 
+  mk_resource_methods
+
+  def self.instances
+    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split(" ")
+    ipset_ids.collect do |ipset_id|
+      ipset_raw = execute_firewall_cmd(["--info-ipset=#{ipset_id}"], nil)
+      raw_options = ipset_raw.match(/options: (.*)/)
+      options = {}
+      if raw_options
+        raw_options[1].split(' ').each { |v|
+          k, v = v.split('=')
+          options[k.to_sym] = v
+        }
+      end
+      new(
+        ensure: :present,
+        name: ipset_id,
+        type: ipset_raw.match(/type: (.*)/)[1],
+        **options
+      )
+    end
+  end
+
+  def self.prefetch(resources)
+    instances.each do |prov|
+      if (resource = resources[prov.name])
+        resource.provider = prov
+      end
+    end
+  end
+
   def exists?
-    execute_firewall_cmd(['--get-ipsets'], nil).split(" ").include?(@resource[:name])
+    @property_hash[:ensure] == :present
   end
 
   def create
     args = []
     args << ["--new-ipset=#{@resource[:name]}"]
     args << ["--type=#{@resource[:type]}"]
-    args << ["--option=#{@resource[:options].map { |a,b| "#{a}=#{b}" }.join(',')}"] if @resource[:options]
+    options = {
+      :family => @resource[:family],
+      :hashsize => @resource[:hashsize],
+      :maxelem => @resource[:maxelem],
+      :timeout => @resource[:timeout]
+    }
+    options = options.merge(@resource[:options]) if @resource[:options]
+    options.each do |option_name, value|
+      if value
+        args << ["--option=#{option_name}=#{value}"]
+      end
+    end
     execute_firewall_cmd(args.flatten, nil)
-    @resource[:entries].each { |e| add_entry(e) }
+    if @resource[:manage_entries]
+      @resource[:entries].each { |e| add_entry(e) }
+    end
+  end
+
+  %i[type maxelem family hashsize timeout].each do |method|
+    define_method("#{method}=") do |should|
+      info("Destroying and creating ipset #{@resource[:name]}")
+      destroy
+      create
+      @property_hash[method] = should
+    end
   end
 
   def entries
-    execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--get-entries"], nil).split("\n").sort
+    if @resource[:manage_entries]
+      execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--get-entries"], nil).split("\n").sort
+    else
+      @resource[:entries]
+    end
   end
 
   def add_entry(entry)
@@ -33,6 +90,10 @@ Puppet::Type.type(:firewalld_ipset).provide(
   end
 
   def entries=(should_entries)
+    unless @resource[:manage_entries]
+      debug("Not managing entries for ipset #{@resource[:name]}")
+      return
+    end
     cur_entries = entries
     delete_entries = cur_entries-should_entries
     add_entries = should_entries-cur_entries

@@ -9,6 +9,7 @@
     <port protocol="udp" port="8001" />
     <port protocol="tcp" port="8002" />
     <port protocol="udp" port="8002" />
+    <port protocol="vrrp" port="" />
 
     <module name="nf_conntrack_netbios_ns" />
 

@@ -33,6 +33,7 @@ describe 'firewalld' do
         :purge_direct_rules => true,
         :purge_direct_chains => true,
         :purge_direct_passthroughs => true,
+        :purge_unknown_ipsets => true
       }
     end
 
@@ -47,6 +48,12 @@ describe 'firewalld' do
     it do
       should contain_firewalld_direct_purge('chain')
     end
+
+    it do
+      should contain_resources('firewalld_ipset')
+        .with_purge(true)
+    end
+
   end
 
   context 'with parameter ports' do
@@ -205,6 +212,58 @@ describe 'firewalld' do
           :unless => "[ \$\(firewall-cmd --get-log-denied) = #{cond} ]"
         )
       end
+    end
+  end
+
+  context 'with parameter cleanup_on_exit' do
+    let(:params) do
+      {
+        cleanup_on_exit: 'yes'
+      }
+    end
+
+    it do
+      should contain_augeas('firewalld::cleanup_on_exit').with(
+        :changes => ["set CleanupOnExit \"yes\""])
+    end
+  end
+
+  context 'with parameter minimal_mark' do
+    let(:params) do
+      {
+        minimal_mark: 10
+      }
+    end
+
+    it do
+      should contain_augeas('firewalld::minimal_mark').with(
+        :changes => ["set MinimalMark \"10\""])
+    end
+  end
+
+  context 'with parameter lockdown' do
+    let(:params) do
+      {
+        lockdown: 'yes'
+      }
+    end
+
+    it do
+      should contain_augeas('firewalld::lockdown').with(
+        :changes => ["set Lockdown \"yes\""])
+    end
+  end
+
+  context 'with parameter ipv6_rpfilter' do
+    let(:params) do
+      {
+        ipv6_rpfilter: 'yes'
+      }
+    end
+
+    it do
+      should contain_augeas('firewalld::ipv6_rpfilter').with(
+        :changes => ["set IPv6_rpfilter \"yes\""])
     end
   end
 

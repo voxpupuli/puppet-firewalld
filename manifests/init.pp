@@ -57,13 +57,21 @@ class firewalld (
   Boolean $purge_direct_rules        = false,
   Boolean $purge_direct_chains       = false,
   Boolean $purge_direct_passthroughs = false,
+  Boolean $purge_unknown_ipsets      = false,
   Optional[String] $default_zone     = undef,
-  Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied = undef
+  Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied = undef,
+  Optional[Enum['yes', 'no']] $cleanup_on_exit = undef,
+  Optional[Integer] $minimal_mark = undef,
+  Optional[Enum['yes', 'no']] $lockdown = undef,
+  Optional[Enum['yes', 'no']] $ipv6_rpfilter = undef,
+  Optional[String] $default_service_zone  = undef,
+  Optional[String] $default_port_zone     = undef,
+  Optional[String] $default_port_protocol = undef,
 ) {
 
     package { $package:
       ensure => $package_ensure,
-      notify => Service['firewalld']
+      notify => Service['firewalld'],
     }
 
     if $install_gui {
@@ -93,6 +101,11 @@ class firewalld (
     }
 
     # create ports
+    Firewalld_port {
+      zone      => $default_port_zone,
+      protocol  => $default_port_protocol,
+    }
+
     $ports.each |String $key, Hash $attrs| {
       firewalld_port { $key:
         *       => $attrs,
@@ -107,6 +120,10 @@ class firewalld (
     }
 
     #...services
+    Firewalld_service {
+      zone      => $default_service_zone,
+    }
+
     $services.each | String $key, Hash $attrs| {
       firewalld_service { $key:
         *       => $attrs,
@@ -182,6 +199,48 @@ class firewalld (
       }
     }
 
+    Augeas {
+      lens    => 'Shellvars.lns',
+      incl    => '/etc/firewalld/firewalld.conf',
+      notify => Exec['firewalld::reload'],
+    }
+
+    if $cleanup_on_exit {
+      augeas {
+        'firewalld::cleanup_on_exit':
+          changes => [
+            "set CleanupOnExit \"${cleanup_on_exit}\"",
+          ];
+      }
+    }
+
+    if $minimal_mark {
+      augeas {
+        'firewalld::minimal_mark':
+          changes => [
+            "set MinimalMark \"${minimal_mark}\"",
+          ];
+      }
+    }
+
+    if $lockdown {
+      augeas {
+        'firewalld::lockdown':
+          changes => [
+            "set Lockdown \"${lockdown}\"",
+          ];
+      }
+    }
+
+    if $ipv6_rpfilter {
+      augeas {
+        'firewalld::ipv6_rpfilter':
+          changes => [
+            "set IPv6_rpfilter \"${ipv6_rpfilter}\"",
+          ];
+      }
+    }
+
     # Set dependencies using resource chaining so that resource declarations made
     # outside of this class (eg: from the profile) also get their dependencies set
     # automatically, this addresses various issues found in
@@ -196,4 +255,10 @@ class firewalld (
     Service['firewalld'] -> Firewalld_direct_rule <||> ~> Exec['firewalld::reload']
     Service['firewalld'] -> Firewalld_direct_passthrough <||> ~> Exec['firewalld::reload']
 
+    if $purge_unknown_ipsets {
+      Firewalld_ipset <||>
+      ~> resources { 'firewalld_ipset':
+        purge => true,
+      }
+    }
 }

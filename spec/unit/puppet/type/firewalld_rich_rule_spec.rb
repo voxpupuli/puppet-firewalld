@@ -28,6 +28,28 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
     end
   end
 
+  describe 'action validation' do
+    it 'raises an error if wrong action string' do
+      expect do described_class.new(
+        title: 'SSH from barny',
+        action: 'accepted',
+      ) end.to raise_error(/Authorized action values are `accept`, `reject`, `drop` or `mark`/)
+    end
+    it 'raises an error if wrong action hash keys' do
+      expect do described_class.new(
+        title: 'SSH from barny',
+        action: {:type => 'accepted', :foo => 'bar'},
+      ) end.to raise_error(/Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`/)
+    end
+    it 'raises an error if wrong action hash values' do
+      expect do described_class.new(
+        title: 'SSH from barny',
+        action: {:type => 'icmp-admin-prohibited', :action => 'accepted'},
+      ) end.to raise_error(/Authorized action values are `accept`, `reject`, `drop` or `mark`/)
+    end
+
+  end
+
   describe 'namevar validation' do
     let(:attrs) {{
       :title  => 'SSH from barny',

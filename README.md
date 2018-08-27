@@ -213,7 +213,7 @@ _Example in Class_:
 
 ```puppet
     firewalld::custom_service{'puppet':
-      short       => 'puppet,
+      short       => 'puppet',
       description => 'Puppet Client access Puppet Server',
       port        => [
         {

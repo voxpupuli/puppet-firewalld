@@ -7,10 +7,10 @@ module PuppetX
         end
         validate do |value|
           if value.is_a?(Hash)
-            if value.keys.sort != %i[action type]
+            if value.keys.sort != ["action", "type"]
               raise Puppet::Error, "Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`. Got #{value}"
             end
-            _validate_action(value[:action])
+            _validate_action(value["action"])
           elsif value.is_a?(String)
             _validate_action(value)
           end

@@ -15,14 +15,15 @@ Puppet::Type.newtype(:firewalld_zone) do
     Example:
 
       firewalld_zone { 'restricted':
-        ensure           => present,
-        target           => '%%REJECT%%',
-        interfaces       => [],
-        sources          => [],
-        purge_rich_rules => true,
-        purge_services   => true,
-        purge_ports      => true,
-        icmp_blocks      => 'router-advertisement'
+        ensure               => present,
+        target               => '%%REJECT%%',
+        interfaces           => [],
+        sources              => [],
+        purge_rich_rules     => true,
+        purge_services       => true,
+        purge_ports          => true,
+        icmp_blocks          => 'router-advertisement',
+        icmp_block_inversion => false
       }
 
   "
@@ -85,7 +86,13 @@ Puppet::Type.newtype(:firewalld_zone) do
     newvalue(:false)
   end
 
-  newproperty(:sources, array_matching: :all) do
+  newproperty(:icmp_block_inversion) do
+    desc 'Can be set to true or false, specifies whether to add or remove icmp_block_inversion from the zone'
+    newvalue(:true)
+    newvalue(:false)
+  end
+
+  newproperty(:sources, :array_matching => :all) do
     desc 'Specify the sources for the zone'
 
     def insync?(is)

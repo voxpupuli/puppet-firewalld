@@ -532,5 +532,6 @@ firewalld::direct_passthroughs:
 
 # Author
 
-* Written and maintained by Craig Dunn <craig@craigdunn.org> @crayfishx
-* Sponsored by Baloise Group [http://baloise.github.io](http://baloise.github.io)
+* Written Initially by Craig Dunn <craig@craigdunn.org> @crayfishx
+* This module is now maintained by [VoxPupuli](https://voxpupuli.org)
+* Thanks and acknowlegements to [Baloise Group](http://baloise.github.io)

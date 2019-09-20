@@ -1,6 +1,12 @@
 # Module: firewalld
 
-[![Build Status](https://travis-ci.org/crayfishx/puppet-firewalld.svg?branch=master)](https://travis-ci.org/crayfishx/puppet-firewalld)  [![Endorsement](https://img.shields.io/puppetforge/e/crayfishx/firewalld.svg)](https://forge.puppet.com/approved) [![Version](https://img.shields.io/puppetforge/v/crayfishx/firewalld.svg)](https://forge.puppet.com/crayfishx/firewalld)
+[![License](https://img.shields.io/github/license/voxpupuli/puppet-firewalld.svg)](https://github.com/voxpupuli/puppet-firewalld/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/voxpupuli/puppet-firewalld.png?branch=master)](https://travis-ci.org/voxpupuli/puppet-firewalld)
+[![Code Coverage](https://coveralls.io/repos/github/voxpupuli/puppet-firewalld/badge.svg?branch=master)](https://coveralls.io/github/voxpupuli/puppet-firewalld)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/firewalld.svg)](https://forge.puppetlabs.com/puppet/firewalld)
+[![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/firewalld.svg)](https://forge.puppetlabs.com/puppet/firewalld)
+[![Puppet Forge - endorsement](https://img.shields.io/puppetforge/e/puppet/firewalld.svg)](https://forge.puppetlabs.com/puppet/firewalld)
+[![Puppet Forge - scores](https://img.shields.io/puppetforge/f/puppet/firewalld.svg)](https://forge.puppetlabs.com/puppet/firewalld)
 
 
 ## Description

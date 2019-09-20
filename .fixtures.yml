@@ -1,9 +1,4 @@
 ---
 fixtures:
-  forge_modules:
-    stdlib:
-      repo: puppetlabs/stdlib
-      ref: 4.25.1
-  symlinks:
-    firewalld: "#{source_dir}"
-
+  repositories:
+    stdlib: 'https://github.com/puppetlabs/puppetlabs-stdlib.git'

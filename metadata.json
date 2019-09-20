@@ -1,34 +1,33 @@
 {
-  "name": "crayfishx-firewalld",
-  "version": "3.4.0",
-  "author": "Craig Dunn",
+  "name": "puppet-firewalld",
+  "version": "4.0.0-rc0",
+  "author": "Vox Pupuli",
   "summary": "Configure firewalld zones, services, and rich rules and direct config",
   "license": "Apache-2.0",
   "tags": [ "firewalld", "firewall", "rhel", "security" ],
   "requirements": [
    {
       "name": "puppet",
-      "version_requirement": ">= 4.4.0 < 6.0.0"
+      "version_requirement": ">= 5.10.0 < 7.0.0"
     }
   ],
   "operatingsystem_support": [
     {
-    "operatingsystem":"RedHat",
-    "operatingsystemrelease":[ "7" ]
+      "operatingsystem":"RedHat",
+      "operatingsystemrelease":[ "7" ]
     },
     {
-    "operatingsystem":"CentOS",
-    "operatingsystemrelease":[ "7" ]
+      "operatingsystem":"CentOS",
+      "operatingsystemrelease":[ "7" ]
     }
    ],
-  "source": "https://github.com/crayfishx/puppet-firewalld",
-  "project_page": "https://github.com/crayfishx/puppet-firewalld",
-  "issues_url": "https://github.com/crayfishx/puppet-firewalld/issues",
+  "source": "https://github.com/voxpupuli/puppet-firewalld",
+  "project_page": "https://github.com/voxpupuli/puppet-firewalld",
+  "issues_url": "https://github.com/voxpupuli/puppet-firewalld/issues",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">=4.25.0 <7.0.0"
+      "version_requirement": ">= 4.25.0 < 7.0.0"
     }
   ]
 }
-

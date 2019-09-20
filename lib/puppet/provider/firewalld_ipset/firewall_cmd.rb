@@ -22,10 +22,11 @@ Puppet::Type.type(:firewalld_ipset).provide(
         }
       end
       new(
-        ensure: :present,
-        name: ipset_id,
-        type: ipset_raw.match(/type: (.*)/)[1],
-        **options
+        {
+          ensure: :present,
+          name: ipset_id,
+          type: ipset_raw.match(/type: (.*)/)[1],
+        }.merge(options)
       )
     end
   end
@@ -64,7 +65,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
     end
   end
 
-  %i[type maxelem family hashsize timeout].each do |method|
+  [:type, :maxelem, :family, :hashsize, :timeout].each do |method|
     define_method("#{method}=") do |should|
       info("Destroying and creating ipset #{@resource[:name]}")
       destroy

@@ -28,16 +28,16 @@ describe Puppet::Type.type(:firewalld_ipset) do
     it 'raises an error if wrong name' do
       expect do
         described_class.new(
-        name: 'white black',
-        type: 'hash:net'
+          name: 'white black',
+          type: 'hash:net'
         )
       end.to raise_error(/IPset name must be a word with no spaces/)
     end
     it 'accept - in name' do
       expect do
         described_class.new(
-        name: 'white-blue',
-        type: 'hash:net'
+          name: 'white-blue',
+          type: 'hash:net'
         )
       end.not_to raise_error
     end
@@ -101,10 +101,10 @@ describe Puppet::Type.type(:firewalld_ipset) do
     it 'raises an error if wrong type' do
       expect do
         Puppet::Type.type(:firewalld_ipset).new(
-        name: 'white',
-        type: 'hash:net',
-        manage_entries: false,
-        entries: ['8.8.8.8/32', '9.9.9.9']
+          name: 'white',
+          type: 'hash:net',
+          manage_entries: false,
+          entries: ['8.8.8.8/32', '9.9.9.9']
         )
       end.to raise_error(/Ipset should not declare entries if it doesn't manage entries/)
     end

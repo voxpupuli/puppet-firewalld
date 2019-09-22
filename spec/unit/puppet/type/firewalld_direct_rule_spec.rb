@@ -44,13 +44,13 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
   describe 'provider' do
     let(:resource) do
       described_class.new(
-          name: 'allow ssh',
-          ensure: 'present',
-          inet_protocol: 'ipv4',
-          table: 'filter',
-          chain: 'OUTPUT',
-          priority: 4,
-          args: '-p tcp --dport=22 -j ACCEPT'
+        name: 'allow ssh',
+        ensure: 'present',
+        inet_protocol: 'ipv4',
+        table: 'filter',
+        chain: 'OUTPUT',
+        priority: 4,
+        args: '-p tcp --dport=22 -j ACCEPT'
       )
     end
 

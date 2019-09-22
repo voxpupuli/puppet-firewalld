@@ -37,9 +37,7 @@ Puppet::Type.newtype(:firewalld_port) do
   newparam(:port) do
     desc 'Specify the element as a port'
     defaultto { @resource[:name] }
-    munge do |value|
-      value.to_s
-    end
+    munge(&:to_s)
   end
 
   newparam(:protocol) do

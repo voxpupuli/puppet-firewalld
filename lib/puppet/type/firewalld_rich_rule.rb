@@ -33,9 +33,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     desc 'IP family, one of ipv4 or ipv6, defauts to ipv4'
     newvalues(:ipv4, :ipv6)
     defaultto :ipv4
-    munge do |value|
-      value.to_s
-    end
+    munge(&:to_s)
   end
 
   newparam(:source) do

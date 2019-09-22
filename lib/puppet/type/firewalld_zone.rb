@@ -196,7 +196,7 @@ Puppet::Type.newtype(:firewalld_zone) do
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_service) }.each do |fws|
       if fws[:zone] == self[:name]
         self.debug("not purging puppet controlled service #{fws[:service]}")
-        puppet_services << "#{fws[:service]}"
+        puppet_services << (fws[:service]).to_s
       end
     end
     provider.get_services.reject { |p| puppet_services.include?(p) }.each do |purge|

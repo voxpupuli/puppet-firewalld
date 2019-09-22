@@ -100,8 +100,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def icmp_blocks=(i)
-    set_blocks = Array.new
-    remove_blocks = Array.new
+    set_blocks = []
+    remove_blocks = []
 
     case i
     when Array then

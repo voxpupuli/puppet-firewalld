@@ -161,9 +161,9 @@ Puppet::Type.newtype(:firewalld_zone) do
   end
 
   def purge_rich_rules
-    return Array.new unless provider.exists?
-    purge_rules = Array.new
-    puppet_rules = Array.new
+    return [] unless provider.exists?
+    purge_rules = []
+    puppet_rules = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_rich_rule) }.each do |fwr|
       self.debug("not purging puppet controlled rich rule #{fwr[:name]}")
       puppet_rules << fwr.provider.build_rich_rule
@@ -190,9 +190,9 @@ Puppet::Type.newtype(:firewalld_zone) do
   end
 
   def purge_services
-    return Array.new unless provider.exists?
-    purge_services = Array.new
-    puppet_services = Array.new
+    return [] unless provider.exists?
+    purge_services = []
+    puppet_services = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_service) }.each do |fws|
       if fws[:zone] == self[:name]
         self.debug("not purging puppet controlled service #{fws[:service]}")
@@ -214,9 +214,9 @@ Puppet::Type.newtype(:firewalld_zone) do
   end
 
   def purge_ports
-    return Array.new unless provider.exists?
-    purge_ports = Array.new
-    puppet_ports = Array.new
+    return [] unless provider.exists?
+    purge_ports = []
+    puppet_ports = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_port) }.each do |fwp|
       if fwp[:zone] == self[:name]
         self.debug("Not purging puppet controlled port #{fwp[:port]}")

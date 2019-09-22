@@ -80,9 +80,9 @@ Puppet::Type.type(:firewalld_zone).provide(
 
   def masquerade
     if execute_firewall_cmd(['--query-masquerade'], @resource[:name], true, false).chomp == 'yes'
-      return :true
+      :true
     else
-      return :false
+      :false
     end
   end
 

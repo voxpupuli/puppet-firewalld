@@ -42,14 +42,14 @@ describe Puppet::Type.type(:firewalld_ipset) do
   ## Provider tests for the firewalld_zone type
   #
   describe 'provider' do
-    let(:resource) {
+    let(:resource) do
       described_class.new(
         name: 'whitelist',
         entries: ['192.168.2.2', '10.72.1.100'])
-    }
-    let(:provider) {
+    end
+    let(:provider) do
       resource.provider
-    }
+    end
 
     it 'creates' do
       provider.expects(:execute_firewall_cmd).with(['--new-ipset=whitelist', '--type=hash:ip'], nil)

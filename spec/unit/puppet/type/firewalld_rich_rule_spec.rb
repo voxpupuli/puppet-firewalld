@@ -50,7 +50,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
   end
 
   describe 'namevar validation' do
-    let(:attrs) {{
+    let(:attrs) do {
       title: 'SSH from barny',
       ensure: 'present',
       zone: 'restricted',
@@ -58,7 +58,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       dest: '192.168.99.2/32',
       service: 'ssh',
       action: 'accept'
-    }}
+    } end
 
     it 'has :name as its namevar' do
       expect(described_class.key_attributes).to eq([:name])
@@ -169,16 +169,16 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
 
     scenarios.each do |attrs, rawrule|
       context "for rule #{rawrule}" do
-        let(:resource) {
+        let(:resource) do
           described_class.new(attrs)
-        }
+        end
         before do
           @fakeclass = Class.new
         end
         let(:provider) { resource.provider }
-        let(:rawrule) {
+        let(:rawrule) do
           'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept'
-        }
+        end
 
         it 'queries the status' do
           @fakeclass.stubs(:exitstatus).returns(0)

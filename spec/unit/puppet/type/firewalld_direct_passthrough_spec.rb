@@ -31,14 +31,14 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
   end
 
   describe 'provider' do
-    let(:resource) {
+    let(:resource) do
       described_class.new(
         name: 'Forward OUTPUT',
         ensure: 'present',
         inet_protocol: 'ipv4',
         args: '-A OUTPUT -j OUTPUT_filter'
       )
-    }
+    end
 
     let(:provider) { resource.provider }
 

@@ -31,17 +31,17 @@ describe Puppet::Type.type(:firewalld_zone) do
   #
   describe 'provider' do
     context 'with standard parameters' do
-      let(:resource) {
+      let(:resource) do
         described_class.new(
           name: 'restricted',
           target: '%%REJECT%%',
           interfaces: ['eth0'],
           icmp_blocks: ['redirect', 'router-advertisment'],
           sources: ['192.168.2.2', '10.72.1.100'])
-      }
-      let(:provider) {
+      end
+      let(:provider) do
         resource.provider
-      }
+      end
 
       it 'checks if it exists' do
         provider.expects(:execute_firewall_cmd).with(['--get-zones'], nil).returns('public restricted')
@@ -129,16 +129,16 @@ describe Puppet::Type.type(:firewalld_zone) do
     end
 
     context 'when specifiying masquerade' do
-      let(:resource) {
+      let(:resource) do
         described_class.new(
           name: 'public',
           ensure: :present,
           masquerade: true,
         )
-      }
-      let(:provider) {
+      end
+      let(:provider) do
         resource.provider
-      }
+      end
 
       it 'sets masquerading' do
         provider.expects(:execute_firewall_cmd).with(['--add-masquerade'])

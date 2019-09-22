@@ -16,10 +16,10 @@ Puppet::Type.type(:firewalld_ipset).provide(
       raw_options = ipset_raw.match(/options: (.*)/)
       options = {}
       if raw_options
-        raw_options[1].split(' ').each { |v|
+        raw_options[1].split(' ').each do |v|
           k, v = v.split('=')
           options[k.to_sym] = v
-        }
+        end
       end
       new(
         {

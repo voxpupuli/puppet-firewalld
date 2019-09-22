@@ -2,16 +2,16 @@ require 'spec_helper'
 
 describe 'firewalld::custom_service' do
   let(:title) { 'My Service' }
-  let(:xml) {
+  let(:xml) do
     File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'services', 'custom_service.xml'))
-  }
+  end
 
-  let(:xml_port_range) {
+  let(:xml_port_range) do
     File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'services', 'custom_service_port_range.xml'))
-  }
+  end
 
   context 'when defining with specific ports' do
-    let(:params) {{
+    let(:params) do {
       short: 'myservice',
       description: 'My multi port service',
       port: [
@@ -49,7 +49,7 @@ describe 'firewalld::custom_service' do
         'ipv4' => '127.0.0.1',
         'ipv6' => '::1'
       }
-    }}
+    } end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice.xml').with(
@@ -58,7 +58,7 @@ describe 'firewalld::custom_service' do
     end
   end
   context 'when defining with specific filename' do
-    let(:params) {{
+    let(:params) do {
       short: 'myservice',
       filename: 'myservice_file',
       description: 'My multi port service',
@@ -96,7 +96,7 @@ describe 'firewalld::custom_service' do
         'ipv4' => '127.0.0.1',
         'ipv6' => '::1'
       }
-    }}
+    } end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice_file.xml').with(
@@ -105,7 +105,7 @@ describe 'firewalld::custom_service' do
     end
   end
   context 'when defining with integer ports' do
-    let(:params) {{
+    let(:params) do {
       short: 'myservice',
       filename: 'myservice_file',
       description: 'My multi port service',
@@ -145,7 +145,7 @@ describe 'firewalld::custom_service' do
         'ipv4' => '127.0.0.1',
         'ipv6' => '::1'
       }
-    }}
+    } end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice_file.xml').with(
@@ -154,7 +154,7 @@ describe 'firewalld::custom_service' do
     end
   end
   context 'when defining with a port range' do
-    let(:params) {{
+    let(:params) do {
       short: 'myservice',
       description: 'My multi port service',
       port: [
@@ -172,7 +172,7 @@ describe 'firewalld::custom_service' do
         'ipv4' => '127.0.0.1',
         'ipv6' => '::1'
       }
-    }}
+    } end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice.xml').with(

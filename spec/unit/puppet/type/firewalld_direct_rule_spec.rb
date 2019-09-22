@@ -15,14 +15,15 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
     end
 
     describe 'namevar validation' do
-      let(:attrs) do {
-        title: 'Allow SSH',
-        ensure: 'present',
-        table: 'filter',
-        chain: 'OUTPUT',
-        priority: 1,
-        args: '-p tcp ---dport=22 -j ACCEPT'
-      } end
+      let(:attrs) do
+        {
+          title: 'Allow SSH',
+          ensure: 'present',
+          table: 'filter',
+          chain: 'OUTPUT',
+          priority: 1,
+          args: '-p tcp ---dport=22 -j ACCEPT'
+        } end
 
       it 'has :name as its namevar' do
         expect(described_class.key_attributes).to eq([:name])

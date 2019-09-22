@@ -11,10 +11,11 @@ describe 'firewalld::custom_service' do
   end
 
   context 'when defining with specific ports' do
-    let(:params) do {
-      short: 'myservice',
-      description: 'My multi port service',
-      port: [
+    let(:params) do
+      {
+        short: 'myservice',
+        description: 'My multi port service',
+        port: [
         {
           'port'     => '8000',
           'protocol' => 'tcp'
@@ -44,12 +45,12 @@ describe 'firewalld::custom_service' do
           'protocol' => 'vrrp'
         }
       ],
-      module: ['nf_conntrack_netbios_ns'],
-      destination: {
-        'ipv4' => '127.0.0.1',
-        'ipv6' => '::1'
-      }
-    } end
+        module: ['nf_conntrack_netbios_ns'],
+        destination: {
+          'ipv4' => '127.0.0.1',
+          'ipv6' => '::1'
+        }
+      } end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice.xml').with(
@@ -58,11 +59,12 @@ describe 'firewalld::custom_service' do
     end
   end
   context 'when defining with specific filename' do
-    let(:params) do {
-      short: 'myservice',
-      filename: 'myservice_file',
-      description: 'My multi port service',
-      port: [
+    let(:params) do
+      {
+        short: 'myservice',
+        filename: 'myservice_file',
+        description: 'My multi port service',
+        port: [
         {
           'port'     => '8000',
           'protocol' => 'tcp'
@@ -91,12 +93,12 @@ describe 'firewalld::custom_service' do
           'protocol' => 'vrrp'
         }
       ],
-      module: ['nf_conntrack_netbios_ns'],
-      destination: {
-        'ipv4' => '127.0.0.1',
-        'ipv6' => '::1'
-      }
-    } end
+        module: ['nf_conntrack_netbios_ns'],
+        destination: {
+          'ipv4' => '127.0.0.1',
+          'ipv6' => '::1'
+        }
+      } end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice_file.xml').with(
@@ -105,11 +107,12 @@ describe 'firewalld::custom_service' do
     end
   end
   context 'when defining with integer ports' do
-    let(:params) do {
-      short: 'myservice',
-      filename: 'myservice_file',
-      description: 'My multi port service',
-      port: [
+    let(:params) do
+      {
+        short: 'myservice',
+        filename: 'myservice_file',
+        description: 'My multi port service',
+        port: [
         {
           'port'     => 8000,
           'protocol' => 'tcp'
@@ -140,12 +143,12 @@ describe 'firewalld::custom_service' do
         }
 
       ],
-      module: ['nf_conntrack_netbios_ns'],
-      destination: {
-        'ipv4' => '127.0.0.1',
-        'ipv6' => '::1'
-      }
-    } end
+        module: ['nf_conntrack_netbios_ns'],
+        destination: {
+          'ipv4' => '127.0.0.1',
+          'ipv6' => '::1'
+        }
+      } end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice_file.xml').with(
@@ -154,10 +157,11 @@ describe 'firewalld::custom_service' do
     end
   end
   context 'when defining with a port range' do
-    let(:params) do {
-      short: 'myservice',
-      description: 'My multi port service',
-      port: [
+    let(:params) do
+      {
+        short: 'myservice',
+        description: 'My multi port service',
+        port: [
         {
           'port'     => '8000:8002',
           'protocol' => 'tcp'
@@ -167,12 +171,12 @@ describe 'firewalld::custom_service' do
           'protocol' => 'udp'
         }
       ],
-      module: ['nf_conntrack_netbios_ns'],
-      destination: {
-        'ipv4' => '127.0.0.1',
-        'ipv6' => '::1'
-      }
-    } end
+        module: ['nf_conntrack_netbios_ns'],
+        destination: {
+          'ipv4' => '127.0.0.1',
+          'ipv6' => '::1'
+        }
+      } end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice.xml').with(

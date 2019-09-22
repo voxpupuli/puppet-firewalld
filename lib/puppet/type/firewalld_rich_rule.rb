@@ -45,9 +45,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
         { 'address' => value }
       else
         errormsg = 'Only one source type address or ipset may be specified.'
-        if value.has_key?('address') && value.has_key?('ipset')
-          raise errormsg
-        end
+        raise errormsg if value.has_key?('address') && value.has_key?('ipset')
         value
       end
     end
@@ -59,9 +57,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
         { 'address' => value }
       else
         errormsg = 'Only one source type address or ipset may be specified.'
-        if value.has_key?('address') && value.has_key?('ipset')
-          raise errormsg
-        end
+        raise errormsg if value.has_key?('address') && value.has_key?('ipset')
         value
       end
     end

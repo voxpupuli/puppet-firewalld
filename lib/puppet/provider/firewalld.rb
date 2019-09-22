@@ -11,9 +11,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def initialize(*args)
-    if state.nil?
-      check_running_state
-    end
+    check_running_state if state.nil?
     super
   end
 
@@ -86,9 +84,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   # in one element
   #
   def parse_args(args)
-    if args.is_a?(Array)
-      args = args.flatten.join(' ')
-    end
+    args = args.flatten.join(' ') if args.is_a?(Array)
     args.split(%r{(\'[^\']*\'| )}).reject { |r| ['', ' '].include?(r) }
   end
 

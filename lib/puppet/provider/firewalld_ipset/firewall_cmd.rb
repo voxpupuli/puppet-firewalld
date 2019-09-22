@@ -55,14 +55,10 @@ Puppet::Type.type(:firewalld_ipset).provide(
     }
     options = options.merge(@resource[:options]) if @resource[:options]
     options.each do |option_name, value|
-      if value
-        args << ["--option=#{option_name}=#{value}"]
-      end
+      args << ["--option=#{option_name}=#{value}"] if value
     end
     execute_firewall_cmd(args.flatten, nil)
-    if @resource[:manage_entries]
-      @resource[:entries].each { |e| add_entry(e) }
-    end
+    @resource[:entries].each { |e| add_entry(e) } if @resource[:manage_entries]
   end
 
   [:type, :maxelem, :family, :hashsize, :timeout].each do |method|

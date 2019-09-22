@@ -50,7 +50,8 @@ describe 'firewalld::custom_service' do
           'ipv4' => '127.0.0.1',
           'ipv6' => '::1'
         }
-      } end
+      }
+    end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice.xml').with(
@@ -98,7 +99,8 @@ describe 'firewalld::custom_service' do
           'ipv4' => '127.0.0.1',
           'ipv6' => '::1'
         }
-      } end
+      }
+    end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice_file.xml').with(
@@ -148,7 +150,8 @@ describe 'firewalld::custom_service' do
           'ipv4' => '127.0.0.1',
           'ipv6' => '::1'
         }
-      } end
+      }
+    end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice_file.xml').with(
@@ -176,7 +179,8 @@ describe 'firewalld::custom_service' do
           'ipv4' => '127.0.0.1',
           'ipv6' => '::1'
         }
-      } end
+      }
+    end
 
     it do
       is_expected.to contain_file('/etc/firewalld/services/myservice.xml').with(

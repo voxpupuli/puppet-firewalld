@@ -23,7 +23,8 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
           chain: 'OUTPUT',
           priority: 1,
           args: '-p tcp ---dport=22 -j ACCEPT'
-        } end
+        }
+      end
 
       it 'has :name as its namevar' do
         expect(described_class.key_attributes).to eq([:name])

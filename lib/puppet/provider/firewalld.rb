@@ -30,22 +30,20 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def self.check_running_state
-    begin
-      debug("Executing --state command - current value #{@state}")
-      ret = execute_firewall_cmd(['--state'], nil, false, false, check_online = false)
-      Puppet::Provider::Firewalld.runstate = ret.exitstatus == 0 ? true : false
-    rescue Puppet::MissingCommand => e
-      # This exception is caught in case the module is being run before
-      # the package provider has installed the firewalld package, if we
-      # cannot find the firewalld-cmd command then we silently continue
-      # leaving @running set to nil, this will cause it to be re-checked
-      # later in the execution process.
-      #
-      # See: https://github.com/crayfishx/puppet-firewalld/issues/96
-      #
-      debug('Could not determine state of firewalld because the executable is not available')
-      return nil
-    end
+    debug("Executing --state command - current value #{@state}")
+    ret = execute_firewall_cmd(['--state'], nil, false, false, check_online = false)
+    Puppet::Provider::Firewalld.runstate = ret.exitstatus == 0 ? true : false
+  rescue Puppet::MissingCommand => e
+    # This exception is caught in case the module is being run before
+    # the package provider has installed the firewalld package, if we
+    # cannot find the firewalld-cmd command then we silently continue
+    # leaving @running set to nil, this will cause it to be re-checked
+    # later in the execution process.
+    #
+    # See: https://github.com/crayfishx/puppet-firewalld/issues/96
+    #
+    debug('Could not determine state of firewalld because the executable is not available')
+    return nil
   end
 
   # v3.0.0

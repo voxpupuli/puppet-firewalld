@@ -31,11 +31,11 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
   end
 
   newparam(:name, :namevar => :true) do
-    desc "Name of the chain eg: LOG_DROPS"
+    desc 'Name of the chain eg: LOG_DROPS'
   end
 
   newparam(:inet_protocol) do
-    desc "Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)"
+    desc 'Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)'
     newvalues('ipv4','ipv6')
     defaultto('ipv4')
     munge do |value|
@@ -45,7 +45,7 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
   end
 
   newparam(:table) do
-    desc "Name of the table type to add (e.g: filter, nat, mangle, raw)"
+    desc 'Name of the table type to add (e.g: filter, nat, mangle, raw)'
     isnamevar
   end
 

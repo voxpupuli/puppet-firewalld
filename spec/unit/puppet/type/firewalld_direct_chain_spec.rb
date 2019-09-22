@@ -28,12 +28,12 @@ describe Puppet::Type.type(:firewalld_direct_chain) do
         resource=described_class.new(:title => 'ipv4:filter:LOG_DROPS')
         expect(resource.name).to eq('LOG_DROPS')
         expect(resource[:table]).to eq('filter')
-        expect(resource[:inet_protocol]).to eq("ipv4")
+        expect(resource[:inet_protocol]).to eq('ipv4')
       end
 
       it 'should default inet_protocol to ipv4' do
         resource=described_class.new(:title => 'LOG_DROPS', :table => 'filter')
-        expect(resource[:inet_protocol]).to eq("ipv4")
+        expect(resource[:inet_protocol]).to eq('ipv4')
       end
 
       it 'should raise an error if given malformed inet protocol' do

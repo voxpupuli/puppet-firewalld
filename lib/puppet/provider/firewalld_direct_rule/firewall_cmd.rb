@@ -5,7 +5,7 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
   :firewall_cmd,
   :parent => Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
+  desc 'Interact with firewall-cmd'
 
   def exists?
     @rule_args ||= generate_raw

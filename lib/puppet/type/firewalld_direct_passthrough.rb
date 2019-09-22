@@ -23,9 +23,9 @@ Puppet::Type.newtype(:firewalld_direct_passthrough) do
   ensurable
 
   newparam(:inet_protocol) do
-    desc "Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)"
-    newvalues("ipv4", "ipv6")
-    defaultto("ipv4")
+    desc 'Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)'
+    newvalues('ipv4', 'ipv6')
+    defaultto('ipv4')
     munge do |value|
       value.to_s
     end
@@ -33,7 +33,7 @@ Puppet::Type.newtype(:firewalld_direct_passthrough) do
 
   newparam(:args) do
     isnamevar
-    desc "Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)"
+    desc 'Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)'
   end
 
 end

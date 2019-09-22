@@ -5,7 +5,7 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
   :firewalld_cmd,
   :parent => Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
+  desc 'Interact with firewall-cmd'
 
 
   def exists?
@@ -28,7 +28,7 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
     passt = []
     passt << [
 	    @resource[:inet_protocol],
-	    @resource[:args].split(" ")
+	    @resource[:args].split(' ')
     ]
     passt.flatten
   end

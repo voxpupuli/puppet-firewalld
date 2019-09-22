@@ -5,7 +5,7 @@ Puppet::Type.type(:firewalld_direct_purge).provide(
   :firewall_cmd,
   :parent => Puppet::Provider::Firewalld
 ) do
-  desc "Meta provider to the firewalld_direct_purge type"
+  desc 'Meta provider to the firewalld_direct_purge type'
 
   def get_instances_of(restype)
     raise Puppet::Error, "Unknown type #{restype}" unless [:chain, :passthrough, :rule].include?(restype)

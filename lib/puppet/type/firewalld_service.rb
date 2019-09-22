@@ -29,16 +29,16 @@ Puppet::Type.newtype(:firewalld_service) do
   end
 
   newparam(:name, :namevar => :true) do
-    desc "Name of the service resource in Puppet"
+    desc 'Name of the service resource in Puppet'
   end
 
   newparam(:service) do
-    desc "Name of the service to add"
+    desc 'Name of the service to add'
     defaultto { @resource[:name] }
   end
 
   newparam(:zone) do
-    desc "Name of the zone to which you want to add the service"
+    desc 'Name of the zone to which you want to add the service'
   end
 
   autorequire(:firewalld_zone) do

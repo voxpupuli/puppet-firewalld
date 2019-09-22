@@ -7,12 +7,12 @@ Puppet::Type.type(:firewalld_zone).provide(
   :firewall_cmd,
   :parent  => Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
+  desc 'Interact with firewall-cmd'
 
 
   def exists?
     @resource[:zone] = @resource[:name]
-    execute_firewall_cmd(['--get-zones'], nil).split(" ").include?(@resource[:name])
+    execute_firewall_cmd(['--get-zones'], nil).split(' ').include?(@resource[:name])
   end
 
   def create
@@ -47,7 +47,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def interfaces
-    execute_firewall_cmd(['--list-interfaces']).chomp.split(" ") || []
+    execute_firewall_cmd(['--list-interfaces']).chomp.split(' ') || []
   end
 
   def interfaces=(new_interfaces)
@@ -65,7 +65,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def sources
-    execute_firewall_cmd(['--list-sources']).chomp.split(" ").sort || []
+    execute_firewall_cmd(['--list-sources']).chomp.split(' ').sort || []
   end
 
   def sources=(new_sources)
@@ -125,7 +125,7 @@ Puppet::Type.type(:firewalld_zone).provide(
             raise Puppet::Error, "#{block} is not a valid icmp type on this system! Valid types are: #{valid_types}"
           end
         else
-          raise Puppet::Error, "parameter icmp_blocks must be a string or array of strings!"
+          raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'
         end
       end
     when String then
@@ -141,7 +141,7 @@ Puppet::Type.type(:firewalld_zone).provide(
         raise Puppet::Error, "#{i} is not a valid icmp type on this system! Valid types are: #{valid_types}"
       end
     else
-      raise Puppet::Error, "parameter icmp_blocks must be a string or array of strings!"
+      raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'
     end
     if !remove_blocks.empty?
       remove_blocks.each do |block|
@@ -175,7 +175,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     [ perm, curr ].flatten.uniq.map do |entry|
       port,protocol = entry.split(/\//)
       self.debug("get_ports() Found port #{port} protocol #{protocol}")
-      { "port" => port, "protocol" => protocol }
+      { 'port' => port, 'protocol' => protocol }
     end
   end
 

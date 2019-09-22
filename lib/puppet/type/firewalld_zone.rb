@@ -48,52 +48,52 @@ Puppet::Type.newtype(:firewalld_zone) do
 
 
   newparam(:name) do
-    desc "Name of the rule resource in Puppet"
+    desc 'Name of the rule resource in Puppet'
   end
 
   newparam(:zone) do
-    desc "Name of the zone"
+    desc 'Name of the zone'
   end
 
   newproperty(:target) do
-    desc "Specify the target for the zone"
+    desc 'Specify the target for the zone'
   end
 
   newproperty(:interfaces, :array_matching => :all) do
-    desc "Specify the interfaces for the zone"
+    desc 'Specify the interfaces for the zone'
 
     def insync?(is)
       case should
       when String then should.lines.sort == is.sort
       when Array then should.sort == is.sort
-      else raise Puppet::Error, "parameter interfaces must be a string or array of strings!"
+      else raise Puppet::Error, 'parameter interfaces must be a string or array of strings!'
       end
     end
   end
 
   newproperty(:masquerade) do
-    desc "Can be set to true or false, specifies whether to add or remove masquerading from the zone"
+    desc 'Can be set to true or false, specifies whether to add or remove masquerading from the zone'
     newvalue(:true)
     newvalue(:false)
   end
 
   newproperty(:sources, :array_matching => :all) do
-    desc "Specify the sources for the zone"
+    desc 'Specify the sources for the zone'
 
     def insync?(is)
       case should
       when String then should.lines.sort == is.sort
       when Array then should.sort == is.sort
-      else raise Puppet::Error, "parameter sources must be a string or array of strings!"
+      else raise Puppet::Error, 'parameter sources must be a string or array of strings!'
       end
     end
 
     def is_to_s(value = [])
-      '[' + value.join(", ") + ']'
+      '[' + value.join(', ') + ']'
     end
 
     def should_to_s(value = [])
-      '[' + value.join(", ") + ']'
+      '[' + value.join(', ') + ']'
     end
   end
 
@@ -105,7 +105,7 @@ Puppet::Type.newtype(:firewalld_zone) do
       case should
       when String then should.lines.sort == is.sort
       when Array then should.sort == is.sort
-      else raise Puppet::Error, "parameter icmp_blocks must be a string or array of strings!"
+      else raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'
       end
     end
   end
@@ -228,16 +228,16 @@ Puppet::Type.newtype(:firewalld_zone) do
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_port) }.each do |fwp|
       if fwp[:zone] == self[:name]
         self.debug("Not purging puppet controlled port #{fwp[:port]}")
-        puppet_ports << { "port" => fwp[:port], "protocol" => fwp[:protocol] }
+        puppet_ports << { 'port' => fwp[:port], 'protocol' => fwp[:protocol] }
       end
     end
     provider.get_ports.reject { |p| puppet_ports.include?(p) }.each do |purge|
       self.debug("Should purge port #{purge['port']} proto #{purge['protocol']}")
       res_type = Puppet::Type.type(:firewalld_port).new(
         :name     => "#{self[:name]}-#{purge['port']}-#{purge['protocol']}-purge",
-        :port     => purge["port"],
+        :port     => purge['port'],
         :ensure   => :absent,
-        :protocol => purge["protocol"],
+        :protocol => purge['protocol'],
         :zone     => self[:name]
       )
       purge_resource(res_type)
@@ -246,11 +246,11 @@ Puppet::Type.newtype(:firewalld_zone) do
   end
 
   newparam(:description) do
-    desc "Description of the zone to add"
+    desc 'Description of the zone to add'
   end
 
   newparam(:short) do
-    desc "Short description of the zone to add"
+    desc 'Short description of the zone to add'
   end
 
 end

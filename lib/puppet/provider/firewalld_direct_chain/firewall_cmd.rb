@@ -2,7 +2,7 @@ require 'puppet'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
 Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, :parent => Puppet::Provider::Firewalld) do
-  desc "Provider for managing firewalld direct chains using firewall-cmd"
+  desc 'Provider for managing firewalld direct chains using firewall-cmd'
 
   def exists?
     @chain_args ||= generate_raw

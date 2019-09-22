@@ -5,10 +5,10 @@ Puppet::Type.type(:firewalld_service).provide(
   :firewall_cmd,
   :parent => Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
+  desc 'Interact with firewall-cmd'
 
   def exists?
-    execute_firewall_cmd(['--list-services']).split(" ").include?(@resource[:service])
+    execute_firewall_cmd(['--list-services']).split(' ').include?(@resource[:service])
   end
 
   def create

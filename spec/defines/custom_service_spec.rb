@@ -3,11 +3,11 @@ require 'spec_helper'
 describe 'firewalld::custom_service' do
   let(:title) { 'My Service' }
   let(:xml) {
-    File.read(File.join(File.dirname(__FILE__), "..", "fixtures", "services", "custom_service.xml"))
+    File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'services', 'custom_service.xml'))
   }
   
   let(:xml_port_range) {
-    File.read(File.join(File.dirname(__FILE__), "..", "fixtures", "services", "custom_service_port_range.xml"))
+    File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'services', 'custom_service_port_range.xml'))
   }
 
   context 'when defining with specific ports' do

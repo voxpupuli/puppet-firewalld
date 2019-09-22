@@ -22,7 +22,7 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
 
       it 'should default inet_protocol to ipv4' do
         resource=described_class.new(:title => '-A OUTPUT -j OUTPUT_filter')
-        expect(resource[:inet_protocol]).to eq("ipv4")
+        expect(resource[:inet_protocol]).to eq('ipv4')
       end
 
       it 'should raise an error if given malformed inet protocol' do
@@ -33,7 +33,7 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
 
   end
 
-  describe "provider" do
+  describe 'provider' do
 
     let(:resource) {
       described_class.new(
@@ -46,11 +46,11 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
 
     let(:provider) { resource.provider }
 
-    it "should create" do
+    it 'should create' do
       provider.expects(:execute_firewall_cmd).with(['--direct','--add-passthrough', [ 'ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
       provider.create
     end
-    it "should destroy" do
+    it 'should destroy' do
       provider.expects(:execute_firewall_cmd).with(['--direct','--remove-passthrough', [ 'ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
       provider.destroy
     end

@@ -5,12 +5,12 @@ Puppet::Type.type(:firewalld_ipset).provide(
   :firewall_cmd,
   :parent => Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
+  desc 'Interact with firewall-cmd'
 
   mk_resource_methods
 
   def self.instances
-    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split(" ")
+    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split(' ')
     ipset_ids.collect do |ipset_id|
       ipset_raw = execute_firewall_cmd(["--info-ipset=#{ipset_id}"], nil)
       raw_options = ipset_raw.match(/options: (.*)/)
@@ -76,7 +76,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
 
   def entries
     if @resource[:manage_entries]
-      execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--get-entries"], nil).split("\n").sort
+      execute_firewall_cmd(["--ipset=#{@resource[:name]}", '--get-entries'], nil).split("\n").sort
     else
       @resource[:entries]
     end

@@ -28,15 +28,15 @@ Puppet::Type.newtype(:firewalld_port) do
   end
   
   newparam(:name, :namevar => true) do
-    desc "Name of the port resource in Puppet"
+    desc 'Name of the port resource in Puppet'
   end
   
   newparam(:zone) do
-    desc "Name of the zone to which you want to add the port"
+    desc 'Name of the zone to which you want to add the port'
   end
   
   newparam(:port) do
-    desc "Specify the element as a port"
+    desc 'Specify the element as a port'
     defaultto { @resource[:name] }
     munge do |value|
       value.to_s
@@ -44,7 +44,7 @@ Puppet::Type.newtype(:firewalld_port) do
   end
 
   newparam(:protocol) do
-    desc "Specify the element as a protocol"
+    desc 'Specify the element as a protocol'
   end
   
   autorequire(:firewalld_zone) do

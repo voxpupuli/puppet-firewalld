@@ -23,15 +23,15 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
 
   newparam(:name) do
     isnamevar
-    desc "Name of the rule resource in Puppet"
+    desc 'Name of the rule resource in Puppet'
   end
 
   newparam(:zone) do
-    desc "Name of the zone"
+    desc 'Name of the zone'
   end
 
   newparam(:family) do
-    desc "IP family, one of ipv4 or ipv6, defauts to ipv4"
+    desc 'IP family, one of ipv4 or ipv6, defauts to ipv4'
     newvalues(:ipv4, :ipv6)
     defaultto :ipv4
     munge do |value|
@@ -40,13 +40,13 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   newparam(:source) do
-    desc "Specify source address, this can be a string of the IP address or a hash containing other options"
+    desc 'Specify source address, this can be a string of the IP address or a hash containing other options'
     munge do |value|
       if value.is_a?(String)
         { 'address' => value }
       else
-        errormsg = "Only one source type address or ipset may be specified."
-        if value.has_key?("address") && value.has_key?("ipset")
+        errormsg = 'Only one source type address or ipset may be specified.'
+        if value.has_key?('address') && value.has_key?('ipset')
           self.fail errormsg
         end
         value
@@ -54,13 +54,13 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     end
   end
   newparam(:dest) do
-    desc "Specify destination address, this can be a string of the IP address or a hash containing other options"
+    desc 'Specify destination address, this can be a string of the IP address or a hash containing other options'
     munge do |value|
       if value.is_a?(String)
         { 'address' => value }
       else
-        errormsg = "Only one source type address or ipset may be specified."
-        if value.has_key?("address") && value.has_key?("ipset")
+        errormsg = 'Only one source type address or ipset may be specified.'
+        if value.has_key?('address') && value.has_key?('ipset')
           self.fail errormsg
         end
         value
@@ -69,39 +69,39 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   newparam(:service) do
-    desc "Specify the element as a service"
+    desc 'Specify the element as a service'
   end
 
   newparam(:port) do
-    desc "Specify the element as a port"
+    desc 'Specify the element as a port'
   end
 
   newparam(:protocol) do
-    desc "Specify the element as a protocol"
+    desc 'Specify the element as a protocol'
   end
 
   newparam(:icmp_block) do
-    desc "Specify the element as an icmp-block"
+    desc 'Specify the element as an icmp-block'
   end
 
   newparam(:masquerade) do
-    desc "Specify the element as masquerade"
+    desc 'Specify the element as masquerade'
   end
 
   newparam(:forward_port) do
-    desc "Specify the element as forward-port"
+    desc 'Specify the element as forward-port'
   end
 
   newparam(:log) do
-    desc "doc"
+    desc 'doc'
   end
 
   newparam(:audit) do
-    desc "doc"
+    desc 'doc'
   end
 
   newparam(:action, :parent => PuppetX::Firewalld::Property::RichRuleAction) do
-    desc "doc"
+    desc 'doc'
   end
 
   newparam(:raw_rule) do
@@ -125,7 +125,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   autorequire(:ipset) do
-    self[:source]["ipset"] if self[:source].is_a?(Hash)
+    self[:source]['ipset'] if self[:source].is_a?(Hash)
   end
 
 

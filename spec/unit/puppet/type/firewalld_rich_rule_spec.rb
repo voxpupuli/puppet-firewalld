@@ -68,7 +68,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
 
     it 'should default family to ipv4' do
       resource=described_class.new(attrs)
-      expect(resource[:family]).to eq("ipv4")
+      expect(resource[:family]).to eq('ipv4')
     end
 
     it 'should raise an error if given malformed inet protocol' do
@@ -87,7 +87,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
 
   ## Many more scenarios needed!
   #
-  describe "provider" do
+  describe 'provider' do
 
     scenarios = {
       ## Test source
@@ -96,10 +96,10 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         :ensure => 'present',
         :family => 'ipv4',
         :zone   => 'restricted',
-        :source => { "address" => "10.0.1.2/24" },
-        :service => "ssh",
-        :log     => { "level" => "debug" },
-        :action  => "accept",
+        :source => { 'address' => '10.0.1.2/24' },
+        :service => 'ssh',
+        :log     => { 'level' => 'debug' },
+        :action  => 'accept',
       } => 'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept',
       ## Test ipset
       {
@@ -107,10 +107,10 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         :ensure => 'present',
         :family => 'ipv4',
         :zone   => 'restricted',
-        :source => { "ipset" => "whitelist" },
-        :service => "ssh",
-        :log     => { "level" => "debug" },
-        :action  => "accept",
+        :source => { 'ipset' => 'whitelist' },
+        :service => 'ssh',
+        :log     => { 'level' => 'debug' },
+        :action  => 'accept',
       } => 'rule family="ipv4" source ipset="whitelist" service name="ssh" log level="debug" accept',
 
       ## Test destination
@@ -119,10 +119,10 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         :ensure => 'present',
         :family => 'ipv4',
         :zone   => 'restricted',
-        :dest => "10.0.1.2/24",
-        :service => "ssh",
-        :log     => { "level" => "debug" },
-        :action  => "accept",
+        :dest => '10.0.1.2/24',
+        :service => 'ssh',
+        :log     => { 'level' => 'debug' },
+        :action  => 'accept',
       } => 'rule family="ipv4" destination address="10.0.1.2/24" service name="ssh" log level="debug" accept',
 
       ## Test address invertion
@@ -131,20 +131,20 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         :ensure => 'present',
         :family => 'ipv4',
         :zone   => 'restricted',
-        :source => { "address" => "10.0.1.2/24", "invert" => true },
-        :service => "ssh",
-        :log     => { "level" => "debug" },
-        :action  => "accept",
+        :source => { 'address' => '10.0.1.2/24', 'invert' => true },
+        :service => 'ssh',
+        :log     => { 'level' => 'debug' },
+        :action  => 'accept',
       } => 'rule family="ipv4" source NOT address="10.0.1.2/24" service name="ssh" log level="debug" accept',
       {
         :name => 'accept ssh',
         :ensure => 'present',
         :family => 'ipv4',
         :zone   => 'restricted',
-        :dest => { "address" => "10.0.1.2/24", "invert" => true },
-        :service => "ssh",
-        :log     => { "level" => "debug" },
-        :action  => "accept",
+        :dest => { 'address' => '10.0.1.2/24', 'invert' => true },
+        :service => 'ssh',
+        :log     => { 'level' => 'debug' },
+        :action  => 'accept',
       } => 'rule family="ipv4" destination NOT address="10.0.1.2/24" service name="ssh" log level="debug" accept',
 
       ## test port
@@ -153,10 +153,10 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         :ensure => 'present',
         :family => 'ipv4',
         :zone   => 'restricted',
-        :dest => "10.0.1.2/24",
-        :port =>  { 'port' => "22", 'protocol' => 'tcp' },
-        :log     => { "level" => "debug" },
-        :action  => "accept",
+        :dest => '10.0.1.2/24',
+        :port =>  { 'port' => '22', 'protocol' => 'tcp' },
+        :log     => { 'level' => 'debug' },
+        :action  => 'accept',
       } => 'rule family="ipv4" destination address="10.0.1.2/24" port port="22" protocol="tcp" log level="debug" accept',
 
       ## test forward port
@@ -164,9 +164,9 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         :name => 'accept ssh',
         :ensure => 'present',
         :family => 'ipv4',
-        :forward_port => { "port" => "8080", "protocol" => "tcp", "to_addr" => "10.72.1.10", "to_port" => "80" },
+        :forward_port => { 'port' => '8080', 'protocol' => 'tcp', 'to_addr' => '10.72.1.10', 'to_port' => '80' },
         :zone   => 'restricted',
-        :log     => { "level" => "debug" },
+        :log     => { 'level' => 'debug' },
       } => 'rule family="ipv4" forward-port port="8080" protocol="tcp" to-port="80" to-addr="10.72.1.10" log level="debug"',
 
     }
@@ -186,18 +186,18 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
           'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept'
         }
       
-        it "should query the status" do
+        it 'should query the status' do
           @fakeclass.stubs(:exitstatus).returns(0)
           provider.expects(:execute_firewall_cmd).with(['--query-rich-rule',rawrule], 'restricted', true, false).returns(@fakeclass)
           expect(provider.exists?).to be_truthy
         end
     
-        it "should create" do
+        it 'should create' do
           provider.expects(:execute_firewall_cmd).with(['--add-rich-rule', rawrule])
           provider.create
         end
     
-        it "should destroy" do
+        it 'should destroy' do
           provider.expects(:execute_firewall_cmd).with(['--remove-rich-rule', rawrule])
           provider.destroy
         end

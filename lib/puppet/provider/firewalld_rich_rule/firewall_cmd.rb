@@ -5,7 +5,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   :firewall_cmd,
   :parent => Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
+  desc 'Interact with firewall-cmd'
 
 
   mk_resource_methods
@@ -117,7 +117,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
       eval_audit,
       eval_action,
     ]
-    @resource[:raw_rule] = raw_rule = rule.flatten.reject { |r| r.empty? }.join(" ")
+    @resource[:raw_rule] = raw_rule = rule.flatten.reject { |r| r.empty? }.join(' ')
     raw_rule
   end
 

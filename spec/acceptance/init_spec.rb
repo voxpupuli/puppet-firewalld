@@ -4,7 +4,7 @@ describe 'firewalld', :unless => UNSUPPORTED_PLATFORMS.include?(fact('osfamily')
 
   context 'running with defaults' do
     it 'should run successfully' do
-      pp = "include firewalld"
+      pp = 'include firewalld'
       #Apply...
       apply_manifest(pp, :catch_failures =>true)
       #...twice and see if this is idempotent

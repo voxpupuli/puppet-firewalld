@@ -5,7 +5,7 @@ Puppet::Type.type(:firewalld_port).provide(
   :firewall_cmd,
   :parent => Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
+  desc 'Interact with firewall-cmd'
   
   mk_resource_methods
   

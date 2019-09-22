@@ -50,7 +50,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   def eval_element
     args = []
     element = elements.select { |e| resource[e] }.first
-    args << element.to_s.gsub(/_/, '-')
+    args << element.to_s.tr('_', '-')
     case element
     when :service
       args << quote_keyval('name', @resource[:service])

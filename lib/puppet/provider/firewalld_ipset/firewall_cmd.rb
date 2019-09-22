@@ -11,7 +11,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
 
   def self.instances
     ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split(' ')
-    ipset_ids.collect do |ipset_id|
+    ipset_ids.map do |ipset_id|
       ipset_raw = execute_firewall_cmd(["--info-ipset=#{ipset_id}"], nil)
       raw_options = ipset_raw.match(%r{options: (.*)})
       options = {}

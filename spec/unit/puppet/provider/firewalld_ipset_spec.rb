@@ -30,13 +30,13 @@ describe provider_class do
 
   describe 'self.instances' do
     it 'returns an array of ip sets' do
-      ipsets_names = provider.class.instances.collect(&:name)
+      ipsets_names = provider.class.instances.map(&:name)
       expect(ipsets_names).to include('black', 'white')
-      ipsets_families = provider.class.instances.collect(&:family)
+      ipsets_families = provider.class.instances.map(&:family)
       expect(ipsets_families).to include('inet', 'inet6')
-      ipsets_hashsize = provider.class.instances.collect(&:hashsize)
+      ipsets_hashsize = provider.class.instances.map(&:hashsize)
       expect(ipsets_hashsize).to include('2048')
-      ipsets_maxelem = provider.class.instances.collect(&:maxelem)
+      ipsets_maxelem = provider.class.instances.map(&:maxelem)
       expect(ipsets_maxelem).to include('200', '400')
     end
   end

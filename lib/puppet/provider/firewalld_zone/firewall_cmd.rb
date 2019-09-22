@@ -39,7 +39,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     zone_target
   end
 
-  def target=(t)
+  def target=(_t)
     debug("Setting target for zone #{@resource[:name]} to #{@resource[:target]}")
     execute_firewall_cmd(['--set-target', @resource[:target]])
   end

@@ -96,7 +96,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def icmp_blocks
-    get_icmp_blocks()
+    get_icmp_blocks
   end
 
   def icmp_blocks=(i)
@@ -114,11 +114,11 @@ Puppet::Type.type(:firewalld_zone).provide(
 
       i.each do |block|
         if block.is_a?(String)
-          if get_icmp_types().include?(block)
+          if get_icmp_types.include?(block)
             debug("adding block #{block} to zone #{@resource[:name]}")
             set_blocks.push(block)
           else
-            valid_types = get_icmp_types().join(', ')
+            valid_types = get_icmp_types.join(', ')
             raise Puppet::Error, "#{block} is not a valid icmp type on this system! Valid types are: #{valid_types}"
           end
         else
@@ -130,11 +130,11 @@ Puppet::Type.type(:firewalld_zone).provide(
         debug("removing block #{remove_block} from zone #{@resource[:name]}")
         remove_blocks.push(remove_block)
       end
-      if get_icmp_types().include?(i)
+      if get_icmp_types.include?(i)
         debug("adding block #{i} to zone #{@resource[:name]}")
         set_blocks.push(i)
       else
-        valid_types = get_icmp_types().join(', ')
+        valid_types = get_icmp_types.join(', ')
         raise Puppet::Error, "#{i} is not a valid icmp type on this system! Valid types are: #{valid_types}"
       end
     else

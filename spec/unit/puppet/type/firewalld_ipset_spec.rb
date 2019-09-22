@@ -17,7 +17,6 @@ describe Puppet::Type.type(:firewalld_ipset) do
           end
         end
 
-
         [
           :entries
         ].each do |param|
@@ -40,7 +39,6 @@ describe Puppet::Type.type(:firewalld_ipset) do
       ) end.to_not raise_error
     end
   end
-
 
   ## Provider tests for the firewalld_zone type
   #

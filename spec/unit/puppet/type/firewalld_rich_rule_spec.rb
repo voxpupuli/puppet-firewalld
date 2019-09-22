@@ -65,7 +65,6 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       expect(described_class.key_attributes).to eq([:name])
     end
 
-
     it 'defaults family to ipv4' do
       resource=described_class.new(attrs)
       expect(resource[:family]).to eq('ipv4')

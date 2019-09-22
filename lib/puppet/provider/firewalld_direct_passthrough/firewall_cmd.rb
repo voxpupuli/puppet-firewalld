@@ -7,7 +7,6 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
-
   def exists?
     @passt_args ||= generate_raw
     output=execute_firewall_cmd(['--direct', '--query-passthrough', @passt_args], nil, true, false)

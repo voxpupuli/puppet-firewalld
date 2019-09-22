@@ -28,7 +28,6 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
         expect(described_class.key_attributes).to eq([:name])
       end
 
-
       it 'defaults inet_protocol to ipv4' do
         resource=described_class.new(attrs)
         expect(resource[:inet_protocol]).to eq('ipv4')
@@ -78,7 +77,6 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
         expect(provider.parse_args(args)).to eq(['-j', 'LOG', '--log-prefix', '\'# IPTABLES DROPPED:\''])
       end
     end
-
 
   end
 end

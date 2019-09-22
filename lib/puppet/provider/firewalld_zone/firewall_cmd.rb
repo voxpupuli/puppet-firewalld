@@ -2,13 +2,11 @@ require 'puppet'
 require 'puppet/type'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
-
 Puppet::Type.type(:firewalld_zone).provide(
   :firewall_cmd,
   parent: Puppet::Provider::Firewalld
 ) do
   desc 'Interact with firewall-cmd'
-
 
   def exists?
     @resource[:zone] = @resource[:name]

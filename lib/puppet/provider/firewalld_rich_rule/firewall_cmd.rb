@@ -7,7 +7,6 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
-
   mk_resource_methods
 
   def exists?

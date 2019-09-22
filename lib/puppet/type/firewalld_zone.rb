@@ -30,7 +30,6 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   ensurable
 
-
   # When set to 1 these variables cause the purge_* options to indicate to Puppet
   # that we are in a changed state
   #
@@ -45,7 +44,6 @@ Puppet::Type.newtype(:firewalld_zone) do
     purge_ports if self[:purge_ports] == :true
     []
   end
-
 
   newparam(:name) do
     desc 'Name of the rule resource in Puppet'
@@ -165,7 +163,6 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
   end
 
-
   def purge_rich_rules
     return Array.new unless provider.exists?
     purge_rules = Array.new
@@ -192,7 +189,6 @@ Puppet::Type.newtype(:firewalld_zone) do
       # the firewall and drop orphaned running rules
       #
       @rich_rules_purgable = true
-
 
     end
   end

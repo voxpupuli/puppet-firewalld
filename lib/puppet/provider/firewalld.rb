@@ -3,7 +3,6 @@ require 'puppet/type'
 require 'puppet/provider'
 class Puppet::Provider::Firewalld < Puppet::Provider
 
-
   @running = nil
   @runstate = nil
 
@@ -82,8 +81,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
    firewall_cmd.execute(cmd_args.flatten)
   end
 
-
-
   def execute_firewall_cmd(args, zone=@resource[:zone], perm=true, failonfail=true)
     self.class.execute_firewall_cmd(args, zone, perm, failonfail)
   end
@@ -105,7 +102,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   def reload_firewall
     execute_firewall_cmd(['--reload'], nil, false) if online?
   end
-
 
   def offline?
     check_running_state if state.nil?

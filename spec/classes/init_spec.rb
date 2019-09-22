@@ -3,7 +3,6 @@ require 'puppet/provider/firewalld'
 
 describe 'firewalld' do
 
-
   before do
     Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true)
   end

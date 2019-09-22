@@ -109,8 +109,6 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
           handle pruning of rules"
   end
 
-
-
   def elements
     [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
   end
@@ -127,6 +125,5 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   autorequire(:ipset) do
     self[:source]['ipset'] if self[:source].is_a?(Hash)
   end
-
 
 end

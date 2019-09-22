@@ -23,7 +23,6 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
     execute_firewall_cmd(['--direct', '--remove-rule', @rule_args], nil)
   end
 
-
   def generate_raw
     rule = []
     rule << [

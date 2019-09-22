@@ -28,7 +28,6 @@ describe Puppet::Type.type(:firewalld_zone) do
     end
   end
 
-
   ## Provider tests for the firewalld_zone type
   #
   describe 'provider' do
@@ -107,7 +106,6 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.expects(:execute_firewall_cmd).with(['--list-sources']).returns('val val')
         expect(provider.sources).to eq(['val', 'val'])
       end
-
 
       it 'sources should always return in alphanumerical order' do
         provider.expects(:execute_firewall_cmd).with(['--list-sources']).returns('4.4.4.4/32 2.2.2.2/32 3.3.3.3/32')

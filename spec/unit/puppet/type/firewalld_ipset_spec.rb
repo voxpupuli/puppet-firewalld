@@ -49,7 +49,8 @@ describe Puppet::Type.type(:firewalld_ipset) do
     let(:resource) do
       described_class.new(
         name: 'whitelist',
-        entries: ['192.168.2.2', '10.72.1.100'])
+        entries: ['192.168.2.2', '10.72.1.100']
+      )
     end
     let(:provider) do
       resource.provider

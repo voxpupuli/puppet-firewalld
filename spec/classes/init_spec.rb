@@ -221,7 +221,8 @@ describe 'firewalld' do
 
     it do
       should contain_augeas('firewalld::cleanup_on_exit').with(
-        changes: ['set CleanupOnExit "yes"'])
+        changes: ['set CleanupOnExit "yes"']
+      )
     end
   end
 
@@ -234,7 +235,8 @@ describe 'firewalld' do
 
     it do
       should contain_augeas('firewalld::minimal_mark').with(
-        changes: ['set MinimalMark "10"'])
+        changes: ['set MinimalMark "10"']
+      )
     end
   end
 
@@ -247,7 +249,8 @@ describe 'firewalld' do
 
     it do
       should contain_augeas('firewalld::lockdown').with(
-        changes: ['set Lockdown "yes"'])
+        changes: ['set Lockdown "yes"']
+      )
     end
   end
 
@@ -260,7 +263,8 @@ describe 'firewalld' do
 
     it do
       should contain_augeas('firewalld::ipv6_rpfilter').with(
-        changes: ['set IPv6_rpfilter "yes"'])
+        changes: ['set IPv6_rpfilter "yes"']
+      )
     end
   end
 end

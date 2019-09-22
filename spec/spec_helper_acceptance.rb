@@ -2,7 +2,7 @@ require 'beaker-rspec'
 require 'beaker/puppet_install_helper'
 require 'pry'
 
-UNSUPPORTED_PLATFORMS = %w(windows Darwin).freeze
+UNSUPPORTED_PLATFORMS = %w[windows Darwin].freeze
 
 unless ENV['RS_PROVISION'] == 'no' || ENV['BEAKER_provision'] == 'no'
 

@@ -1,7 +1,7 @@
 require_relative '../../puppet_x/firewalld/property/positive_integer'
 
 Puppet::Type.newtype(:firewalld_ipset) do
-  @doc = %q{
+  @doc = %q(
     Configure IPsets in Firewalld
 
     Example:
@@ -11,7 +11,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
             family   => 'inet',
             entries  => ['192.168.0.0/24']
         }
-  }
+  )
 
   ensurable
 

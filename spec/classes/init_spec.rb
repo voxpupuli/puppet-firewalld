@@ -48,8 +48,8 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_resources('firewalld_ipset')
-        .with_purge(true)
+      should contain_resources('firewalld_ipset').
+        with_purge(true)
     end
   end
 
@@ -71,13 +71,13 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld_port('my_port')
-        .with_ensure('present')
-        .with_port('9999')
-        .with_protocol('tcp')
-        .with_zone('public')
-        .that_notifies('Exec[firewalld::reload]')
-        .that_requires('Service[firewalld]')
+      should contain_firewalld_port('my_port').
+        with_ensure('present').
+        with_port('9999').
+        with_protocol('tcp').
+        with_zone('public').
+        that_notifies('Exec[firewalld::reload]').
+        that_requires('Service[firewalld]')
     end
   end
 
@@ -96,11 +96,11 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld_zone('restricted')
-        .with_ensure('present')
-        .with_target('%%REJECT%%')
-        .that_notifies('Exec[firewalld::reload]')
-        .that_requires('Service[firewalld]')
+      should contain_firewalld_zone('restricted').
+        with_ensure('present').
+        with_target('%%REJECT%%').
+        that_notifies('Exec[firewalld::reload]').
+        that_requires('Service[firewalld]')
     end
   end
 
@@ -119,11 +119,11 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld_service('mysql')
-        .with_ensure('present')
-        .with_zone('public')
-        .that_notifies('Exec[firewalld::reload]')
-        .that_requires('Service[firewalld]')
+      should contain_firewalld_service('mysql').
+        with_ensure('present').
+        with_zone('public').
+        that_notifies('Exec[firewalld::reload]').
+        that_requires('Service[firewalld]')
     end
   end
 
@@ -145,11 +145,11 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld_rich_rule('Accept SSH from Gondor')
-        .with_ensure('present')
-        .with_zone('restricted')
-        .that_notifies('Exec[firewalld::reload]')
-        .that_requires('Service[firewalld]')
+      should contain_firewalld_rich_rule('Accept SSH from Gondor').
+        with_ensure('present').
+        with_zone('restricted').
+        that_notifies('Exec[firewalld::reload]').
+        that_requires('Service[firewalld]')
     end
   end
 
@@ -173,10 +173,10 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld__custom_service('MyService')
-        .with_ensure('present')
-        .with_short('MyService')
-        .with_port([{ 'port' => '1234', 'protocol' => 'tcp' }, { 'port' => '1234', 'protocol' => 'udp' }])
+      should contain_firewalld__custom_service('MyService').
+        with_ensure('present').
+        with_short('MyService').
+        with_port([{ 'port' => '1234', 'protocol' => 'tcp' }, { 'port' => '1234', 'protocol' => 'udp' }])
     end
   end
 

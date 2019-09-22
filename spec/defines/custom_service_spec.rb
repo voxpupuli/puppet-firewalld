@@ -16,32 +16,32 @@ describe 'firewalld::custom_service' do
       description: 'My multi port service',
       port: [
         {
-            'port'     => '8000',
-            'protocol' => 'tcp'
+          'port'     => '8000',
+          'protocol' => 'tcp'
         },
         {
-            'port'     => '8000',
-            'protocol' => 'udp'
+          'port'     => '8000',
+          'protocol' => 'udp'
         },
         {
-            'port'     => '8001',
-            'protocol' => 'tcp'
+          'port'     => '8001',
+          'protocol' => 'tcp'
         },
         {
-            'port'     => '8001',
-            'protocol' => 'udp'
+          'port'     => '8001',
+          'protocol' => 'udp'
         },
         {
-            'port'     => '8002',
-            'protocol' => 'tcp'
+          'port'     => '8002',
+          'protocol' => 'tcp'
         },
         {
-            'port'     => '8002',
-            'protocol' => 'udp'
+          'port'     => '8002',
+          'protocol' => 'udp'
         },
         {
-            'port'     => '',
-            'protocol' => 'vrrp'
+          'port'     => '',
+          'protocol' => 'vrrp'
         }
       ],
       module: ['nf_conntrack_netbios_ns'],
@@ -64,31 +64,31 @@ describe 'firewalld::custom_service' do
       description: 'My multi port service',
       port: [
         {
-            'port'     => '8000',
-            'protocol' => 'tcp'
+          'port'     => '8000',
+          'protocol' => 'tcp'
         },
         {
-            'port'     => '8000',
-            'protocol' => 'udp'
+          'port'     => '8000',
+          'protocol' => 'udp'
         },
         {
-            'port'     => '8001',
-            'protocol' => 'tcp'
+          'port'     => '8001',
+          'protocol' => 'tcp'
         },
         {
-            'port'     => '8001',
-            'protocol' => 'udp'
+          'port'     => '8001',
+          'protocol' => 'udp'
         },
         {
-            'port'     => '8002',
-            'protocol' => 'tcp'
+          'port'     => '8002',
+          'protocol' => 'tcp'
         },
         {
-            'port'     => '8002',
-            'protocol' => 'udp'
+          'port'     => '8002',
+          'protocol' => 'udp'
         },
         {
-            'protocol' => 'vrrp'
+          'protocol' => 'vrrp'
         }
       ],
       module: ['nf_conntrack_netbios_ns'],
@@ -111,32 +111,32 @@ describe 'firewalld::custom_service' do
       description: 'My multi port service',
       port: [
         {
-            'port'     => 8000,
-            'protocol' => 'tcp'
+          'port'     => 8000,
+          'protocol' => 'tcp'
         },
         {
-            'port'     => 8000,
-            'protocol' => 'udp'
+          'port'     => 8000,
+          'protocol' => 'udp'
         },
         {
-            'port'     => 8001,
-            'protocol' => 'tcp'
+          'port'     => 8001,
+          'protocol' => 'tcp'
         },
         {
-            'port'     => 8001,
-            'protocol' => 'udp'
+          'port'     => 8001,
+          'protocol' => 'udp'
         },
         {
-            'port'     => 8002,
-            'protocol' => 'tcp'
+          'port'     => 8002,
+          'protocol' => 'tcp'
         },
         {
-            'port'     => 8002,
-            'protocol' => 'udp'
+          'port'     => 8002,
+          'protocol' => 'udp'
         },
         {
-            'port'     => '',
-            'protocol' => 'vrrp'
+          'port'     => '',
+          'protocol' => 'vrrp'
         }
 
       ],
@@ -159,12 +159,12 @@ describe 'firewalld::custom_service' do
       description: 'My multi port service',
       port: [
         {
-            'port'     => '8000:8002',
-            'protocol' => 'tcp'
+          'port'     => '8000:8002',
+          'protocol' => 'tcp'
         },
         {
-            'port'     => '8000:8002',
-            'protocol' => 'udp'
+          'port'     => '8000:8002',
+          'protocol' => 'udp'
         }
       ],
       module: ['nf_conntrack_netbios_ns'],

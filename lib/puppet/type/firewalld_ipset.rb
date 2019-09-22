@@ -18,7 +18,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
   newparam(:name, namevar: true) do
     desc 'Name of the IPset'
     validate do |val|
-      raise Puppet::Error, 'IPset name must be a word with no spaces' unless val =~ /^[\w-]+$/
+      raise Puppet::Error, 'IPset name must be a word with no spaces' unless val =~ %r{^[\w-]+$}
     end
   end
 

@@ -19,11 +19,11 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
   def self.title_patterns
     [
       [
-        /^([^:]+):([^:]+):([^:]+)$/,
+        %r{^([^:]+):([^:]+):([^:]+)$},
         [[:inet_protocol], [:table], [:name]]
       ],
       [
-        /^([^:]+)$/,
+        %r{^([^:]+)$},
         [[:name]]
       ]
     ]

@@ -9,8 +9,8 @@ Puppet::Type.type(:firewalld_direct_purge).provide(
 
   def get_instances_of(restype)
     raise Puppet::Error, "Unknown type #{restype}" unless [:chain, :passthrough, :rule].include?(restype)
-    perm = execute_firewall_cmd(['--direct', "--get-all-#{restype.to_s}s"], nil).split(/\n/)
-    curr = execute_firewall_cmd(['--direct', "--get-all-#{restype.to_s}s"], nil, false).split(/\n/)
+    perm = execute_firewall_cmd(['--direct', "--get-all-#{restype.to_s}s"], nil).split(%r{\n})
+    curr = execute_firewall_cmd(['--direct', "--get-all-#{restype.to_s}s"], nil, false).split(%r{\n})
     [perm, curr].flatten.uniq
   end
 

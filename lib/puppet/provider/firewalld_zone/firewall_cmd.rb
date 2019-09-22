@@ -153,8 +153,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def get_rules
-    perm = execute_firewall_cmd(['--list-rich-rules']).split(/\n/)
-    curr = execute_firewall_cmd(['--list-rich-rules'], @resource[:name], false).split(/\n/)
+    perm = execute_firewall_cmd(['--list-rich-rules']).split(%r{\n})
+    curr = execute_firewall_cmd(['--list-rich-rules'], @resource[:name], false).split(%r{\n})
     [perm, curr].flatten.uniq
   end
 

@@ -84,7 +84,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
     end.each do |inst|
       @purge_resources << inst
       unless Puppet.settings[:noop] || self[:noop]
-        provider.purge_resources(resource_type, inst.split(/ /))
+        provider.purge_resources(resource_type, inst.split(%r{ }))
       end
     end
   end

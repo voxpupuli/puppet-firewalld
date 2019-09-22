@@ -113,16 +113,13 @@ Puppet::Type.type(:firewalld_zone).provide(
       end
 
       i.each do |block|
-        if block.is_a?(String)
-          if get_icmp_types.include?(block)
-            debug("adding block #{block} to zone #{@resource[:name]}")
-            set_blocks.push(block)
-          else
-            valid_types = get_icmp_types.join(', ')
-            raise Puppet::Error, "#{block} is not a valid icmp type on this system! Valid types are: #{valid_types}"
-          end
+        raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!' unless block.is_a?(String)
+        if get_icmp_types.include?(block)
+          debug("adding block #{block} to zone #{@resource[:name]}")
+          set_blocks.push(block)
         else
-          raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'
+          valid_types = get_icmp_types.join(', ')
+          raise Puppet::Error, "#{block} is not a valid icmp type on this system! Valid types are: #{valid_types}"
         end
       end
     when String then
@@ -145,7 +142,7 @@ Puppet::Type.type(:firewalld_zone).provide(
         execute_firewall_cmd(['--remove-icmp-block', block])
       end
     end
-    unless set_blocks.empty?
+    unless set_blocks.empty? # rubocop:disable Style/GuardClause
       set_blocks.each do |block|
         execute_firewall_cmd(['--add-icmp-block', block])
       end

@@ -119,10 +119,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
 
   def self.available?
     check_running_state if state.nil?
-    if state.nil?
-      return false
-    else
-      return true
-    end
+    !state.nil?
   end
 end

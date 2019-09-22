@@ -78,7 +78,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
     end
 
     it 'raises an error if given malformed inet protocol' do
-      expect { described_class.new(attrs.merge({ family: 'bad' })) }.to raise_error(Puppet::Error)
+      expect { described_class.new(attrs.merge(family: 'bad')) }.to raise_error(Puppet::Error)
     end
 
     it 'converts source into a hash' do

@@ -75,7 +75,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
       shell_cmd,
       Puppet::Util,
       Puppet::Util::Execution,
-      { failonfail: failonfail }
+      failonfail: failonfail
     )
     firewall_cmd.execute(cmd_args.flatten)
   end

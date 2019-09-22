@@ -8,7 +8,7 @@ Puppet::Type.newtype(:firewalld_zone) do
   Puppet::Type.type(:firewalld_service)
   Puppet::Type.type(:firewalld_port)
 
-  @doc = %q(Creates and manages firewald zones.
+  @doc = "Creates and manages firewald zones.
     Note that setting ensure => 'absent' to the built in firewalld zones will
     not work, and will generate an error. This is a limitation of firewalld itself, not the module.
 
@@ -25,7 +25,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         icmp_blocks      => 'router-advertisement'
       }
 
-  )
+  "
 
   ensurable
 

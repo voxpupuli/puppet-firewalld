@@ -2,7 +2,7 @@ require 'puppet'
 require_relative '../../puppet_x/firewalld/property/rich_rule_action'
 
 Puppet::Type.newtype(:firewalld_rich_rule) do
-  @doc = %q(Manages firewalld rich rules.
+  @doc = "Manages firewalld rich rules.
 
     firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this
 
@@ -16,7 +16,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
         action  => 'accept',
       }
 
-  )
+  "
 
   ensurable
 

@@ -1,7 +1,7 @@
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_port) do
-  @doc = %q(Assigns a port to a specific firewalld zone.
+  @doc = "Assigns a port to a specific firewalld zone.
     firewalld_port will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this
 
     Example:
@@ -12,7 +12,7 @@ Puppet::Type.newtype(:firewalld_port) do
             port     => 8080,
             protocol => 'tcp',
         }
-  )
+  "
 
   ensurable do
     newvalue(:present) do

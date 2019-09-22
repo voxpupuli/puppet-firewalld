@@ -1,7 +1,7 @@
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_direct_chain) do
-  @doc = %q(Allow to create a custom chain in iptables/ip6tables/ebtables using firewalld direct interface.
+  @doc = "Allow to create a custom chain in iptables/ip6tables/ebtables using firewalld direct interface.
 
     Example:
 
@@ -12,7 +12,7 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
             table          => 'filter'
         }
 
-  )
+  "
 
   ensurable
 

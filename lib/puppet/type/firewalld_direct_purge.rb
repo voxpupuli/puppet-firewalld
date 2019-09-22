@@ -8,7 +8,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
   Puppet::Type.type(:firewalld_direct_rule)
   Puppet::Type.type(:firewalld_direct_passthrough)
 
-  @doc = %q(Allow to purge direct rules in iptables/ip6tables/ebtables using firewalld direct interface.
+  @doc = "Allow to purge direct rules in iptables/ip6tables/ebtables using firewalld direct interface.
 
     Example:
 
@@ -16,7 +16,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
         firewalld_direct_purge {'passthrough': }
         firewalld_direct_purge {'rule': }
 
-  )
+  "
 
   ensurable do
     defaultto(:purged)

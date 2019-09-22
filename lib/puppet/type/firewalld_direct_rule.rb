@@ -1,7 +1,7 @@
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_direct_rule) do
-  @doc = %q(Allow to pass rules directly to iptables/ip6tables/ebtables using firewalld direct interface.
+  @doc = "Allow to pass rules directly to iptables/ip6tables/ebtables using firewalld direct interface.
 
     Example:
 
@@ -14,7 +14,7 @@ Puppet::Type.newtype(:firewalld_direct_rule) do
             args           => '-p tcp --dport=22 -j ACCEPT',
         }
 
-  )
+  "
 
   ensurable
 

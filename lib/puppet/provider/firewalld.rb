@@ -78,7 +78,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
       Puppet::Util::Execution,
       { failonfail: failonfail }
     )
-   firewall_cmd.execute(cmd_args.flatten)
+    firewall_cmd.execute(cmd_args.flatten)
   end
 
   def execute_firewall_cmd(args, zone = @resource[:zone], perm = true, failonfail = true)

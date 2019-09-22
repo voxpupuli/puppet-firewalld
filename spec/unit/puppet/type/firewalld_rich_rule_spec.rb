@@ -61,25 +61,25 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       action: 'accept'
     }}
 
-    it 'should have :name as its namevar' do
+    it 'has :name as its namevar' do
       expect(described_class.key_attributes).to eq([:name])
     end
 
 
-    it 'should default family to ipv4' do
+    it 'defaults family to ipv4' do
       resource=described_class.new(attrs)
       expect(resource[:family]).to eq('ipv4')
     end
 
-    it 'should raise an error if given malformed inet protocol' do
+    it 'raises an error if given malformed inet protocol' do
       expect { described_class.new(attrs.merge({family: 'bad'})) }.to raise_error(Puppet::Error)
     end
 
-    it 'should convert source into a hash' do
+    it 'converts source into a hash' do
       expect(described_class.new(attrs)[:source]).to be_a(Hash)
     end
 
-    it 'should convert dest into a hash' do
+    it 'converts dest into a hash' do
       expect(described_class.new(attrs)[:dest]).to be_a(Hash)
     end
 
@@ -186,18 +186,18 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
           'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept'
         }
       
-        it 'should query the status' do
+        it 'queries the status' do
           @fakeclass.stubs(:exitstatus).returns(0)
           provider.expects(:execute_firewall_cmd).with(['--query-rich-rule',rawrule], 'restricted', true, false).returns(@fakeclass)
           expect(provider.exists?).to be_truthy
         end
     
-        it 'should create' do
+        it 'creates' do
           provider.expects(:execute_firewall_cmd).with(['--add-rich-rule', rawrule])
           provider.create
         end
     
-        it 'should destroy' do
+        it 'destroys' do
           provider.expects(:execute_firewall_cmd).with(['--remove-rich-rule', rawrule])
           provider.destroy
         end

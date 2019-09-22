@@ -23,7 +23,7 @@ describe provider_class do
 
   describe 'when creating' do
     context 'with basic parameters' do
-      it 'should build the rich rule' do
+      it 'builds the rich rule' do
         resource.expects(:[]).with(:source).returns('192.168.1.2/32').at_least_once
         resource.expects(:[]).with(:service).returns('ssh').at_least_once
         resource.expects(:[]).with('family').returns('ipv4').at_least_once
@@ -41,7 +41,7 @@ describe provider_class do
       end
     end
     context 'with reject type' do
-      it 'should build the rich rule' do
+      it 'builds the rich rule' do
         resource.expects(:[]).with(:source).returns(nil).at_least_once
         resource.expects(:[]).with(:service).returns('ssh').at_least_once
         resource.expects(:[]).with('family').returns('ipv4').at_least_once

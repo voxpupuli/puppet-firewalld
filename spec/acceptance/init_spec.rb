@@ -3,7 +3,7 @@ require 'spec_helper_acceptance'
 describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
 
   context 'running with defaults' do
-    it 'should run successfully' do
+    it 'runs successfully' do
       pp = 'include firewalld'
       #Apply...
       apply_manifest(pp, catch_failures: true)

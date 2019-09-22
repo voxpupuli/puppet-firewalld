@@ -24,17 +24,17 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
         args: '-p tcp ---dport=22 -j ACCEPT'
       }}
 
-      it 'should have :name as its namevar' do
+      it 'has :name as its namevar' do
         expect(described_class.key_attributes).to eq([:name])
       end
 
 
-      it 'should default inet_protocol to ipv4' do
+      it 'defaults inet_protocol to ipv4' do
         resource=described_class.new(attrs)
         expect(resource[:inet_protocol]).to eq('ipv4')
       end
 
-      it 'should raise an error if given malformed inet protocol' do
+      it 'raises an error if given malformed inet protocol' do
         expect { described_class.new(attrs.merge({inet_protocol: 'bad'})) }.to raise_error(Puppet::Error)
       end
 
@@ -57,23 +57,23 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
 
     let(:provider) { resource.provider }
 
-    it 'should create' do
+    it 'creates' do
       provider.expects(:execute_firewall_cmd).with(['--direct', '--add-rule', [ 'ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
       provider.create
     end
 
-    it 'should destroy' do
+    it 'destroys' do
       provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-rule', [  'ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
       provider.destroy
     end
 
     context 'parsing arguments' do
-      it 'should correctly parse arguments into an array' do
+      it 'correctlies parse arguments into an array' do
         args='-p tcp --dport=22 -j ACCEPT'
         expect(provider.parse_args(args)).to eq(['-p', 'tcp', '--dport=22', '-j', 'ACCEPT'])
       end
 
-      it 'should correctly parse arguments in quotes' do
+      it 'correctlies parse arguments in quotes' do
         args="-j LOG --log-prefix '# IPTABLES DROPPED:'"
         expect(provider.parse_args(args)).to eq(['-j', 'LOG', '--log-prefix', '\'# IPTABLES DROPPED:\''])
       end

@@ -42,7 +42,7 @@ describe provider_class do
 
   describe 'when creating' do
     context 'basic ipset' do
-      it 'should create a new ipset with entries' do
+      it 'creates a new ipset with entries' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once
         resource.expects(:[]).with(:family).returns('inet').at_least_once
@@ -62,7 +62,7 @@ describe provider_class do
 
   describe 'when modifying' do
     context 'hashsize' do
-      it 'should remove and create a new ipset' do
+      it 'removes and create a new ipset' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once
         resource.expects(:[]).with(:family).returns('inet').at_least_once
@@ -83,7 +83,7 @@ describe provider_class do
       end
     end
     context 'entries' do
-      it 'should remove and add entries' do
+      it 'removes and add entries' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once
         resource.expects(:[]).with(:family).returns('inet').at_least_once
@@ -102,7 +102,7 @@ describe provider_class do
         provider.create
         provider.entries = ['192.168.14.0/24', '10.0.0.0/8']
       end
-      it 'should ignore entries when manage_entries is false ' do
+      it 'ignores entries when manage_entries is false' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once
         resource.expects(:[]).with(:family).returns('inet').at_least_once

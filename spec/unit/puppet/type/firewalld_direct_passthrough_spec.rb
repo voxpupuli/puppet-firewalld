@@ -15,17 +15,17 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
     end
 
     describe 'namevar validation' do
-      it 'should have :args as its namevar' do
+      it 'has :args as its namevar' do
         expect(described_class.key_attributes).to eq([:args])
       end
 
 
-      it 'should default inet_protocol to ipv4' do
+      it 'defaults inet_protocol to ipv4' do
         resource=described_class.new(title: '-A OUTPUT -j OUTPUT_filter')
         expect(resource[:inet_protocol]).to eq('ipv4')
       end
 
-      it 'should raise an error if given malformed inet protocol' do
+      it 'raises an error if given malformed inet protocol' do
         expect { described_class.new(title: '-A OUTPUT -j OUTPUT_filter', inet_protocol: 'bad') }.to raise_error(Puppet::Error)
       end
 
@@ -46,11 +46,11 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
 
     let(:provider) { resource.provider }
 
-    it 'should create' do
+    it 'creates' do
       provider.expects(:execute_firewall_cmd).with(['--direct','--add-passthrough', [ 'ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
       provider.create
     end
-    it 'should destroy' do
+    it 'destroys' do
       provider.expects(:execute_firewall_cmd).with(['--direct','--remove-passthrough', [ 'ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
       provider.destroy
     end

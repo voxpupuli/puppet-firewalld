@@ -21,7 +21,7 @@ describe provider_class do
 
   describe 'when creating' do
     context 'with name white' do
-      it 'should execute firewall_cmd with new-zone' do
+      it 'executes firewall_cmd with new-zone' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:target).returns(nil).at_least_once
         resource.expects(:[]).with(:sources).returns(nil).at_least_once
@@ -40,7 +40,7 @@ describe provider_class do
 
   describe 'when modifying' do
     context 'type' do
-      it 'should remove and create a new ipset' do
+      it 'removes and create a new ipset' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:target).returns(nil).at_least_once
         resource.expects(:[]).with(:sources).returns(nil).at_least_once

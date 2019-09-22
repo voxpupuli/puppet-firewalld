@@ -6,7 +6,7 @@ UNSUPPORTED_PLATFORMS = %w[windows Darwin].freeze
 
 unless ENV['RS_PROVISION'] == 'no' || ENV['BEAKER_provision'] == 'no'
 
-  environment = ENV['http_proxy'] ? { http_proxy:  ENV['http_proxy'] } : {}
+  environment = ENV['http_proxy'] ? { http_proxy: ENV['http_proxy'] } : {}
 
   run_puppet_install_helper
 

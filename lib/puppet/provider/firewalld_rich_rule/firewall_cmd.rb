@@ -11,7 +11,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def exists?
     @rule_args ||= build_rich_rule
-    output=execute_firewall_cmd(['--query-rich-rule', @rule_args], @resource[:zone], true, false)
+    output = execute_firewall_cmd(['--query-rich-rule', @rule_args], @resource[:zone], true, false)
     output.exitstatus == 0
   end
 
@@ -24,9 +24,9 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def eval_source
-    args=[]
+    args = []
     return [] unless addr = @resource[:source]
-    invert = addr['invert']  ? ' NOT' : ''
+    invert = addr['invert'] ? ' NOT' : ''
     args << "source#{invert}"
     args << quote_keyval('address', addr['address'])
     args << quote_keyval('ipset', addr['ipset'])
@@ -34,9 +34,9 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def eval_dest
-    args=[]
+    args = []
     return [] unless addr = @resource[:dest]
-    invert = addr['invert']  ? ' NOT' : ''
+    invert = addr['invert'] ? ' NOT' : ''
     args << "destination#{invert}"
     args << quote_keyval('address', addr['address'])
     args << quote_keyval('ipset', addr['ipset'])
@@ -48,7 +48,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def eval_element
-    args=[]
+    args = []
     element = elements.select { |e| resource[e] }.first
     args << element.to_s.gsub(/_/, '-')
     case element
@@ -95,7 +95,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def eval_action
     return [] unless action = @resource[:action]
-    args=[]
+    args = []
     if action.is_a?(Hash)
       args << action[:action]
       args << quote_keyval('type', action[:type])

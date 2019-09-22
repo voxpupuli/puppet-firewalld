@@ -29,7 +29,7 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
       end
 
       it 'defaults inet_protocol to ipv4' do
-        resource=described_class.new(attrs)
+        resource = described_class.new(attrs)
         expect(resource[:inet_protocol]).to eq('ipv4')
       end
 
@@ -66,12 +66,12 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
 
     context 'parsing arguments' do
       it 'correctlies parse arguments into an array' do
-        args='-p tcp --dport=22 -j ACCEPT'
+        args = '-p tcp --dport=22 -j ACCEPT'
         expect(provider.parse_args(args)).to eq(['-p', 'tcp', '--dport=22', '-j', 'ACCEPT'])
       end
 
       it 'correctlies parse arguments in quotes' do
-        args="-j LOG --log-prefix '# IPTABLES DROPPED:'"
+        args = "-j LOG --log-prefix '# IPTABLES DROPPED:'"
         expect(provider.parse_args(args)).to eq(['-j', 'LOG', '--log-prefix', '\'# IPTABLES DROPPED:\''])
       end
     end

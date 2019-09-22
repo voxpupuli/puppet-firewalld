@@ -1,7 +1,7 @@
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_service) do
-  @doc =%q{Assigns a service to a specific firewalld zone.
+  @doc = %q{Assigns a service to a specific firewalld zone.
     firewalld_service will autorequire the firewalld_zone specified in the zone parameter and the firewalld::custom_service
 		specified in the service parameter, so there is no need to add dependencies for this
 

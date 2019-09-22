@@ -1,7 +1,7 @@
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_direct_rule) do
-  @doc =%q{Allow to pass rules directly to iptables/ip6tables/ebtables using firewalld direct interface.
+  @doc = %q{Allow to pass rules directly to iptables/ip6tables/ebtables using firewalld direct interface.
 
     Example:
 

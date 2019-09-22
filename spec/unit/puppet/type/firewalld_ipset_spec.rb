@@ -67,7 +67,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
       provider.expects(:entries).returns([])
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=10.72.1.100'], nil)
-      provider.entries=(['192.168.2.2', '10.72.1.100'])
+      provider.entries = (['192.168.2.2', '10.72.1.100'])
     end
 
     it 'removes unconfigured entries' do
@@ -75,7 +75,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.9.9.9'], nil)
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.8.8.8'], nil)
-      provider.entries=(['192.168.2.2', '10.72.1.100'])
+      provider.entries = (['192.168.2.2', '10.72.1.100'])
     end
   end
   context 'change in ipset members' do

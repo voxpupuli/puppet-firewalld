@@ -8,7 +8,7 @@ Puppet::Type.newtype(:firewalld_zone) do
   Puppet::Type.type(:firewalld_service)
   Puppet::Type.type(:firewalld_port)
 
-  @doc =%q{Creates and manages firewald zones.
+  @doc = %q{Creates and manages firewald zones.
     Note that setting ensure => 'absent' to the built in firewalld zones will
     not work, and will generate an error. This is a limitation of firewalld itself, not the module.
 
@@ -147,7 +147,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
     def retrieve
       return :false if @resource[:purge_ports] == :false
-      provider.resource.ports_purgable  ? :purgable : :true
+      provider.resource.ports_purgable ? :purgable : :true
     end
   end
 

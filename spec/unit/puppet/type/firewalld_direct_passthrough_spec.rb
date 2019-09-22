@@ -20,7 +20,7 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
       end
 
       it 'defaults inet_protocol to ipv4' do
-        resource=described_class.new(title: '-A OUTPUT -j OUTPUT_filter')
+        resource = described_class.new(title: '-A OUTPUT -j OUTPUT_filter')
         expect(resource[:inet_protocol]).to eq('ipv4')
       end
 

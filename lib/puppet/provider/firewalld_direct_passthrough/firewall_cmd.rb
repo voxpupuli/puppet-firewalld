@@ -9,7 +9,7 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
 
   def exists?
     @passt_args ||= generate_raw
-    output=execute_firewall_cmd(['--direct', '--query-passthrough', @passt_args], nil, true, false)
+    output = execute_firewall_cmd(['--direct', '--query-passthrough', @passt_args], nil, true, false)
     output.include?('yes')
   end
 

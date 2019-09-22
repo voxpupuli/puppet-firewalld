@@ -17,12 +17,12 @@ Puppet::Type.type(:firewalld_zone).provide(
     self.debug("Creating new zone #{@resource[:name]} with target: '#{@resource[:target]}'")
     execute_firewall_cmd(['--new-zone', @resource[:name]], nil)
 
-    self.target=(@resource[:target]) if @resource[:target]
-    self.sources=(@resource[:sources]) if @resource[:sources]
-    self.interfaces=@resource[:interfaces]
-    self.icmp_blocks=(@resource[:icmp_blocks]) if @resource[:icmp_blocks]
-    self.description=(@resource[:description]) if @resource[:description]
-    self.short=(@resource[:short]) if @resource[:short]
+    self.target = (@resource[:target]) if @resource[:target]
+    self.sources = (@resource[:sources]) if @resource[:sources]
+    self.interfaces = @resource[:interfaces]
+    self.icmp_blocks = (@resource[:icmp_blocks]) if @resource[:icmp_blocks]
+    self.description = (@resource[:description]) if @resource[:description]
+    self.short = (@resource[:short]) if @resource[:short]
   end
 
   def destroy
@@ -31,7 +31,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def target
-    zone_target=execute_firewall_cmd(['--get-target']).chomp
+    zone_target = execute_firewall_cmd(['--get-target']).chomp
     # The firewall-cmd may or may not return the target surrounded by
     # %% depending on the version. See:
     # https://github.com/crayfishx/puppet-firewalld/issues/111

@@ -33,7 +33,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   def self.check_running_state
     begin
       self.debug("Executing --state command - current value #{@state}")
-      ret = execute_firewall_cmd(['--state'], nil, false, false, check_online=false)
+      ret = execute_firewall_cmd(['--state'], nil, false, false, check_online = false)
       Puppet::Provider::Firewalld.runstate = ret.exitstatus == 0 ? true : false
 
     rescue Puppet::MissingCommand => e

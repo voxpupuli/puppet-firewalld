@@ -96,8 +96,8 @@ Puppet::Type.type(:firewalld_ipset).provide(
       return
     end
     cur_entries = entries
-    delete_entries = cur_entries-should_entries
-    add_entries = should_entries-cur_entries
+    delete_entries = cur_entries - should_entries
+    add_entries = should_entries - cur_entries
     delete_entries.each { |e| remove_entry(e) }
     add_entries.each { |e| add_entry(e) }
   end

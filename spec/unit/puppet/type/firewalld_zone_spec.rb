@@ -109,7 +109,7 @@ describe Puppet::Type.type(:firewalld_zone) do
 
       it 'sources should always return in alphanumerical order' do
         provider.expects(:execute_firewall_cmd).with(['--list-sources']).returns('4.4.4.4/32 2.2.2.2/32 3.3.3.3/32')
-        expect(provider.sources).to eq(['2.2.2.2/32', '3.3.3.3/32','4.4.4.4/32'])
+        expect(provider.sources).to eq(['2.2.2.2/32', '3.3.3.3/32', '4.4.4.4/32'])
       end
 
       it 'sets sources' do

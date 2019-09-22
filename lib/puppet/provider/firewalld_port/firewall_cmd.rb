@@ -15,7 +15,7 @@ Puppet::Type.type(:firewalld_port).provide(
     output.exitstatus == 0
   end
 
-  def quote_keyval(key,val)
+  def quote_keyval(key, val)
     val ? "#{key}=\"#{val}\"" : ''
   end
 

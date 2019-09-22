@@ -50,7 +50,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
 
   newparam(:name, namevar: true) do
     desc "Type of resource to purge, valid values are 'chain', 'passthrough' and 'rule'"
-    newvalues('chain','passthrough','rule')
+    newvalues('chain', 'passthrough', 'rule')
   end
 
   def purge?

@@ -46,11 +46,11 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
     let(:provider) { resource.provider }
 
     it 'creates' do
-      provider.expects(:execute_firewall_cmd).with(['--direct','--add-passthrough', ['ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
+      provider.expects(:execute_firewall_cmd).with(['--direct', '--add-passthrough', ['ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
       provider.create
     end
     it 'destroys' do
-      provider.expects(:execute_firewall_cmd).with(['--direct','--remove-passthrough', ['ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
+      provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-passthrough', ['ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
       provider.destroy
     end
   end

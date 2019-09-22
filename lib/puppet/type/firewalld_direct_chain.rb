@@ -36,7 +36,7 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
 
   newparam(:inet_protocol) do
     desc 'Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)'
-    newvalues('ipv4','ipv6')
+    newvalues('ipv4', 'ipv6')
     defaultto('ipv4')
     munge do |value|
       value.to_s

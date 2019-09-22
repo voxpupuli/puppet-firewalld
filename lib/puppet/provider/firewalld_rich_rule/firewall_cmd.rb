@@ -15,7 +15,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     output.exitstatus == 0
   end
 
-  def quote_keyval(key,val)
+  def quote_keyval(key, val)
     val ? "#{key}=\"#{val}\"" : ''
   end
 
@@ -50,7 +50,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   def eval_element
     args=[]
     element = elements.select { |e| resource[e] }.first
-    args << element.to_s.gsub(/_/,'-')
+    args << element.to_s.gsub(/_/, '-')
     case element
     when :service
       args << quote_keyval('name', @resource[:service])

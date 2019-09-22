@@ -26,8 +26,8 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
   def generate_raw
     passt = []
     passt << [
-	     @resource[:inet_protocol],
-	     @resource[:args].split(' ')
+      @resource[:inet_protocol],
+      @resource[:args].split(' ')
     ]
     passt.flatten
   end

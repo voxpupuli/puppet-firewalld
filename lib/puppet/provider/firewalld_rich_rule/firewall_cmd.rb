@@ -19,7 +19,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     val ? "#{key}=\"#{val}\"" : ''
   end
 
-  def key_val_opt(opt, resource_param=opt)
+  def key_val_opt(opt, resource_param = opt)
     quote_keyval(opt, @resource[resource_param.to_s])
   end
 

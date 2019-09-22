@@ -51,7 +51,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   # v3.0.0
-  def self.execute_firewall_cmd(args,  zone=nil, perm=true, failonfail=true, check_online=true)
+  def self.execute_firewall_cmd(args,  zone = nil, perm = true, failonfail = true, check_online = true)
     if check_online and not online?
       shell_cmd = 'firewall-offline-cmd'
       perm = false
@@ -81,7 +81,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
    firewall_cmd.execute(cmd_args.flatten)
   end
 
-  def execute_firewall_cmd(args, zone=@resource[:zone], perm=true, failonfail=true)
+  def execute_firewall_cmd(args, zone = @resource[:zone], perm = true, failonfail = true)
     self.class.execute_firewall_cmd(args, zone, perm, failonfail)
   end
 

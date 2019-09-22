@@ -34,7 +34,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
       debug("Executing --state command - current value #{@state}")
       ret = execute_firewall_cmd(['--state'], nil, false, false, check_online = false)
       Puppet::Provider::Firewalld.runstate = ret.exitstatus == 0 ? true : false
-
     rescue Puppet::MissingCommand => e
       # This exception is caught in case the module is being run before
       # the package provider has installed the firewalld package, if we

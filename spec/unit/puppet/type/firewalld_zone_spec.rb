@@ -46,12 +46,12 @@ describe Puppet::Type.type(:firewalld_zone) do
 
       it 'checks if it exists' do
         provider.expects(:execute_firewall_cmd).with(['--get-zones'], nil).returns('public restricted')
-        expect(provider.exists?).to be_truthy
+        expect(provider).to be_exists
       end
 
       it 'checks if it doesnt exist' do
         provider.expects(:execute_firewall_cmd).with(['--get-zones'], nil).returns('public private')
-        expect(provider.exists?).to be_falsey
+        expect(provider).not_to be_exists
       end
 
       it 'evalulates target' do

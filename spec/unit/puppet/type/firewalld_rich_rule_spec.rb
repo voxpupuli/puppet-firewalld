@@ -191,7 +191,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         it 'queries the status' do
           @fakeclass.stubs(:exitstatus).returns(0)
           provider.expects(:execute_firewall_cmd).with(['--query-rich-rule', rawrule], 'restricted', true, false).returns(@fakeclass)
-          expect(provider.exists?).to be_truthy
+          expect(provider).to be_exists
         end
 
         it 'creates' do

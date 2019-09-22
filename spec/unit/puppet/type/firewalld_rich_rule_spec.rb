@@ -180,17 +180,15 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         let(:resource) do
           described_class.new(attrs)
         end
-        before do
-          @fakeclass = Class.new
-        end
+        let(:fakeclass) { Class.new }
         let(:provider) { resource.provider }
         let(:rawrule) do
           'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept'
         end
 
         it 'queries the status' do
-          @fakeclass.stubs(:exitstatus).returns(0)
-          provider.expects(:execute_firewall_cmd).with(['--query-rich-rule', rawrule], 'restricted', true, false).returns(@fakeclass)
+          fakeclass.stubs(:exitstatus).returns(0)
+          provider.expects(:execute_firewall_cmd).with(['--query-rich-rule', rawrule], 'restricted', true, false).returns(fakeclass)
           expect(provider).to be_exists
         end
 

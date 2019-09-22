@@ -195,7 +195,7 @@ describe 'firewalld' do
     end
   end
 
-  ['unicast', 'broadcast', 'multicast', 'all', 'off'].each do |cond|
+  %w[unicast broadcast multicast all off].each do |cond|
     context "with log_denied set to #{cond}" do
       let(:params) do
         {

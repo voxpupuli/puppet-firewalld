@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
 Puppet::Type.type(:firewalld_direct_purge).provide(
   :firewall_cmd,
-  :parent => Puppet::Provider::Firewalld
+  parent: Puppet::Provider::Firewalld
 ) do
   desc 'Meta provider to the firewalld_direct_purge type'
 

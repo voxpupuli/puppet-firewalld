@@ -36,11 +36,11 @@ describe Puppet::Type.type(:firewalld_zone) do
     context 'with standard parameters' do
       let(:resource) {
         described_class.new(
-          :name => 'restricted',
-          :target => '%%REJECT%%',
-          :interfaces => ['eth0'],
-          :icmp_blocks => [ 'redirect', 'router-advertisment' ],
-          :sources    => ['192.168.2.2', '10.72.1.100'])
+          name: 'restricted',
+          target: '%%REJECT%%',
+          interfaces: ['eth0'],
+          icmp_blocks: [ 'redirect', 'router-advertisment' ],
+          sources: ['192.168.2.2', '10.72.1.100'])
       }
       let(:provider) {
         resource.provider
@@ -135,9 +135,9 @@ describe Puppet::Type.type(:firewalld_zone) do
     context 'when specifiying masquerade' do
       let(:resource) {
         described_class.new(
-          :name => 'public',
-          :ensure => :present,
-          :masquerade => true,
+          name: 'public',
+          ensure: :present,
+          masquerade: true,
         )
       }
       let(:provider) {

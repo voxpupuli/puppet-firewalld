@@ -100,7 +100,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     desc 'doc'
   end
 
-  newparam(:action, :parent => PuppetX::Firewalld::Property::RichRuleAction) do
+  newparam(:action, parent: PuppetX::Firewalld::Property::RichRuleAction) do
     desc 'doc'
   end
 

@@ -38,13 +38,13 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
     it 'raises an error if wrong action hash keys' do
       expect do described_class.new(
         title: 'SSH from barny',
-        action: {:type => 'accepted', :foo => 'bar'},
+        action: {type: 'accepted', foo: 'bar'},
       ) end.to raise_error(/Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`/)
     end
     it 'raises an error if wrong action hash values' do
       expect do described_class.new(
         title: 'SSH from barny',
-        action: {:type => 'icmp-admin-prohibited', :action => 'accepted'},
+        action: {type: 'icmp-admin-prohibited', action: 'accepted'},
       ) end.to raise_error(/Authorized action values are `accept`, `reject`, `drop` or `mark`/)
     end
 
@@ -52,13 +52,13 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
 
   describe 'namevar validation' do
     let(:attrs) {{
-      :title  => 'SSH from barny',
-      :ensure => 'present',
-      :zone   => 'restricted',
-      :source => '192.168.1.2/32',
-      :dest   => '192.168.99.2/32',
-      :service => 'ssh',
-      :action => 'accept'
+      title: 'SSH from barny',
+      ensure: 'present',
+      zone: 'restricted',
+      source: '192.168.1.2/32',
+      dest: '192.168.99.2/32',
+      service: 'ssh',
+      action: 'accept'
     }}
 
     it 'should have :name as its namevar' do
@@ -72,7 +72,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
     end
 
     it 'should raise an error if given malformed inet protocol' do
-      expect { described_class.new(attrs.merge({:family => 'bad'})) }.to raise_error(Puppet::Error)
+      expect { described_class.new(attrs.merge({family: 'bad'})) }.to raise_error(Puppet::Error)
     end
 
     it 'should convert source into a hash' do
@@ -92,81 +92,81 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
     scenarios = {
       ## Test source
       {
-        :name => 'accept ssh',
-        :ensure => 'present',
-        :family => 'ipv4',
-        :zone   => 'restricted',
-        :source => { 'address' => '10.0.1.2/24' },
-        :service => 'ssh',
-        :log     => { 'level' => 'debug' },
-        :action  => 'accept',
+        name: 'accept ssh',
+        ensure: 'present',
+        family: 'ipv4',
+        zone: 'restricted',
+        source: { 'address' => '10.0.1.2/24' },
+        service: 'ssh',
+        log: { 'level' => 'debug' },
+        action: 'accept',
       } => 'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept',
       ## Test ipset
       {
-        :name => 'accept ssh',
-        :ensure => 'present',
-        :family => 'ipv4',
-        :zone   => 'restricted',
-        :source => { 'ipset' => 'whitelist' },
-        :service => 'ssh',
-        :log     => { 'level' => 'debug' },
-        :action  => 'accept',
+        name: 'accept ssh',
+        ensure: 'present',
+        family: 'ipv4',
+        zone: 'restricted',
+        source: { 'ipset' => 'whitelist' },
+        service: 'ssh',
+        log: { 'level' => 'debug' },
+        action: 'accept',
       } => 'rule family="ipv4" source ipset="whitelist" service name="ssh" log level="debug" accept',
 
       ## Test destination
       {
-        :name => 'accept ssh',
-        :ensure => 'present',
-        :family => 'ipv4',
-        :zone   => 'restricted',
-        :dest => '10.0.1.2/24',
-        :service => 'ssh',
-        :log     => { 'level' => 'debug' },
-        :action  => 'accept',
+        name: 'accept ssh',
+        ensure: 'present',
+        family: 'ipv4',
+        zone: 'restricted',
+        dest: '10.0.1.2/24',
+        service: 'ssh',
+        log: { 'level' => 'debug' },
+        action: 'accept',
       } => 'rule family="ipv4" destination address="10.0.1.2/24" service name="ssh" log level="debug" accept',
 
       ## Test address invertion
       {
-        :name => 'accept ssh',
-        :ensure => 'present',
-        :family => 'ipv4',
-        :zone   => 'restricted',
-        :source => { 'address' => '10.0.1.2/24', 'invert' => true },
-        :service => 'ssh',
-        :log     => { 'level' => 'debug' },
-        :action  => 'accept',
+        name: 'accept ssh',
+        ensure: 'present',
+        family: 'ipv4',
+        zone: 'restricted',
+        source: { 'address' => '10.0.1.2/24', 'invert' => true },
+        service: 'ssh',
+        log: { 'level' => 'debug' },
+        action: 'accept',
       } => 'rule family="ipv4" source NOT address="10.0.1.2/24" service name="ssh" log level="debug" accept',
       {
-        :name => 'accept ssh',
-        :ensure => 'present',
-        :family => 'ipv4',
-        :zone   => 'restricted',
-        :dest => { 'address' => '10.0.1.2/24', 'invert' => true },
-        :service => 'ssh',
-        :log     => { 'level' => 'debug' },
-        :action  => 'accept',
+        name: 'accept ssh',
+        ensure: 'present',
+        family: 'ipv4',
+        zone: 'restricted',
+        dest: { 'address' => '10.0.1.2/24', 'invert' => true },
+        service: 'ssh',
+        log: { 'level' => 'debug' },
+        action: 'accept',
       } => 'rule family="ipv4" destination NOT address="10.0.1.2/24" service name="ssh" log level="debug" accept',
 
       ## test port
       {
-        :name => 'accept ssh',
-        :ensure => 'present',
-        :family => 'ipv4',
-        :zone   => 'restricted',
-        :dest => '10.0.1.2/24',
-        :port =>  { 'port' => '22', 'protocol' => 'tcp' },
-        :log     => { 'level' => 'debug' },
-        :action  => 'accept',
+        name: 'accept ssh',
+        ensure: 'present',
+        family: 'ipv4',
+        zone: 'restricted',
+        dest: '10.0.1.2/24',
+        port: { 'port' => '22', 'protocol' => 'tcp' },
+        log: { 'level' => 'debug' },
+        action: 'accept',
       } => 'rule family="ipv4" destination address="10.0.1.2/24" port port="22" protocol="tcp" log level="debug" accept',
 
       ## test forward port
       {
-        :name => 'accept ssh',
-        :ensure => 'present',
-        :family => 'ipv4',
-        :forward_port => { 'port' => '8080', 'protocol' => 'tcp', 'to_addr' => '10.72.1.10', 'to_port' => '80' },
-        :zone   => 'restricted',
-        :log     => { 'level' => 'debug' },
+        name: 'accept ssh',
+        ensure: 'present',
+        family: 'ipv4',
+        forward_port: { 'port' => '8080', 'protocol' => 'tcp', 'to_addr' => '10.72.1.10', 'to_port' => '80' },
+        zone: 'restricted',
+        log: { 'level' => 'debug' },
       } => 'rule family="ipv4" forward-port port="8080" protocol="tcp" to-port="80" to-addr="10.72.1.10" log level="debug"',
 
     }

@@ -30,7 +30,7 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
     ]
   end
 
-  newparam(:name, :namevar => :true) do
+  newparam(:name, namevar: :true) do
     desc 'Name of the chain eg: LOG_DROPS'
   end
 

@@ -15,8 +15,8 @@ describe provider_class do
   let(:provider) { resource.provider }
 
   before :each do
-    provider.class.stubs(:execute_firewall_cmd).returns(Object.any_instance.stubs(:exitstatus => 0))
-    provider.class.stubs(:execute_firewall_cmd).with(['--list-interfaces']).returns(Object.any_instance.stubs(:exitstatus => 0, :chomp => ''))
+    provider.class.stubs(:execute_firewall_cmd).returns(Object.any_instance.stubs(exitstatus: 0))
+    provider.class.stubs(:execute_firewall_cmd).with(['--list-interfaces']).returns(Object.any_instance.stubs(exitstatus: 0, chomp: ''))
   end
 
   describe 'when creating' do

@@ -28,7 +28,7 @@ Puppet::Type.newtype(:firewalld_service) do
     defaultto(:present)
   end
 
-  newparam(:name, :namevar => :true) do
+  newparam(:name, namevar: :true) do
     desc 'Name of the service resource in Puppet'
   end
 

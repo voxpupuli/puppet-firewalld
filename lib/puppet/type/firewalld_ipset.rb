@@ -16,7 +16,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
 
   ensurable
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'Name of the IPset'
     validate do |val|
       raise Puppet::Error, 'IPset name must be a word with no spaces' unless val =~ /^[\w-]+$/
@@ -36,7 +36,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
     end
   end
 
-  newproperty(:entries, :array_matching => :all) do
+  newproperty(:entries, array_matching: :all) do
     desc 'Array of ipset entries'
     def insync?(is)
       should.sort == is.sort
@@ -61,19 +61,19 @@ Puppet::Type.newtype(:firewalld_ipset) do
     newvalues(:inet6, :inet)
   end
 
-  newproperty(:hashsize, :parent => PuppetX::Firewalld::Property::PositiveInteger) do
+  newproperty(:hashsize, parent: PuppetX::Firewalld::Property::PositiveInteger) do
     desc 'Initial hash size of the IPSet'
   end
 
-  newproperty(:maxelem, :parent => PuppetX::Firewalld::Property::PositiveInteger) do
+  newproperty(:maxelem, parent: PuppetX::Firewalld::Property::PositiveInteger) do
     desc 'Maximal number of elements that can be stored in the set'
   end
 
-  newproperty(:timeout, :parent => PuppetX::Firewalld::Property::PositiveInteger) do
+  newproperty(:timeout, parent: PuppetX::Firewalld::Property::PositiveInteger) do
     desc 'Timeout in seconds before entries expiry'
   end
 
-  newparam(:manage_entries, :parent => Puppet::Parameter::Boolean) do
+  newparam(:manage_entries, parent: Puppet::Parameter::Boolean) do
     desc 'Should we manage entries in this ipset or leave another process manage those entries'
     defaultto true
   end

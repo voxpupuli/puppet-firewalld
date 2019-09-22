@@ -19,7 +19,7 @@ Puppet::Type.newtype(:firewalld_direct_rule) do
 
   ensurable
 
-  newparam(:name, :namevar => :true) do
+  newparam(:name, namevar: :true) do
     desc 'Name of the rule resource in Puppet'
   end
 

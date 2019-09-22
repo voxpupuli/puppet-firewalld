@@ -59,7 +59,7 @@ Puppet::Type.newtype(:firewalld_zone) do
     desc 'Specify the target for the zone'
   end
 
-  newproperty(:interfaces, :array_matching => :all) do
+  newproperty(:interfaces, array_matching: :all) do
     desc 'Specify the interfaces for the zone'
 
     def insync?(is)
@@ -77,7 +77,7 @@ Puppet::Type.newtype(:firewalld_zone) do
     newvalue(:false)
   end
 
-  newproperty(:sources, :array_matching => :all) do
+  newproperty(:sources, array_matching: :all) do
     desc 'Specify the sources for the zone'
 
     def insync?(is)
@@ -97,7 +97,7 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
   end
 
-  newproperty(:icmp_blocks, :array_matching => :all) do
+  newproperty(:icmp_blocks, array_matching: :all) do
     desc "Specify the icmp-blocks for the zone. Can be a single string specifying one icmp type,
           or an array of strings specifying multiple icmp types. Any blocks not specified here will be removed
          "
@@ -177,10 +177,10 @@ Puppet::Type.newtype(:firewalld_zone) do
     provider.get_rules.reject { |p| puppet_rules.include?(p) }.each do |purge|
       self.debug("should purge rich rule #{purge}")
       res_type = Puppet::Type.type(:firewalld_rich_rule).new(
-        :name     => purge,
-        :raw_rule => purge,
-        :ensure   => :absent,
-        :zone     => self[:name]
+        name: purge,
+        raw_rule: purge,
+        ensure: :absent,
+        zone: self[:name]
       )
 
       # If the rule exists in --permanent then we should purge it
@@ -210,10 +210,10 @@ Puppet::Type.newtype(:firewalld_zone) do
     provider.get_services.reject { |p| puppet_services.include?(p) }.each do |purge|
       self.debug("should purge service #{purge}")
       res_type = Puppet::Type.type(:firewalld_service).new(
-        :name     => "#{self[:name]}-#{purge}",
-        :ensure   => :absent,
-        :service  => purge,
-        :zone     => self[:name]
+        name: "#{self[:name]}-#{purge}",
+        ensure: :absent,
+        service: purge,
+        zone: self[:name]
       )
 
       purge_resource(res_type)
@@ -234,11 +234,11 @@ Puppet::Type.newtype(:firewalld_zone) do
     provider.get_ports.reject { |p| puppet_ports.include?(p) }.each do |purge|
       self.debug("Should purge port #{purge['port']} proto #{purge['protocol']}")
       res_type = Puppet::Type.type(:firewalld_port).new(
-        :name     => "#{self[:name]}-#{purge['port']}-#{purge['protocol']}-purge",
-        :port     => purge['port'],
-        :ensure   => :absent,
-        :protocol => purge['protocol'],
-        :zone     => self[:name]
+        name: "#{self[:name]}-#{purge['port']}-#{purge['protocol']}-purge",
+        port: purge['port'],
+        ensure: :absent,
+        protocol: purge['protocol'],
+        zone: self[:name]
       )
       purge_resource(res_type)
       @ports_purgable = true

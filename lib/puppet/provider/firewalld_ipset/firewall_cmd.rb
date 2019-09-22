@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
 Puppet::Type.type(:firewalld_ipset).provide(
   :firewall_cmd,
-  :parent => Puppet::Provider::Firewalld
+  parent: Puppet::Provider::Firewalld
 ) do
   desc 'Interact with firewall-cmd'
 
@@ -48,10 +48,10 @@ Puppet::Type.type(:firewalld_ipset).provide(
     args << ["--new-ipset=#{@resource[:name]}"]
     args << ["--type=#{@resource[:type]}"]
     options = {
-      :family => @resource[:family],
-      :hashsize => @resource[:hashsize],
-      :maxelem => @resource[:maxelem],
-      :timeout => @resource[:timeout]
+      family: @resource[:family],
+      hashsize: @resource[:hashsize],
+      maxelem: @resource[:maxelem],
+      timeout: @resource[:timeout]
     }
     options = options.merge(@resource[:options]) if @resource[:options]
     options.each do |option_name, value|

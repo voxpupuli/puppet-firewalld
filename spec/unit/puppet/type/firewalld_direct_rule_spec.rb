@@ -16,12 +16,12 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
 
     describe 'namevar validation' do
       let(:attrs) {{
-        :title  => 'Allow SSH',
-        :ensure => 'present',
-        :table => 'filter',
-        :chain => 'OUTPUT',
-        :priority => 1,
-        :args => '-p tcp ---dport=22 -j ACCEPT'
+        title: 'Allow SSH',
+        ensure: 'present',
+        table: 'filter',
+        chain: 'OUTPUT',
+        priority: 1,
+        args: '-p tcp ---dport=22 -j ACCEPT'
       }}
 
       it 'should have :name as its namevar' do
@@ -35,7 +35,7 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
       end
 
       it 'should raise an error if given malformed inet protocol' do
-        expect { described_class.new(attrs.merge({:inet_protocol => 'bad'})) }.to raise_error(Puppet::Error)
+        expect { described_class.new(attrs.merge({inet_protocol: 'bad'})) }.to raise_error(Puppet::Error)
       end
 
     end
@@ -45,13 +45,13 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
 
     let(:resource) {
       described_class.new(
-          :name           => 'allow ssh',
-          :ensure         => 'present',
-          :inet_protocol  => 'ipv4',
-          :table          => 'filter',
-          :chain          => 'OUTPUT',
-          :priority       => 4,
-          :args           => '-p tcp --dport=22 -j ACCEPT',
+          name: 'allow ssh',
+          ensure: 'present',
+          inet_protocol: 'ipv4',
+          table: 'filter',
+          chain: 'OUTPUT',
+          priority: 4,
+          args: '-p tcp --dport=22 -j ACCEPT',
       )
     }
 

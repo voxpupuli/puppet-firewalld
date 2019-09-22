@@ -15,14 +15,14 @@ describe 'firewalld' do
   context 'when defining a default zone' do
     let(:params) do
       {
-        :default_zone => 'restricted',
+        default_zone: 'restricted',
       }
     end
 
     it do
       should contain_exec('firewalld::set_default_zone').with(
-        :command => 'firewall-cmd --set-default-zone restricted',
-        :unless  => '[ $(firewall-cmd --get-default-zone) = restricted ]',
+        command: 'firewall-cmd --set-default-zone restricted',
+        unless: '[ $(firewall-cmd --get-default-zone) = restricted ]',
       ).that_requires('Exec[firewalld::reload]')
     end
   end
@@ -30,10 +30,10 @@ describe 'firewalld' do
   context 'with purge options' do
     let(:params) do
       {
-        :purge_direct_rules => true,
-        :purge_direct_chains => true,
-        :purge_direct_passthroughs => true,
-        :purge_unknown_ipsets => true
+        purge_direct_rules: true,
+        purge_direct_chains: true,
+        purge_direct_passthroughs: true,
+        purge_unknown_ipsets: true
       }
     end
 
@@ -186,14 +186,14 @@ describe 'firewalld' do
   context 'with default_zone' do
     let(:params) do
       {
-        :default_zone => 'public'
+        default_zone: 'public'
       }
     end
 
     it do
       should contain_exec('firewalld::set_default_zone').with(
-        :command => 'firewall-cmd --set-default-zone public',
-        :unless  => '[ $(firewall-cmd --get-default-zone) = public ]',
+        command: 'firewall-cmd --set-default-zone public',
+        unless: '[ $(firewall-cmd --get-default-zone) = public ]',
       ).that_requires('Exec[firewalld::reload]')
     end
   end
@@ -202,14 +202,14 @@ describe 'firewalld' do
     context "with log_denied set to #{cond}" do
       let(:params) do
         {
-          :log_denied => cond
+          log_denied: cond
         }
       end
 
       it do
         should contain_exec('firewalld::set_log_denied').with(
-          :command => "firewall-cmd --set-log-denied #{cond} && firewall-cmd --reload",
-          :unless => "[ \$\(firewall-cmd --get-log-denied) = #{cond} ]"
+          command: "firewall-cmd --set-log-denied #{cond} && firewall-cmd --reload",
+          unless: "[ \$\(firewall-cmd --get-log-denied) = #{cond} ]"
         )
       end
     end
@@ -224,7 +224,7 @@ describe 'firewalld' do
 
     it do
       should contain_augeas('firewalld::cleanup_on_exit').with(
-        :changes => ['set CleanupOnExit "yes"'])
+        changes: ['set CleanupOnExit "yes"'])
     end
   end
 
@@ -237,7 +237,7 @@ describe 'firewalld' do
 
     it do
       should contain_augeas('firewalld::minimal_mark').with(
-        :changes => ['set MinimalMark "10"'])
+        changes: ['set MinimalMark "10"'])
     end
   end
 
@@ -250,7 +250,7 @@ describe 'firewalld' do
 
     it do
       should contain_augeas('firewalld::lockdown').with(
-        :changes => ['set Lockdown "yes"'])
+        changes: ['set Lockdown "yes"'])
     end
   end
 
@@ -263,7 +263,7 @@ describe 'firewalld' do
 
     it do
       should contain_augeas('firewalld::ipv6_rpfilter').with(
-        :changes => ['set IPv6_rpfilter "yes"'])
+        changes: ['set IPv6_rpfilter "yes"'])
     end
   end
 

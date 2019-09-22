@@ -17,8 +17,8 @@ describe provider_class do
   let(:provider) { resource.provider }
 
   before :each do
-    provider.class.stubs(:execute_firewall_cmd).returns(Object.any_instance.stubs(:exitstatus => 0))
-    provider.class.stubs(:execute_firewall_cmd).with(['--list-interfaces']).returns(Object.any_instance.stubs(:exitstatus => 0, :chomp => ''))
+    provider.class.stubs(:execute_firewall_cmd).returns(Object.any_instance.stubs(exitstatus: 0))
+    provider.class.stubs(:execute_firewall_cmd).with(['--list-interfaces']).returns(Object.any_instance.stubs(exitstatus: 0, chomp: ''))
   end
 
   describe 'when creating' do
@@ -54,7 +54,7 @@ describe provider_class do
         resource.expects(:[]).with(:log).returns(nil)
         resource.expects(:[]).with(:audit).returns(nil)
         resource.expects(:[]).with(:raw_rule).returns(nil)
-        resource.expects(:[]).with(:action).returns({:action => 'reject', :type => 'icmp-admin-prohibited'})
+        resource.expects(:[]).with(:action).returns({action: 'reject', type: 'icmp-admin-prohibited'})
         expect(provider.build_rich_rule).to eq('rule family="ipv4" destination address="192.168.0.1/32" service name="ssh" reject type="icmp-admin-prohibited"')
       end
     end

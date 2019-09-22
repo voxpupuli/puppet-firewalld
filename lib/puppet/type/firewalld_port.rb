@@ -27,7 +27,7 @@ Puppet::Type.newtype(:firewalld_port) do
     defaultto(:present)
   end
   
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'Name of the port resource in Puppet'
   end
   

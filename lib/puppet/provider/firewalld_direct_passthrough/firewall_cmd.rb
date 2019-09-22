@@ -3,7 +3,7 @@ require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
 Puppet::Type.type(:firewalld_direct_passthrough).provide(
   :firewalld_cmd,
-  :parent => Puppet::Provider::Firewalld
+  parent: Puppet::Provider::Firewalld
 ) do
   desc 'Interact with firewall-cmd'
 

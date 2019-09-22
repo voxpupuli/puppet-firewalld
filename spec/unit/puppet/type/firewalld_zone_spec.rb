@@ -38,7 +38,7 @@ describe Puppet::Type.type(:firewalld_zone) do
           name: 'restricted',
           target: '%%REJECT%%',
           interfaces: ['eth0'],
-          icmp_blocks: [ 'redirect', 'router-advertisment' ],
+          icmp_blocks: ['redirect', 'router-advertisment'],
           sources: ['192.168.2.2', '10.72.1.100'])
       }
       let(:provider) {

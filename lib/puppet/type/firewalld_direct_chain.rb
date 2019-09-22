@@ -21,11 +21,11 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
     [
       [
         /^([^:]+):([^:]+):([^:]+)$/,
-        [ [:inet_protocol], [:table], [:name] ]
+        [[:inet_protocol], [:table], [:name]]
       ],
       [
         /^([^:]+)$/,
-        [[ :name ]]
+        [[:name]]
       ]
     ]
   end

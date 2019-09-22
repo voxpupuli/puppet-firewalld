@@ -44,7 +44,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def elements
-   [ :service, :port, :protocol, :icmp_block, :masquerade, :forward_port ]
+   [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
   end
 
   def eval_element
@@ -106,7 +106,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def build_rich_rule
     return @resource[:raw_rule] if @resource[:raw_rule]
-    rule = [ 'rule' ]
+    rule = ['rule']
     rule << [
       key_val_opt('family'),
       eval_source,

@@ -60,7 +60,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     end
     cmd_args = []
     cmd_args << '--permanent' if perm
-    cmd_args << [ '--zone', zone ] unless zone.nil?
+    cmd_args << ['--zone', zone] unless zone.nil?
 
     # Add the arguments to our command string, removing any quotes, the command
     # provider will sort the quotes out.
@@ -93,7 +93,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     if args.is_a?(Array)
       args = args.flatten.join(' ')
     end
-    args.split(/(\'[^\']*\'| )/).reject { |r| [ '', ' '].include?(r) }
+    args.split(/(\'[^\']*\'| )/).reject { |r| ['', ' '].include?(r) }
   end
 
   # Occasionally we need to restart firewalld in a transient way between resources

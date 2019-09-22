@@ -57,12 +57,12 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
     let(:provider) { resource.provider }
 
     it 'creates' do
-      provider.expects(:execute_firewall_cmd).with(['--direct', '--add-rule', [ 'ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
+      provider.expects(:execute_firewall_cmd).with(['--direct', '--add-rule', ['ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
       provider.create
     end
 
     it 'destroys' do
-      provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-rule', [  'ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
+      provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-rule', ['ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
       provider.destroy
     end
 

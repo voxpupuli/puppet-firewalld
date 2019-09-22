@@ -7,7 +7,7 @@ describe 'firewalld' do
   end
 
   context 'with defaults for all parameters' do
-    it { should contain_class('firewalld') }
+    it { is_expected.to contain_class('firewalld') }
   end
 
   context 'when defining a default zone' do
@@ -18,7 +18,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_exec('firewalld::set_default_zone').with(
+      is_expected.to contain_exec('firewalld::set_default_zone').with(
         command: 'firewall-cmd --set-default-zone restricted',
         unless: '[ $(firewall-cmd --get-default-zone) = restricted ]'
       ).that_requires('Exec[firewalld::reload]')
@@ -36,19 +36,19 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld_direct_purge('rule')
+      is_expected.to contain_firewalld_direct_purge('rule')
     end
 
     it do
-      should contain_firewalld_direct_purge('passthrough')
+      is_expected.to contain_firewalld_direct_purge('passthrough')
     end
 
     it do
-      should contain_firewalld_direct_purge('chain')
+      is_expected.to contain_firewalld_direct_purge('chain')
     end
 
     it do
-      should contain_resources('firewalld_ipset').
+      is_expected.to contain_resources('firewalld_ipset').
         with_purge(true)
     end
   end
@@ -71,7 +71,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld_port('my_port').
+      is_expected.to contain_firewalld_port('my_port').
         with_ensure('present').
         with_port('9999').
         with_protocol('tcp').
@@ -96,7 +96,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld_zone('restricted').
+      is_expected.to contain_firewalld_zone('restricted').
         with_ensure('present').
         with_target('%%REJECT%%').
         that_notifies('Exec[firewalld::reload]').
@@ -119,7 +119,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld_service('mysql').
+      is_expected.to contain_firewalld_service('mysql').
         with_ensure('present').
         with_zone('public').
         that_notifies('Exec[firewalld::reload]').
@@ -145,7 +145,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld_rich_rule('Accept SSH from Gondor').
+      is_expected.to contain_firewalld_rich_rule('Accept SSH from Gondor').
         with_ensure('present').
         with_zone('restricted').
         that_notifies('Exec[firewalld::reload]').
@@ -173,7 +173,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_firewalld__custom_service('MyService').
+      is_expected.to contain_firewalld__custom_service('MyService').
         with_ensure('present').
         with_short('MyService').
         with_port([{ 'port' => '1234', 'protocol' => 'tcp' }, { 'port' => '1234', 'protocol' => 'udp' }])
@@ -188,7 +188,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_exec('firewalld::set_default_zone').with(
+      is_expected.to contain_exec('firewalld::set_default_zone').with(
         command: 'firewall-cmd --set-default-zone public',
         unless: '[ $(firewall-cmd --get-default-zone) = public ]'
       ).that_requires('Exec[firewalld::reload]')
@@ -204,7 +204,7 @@ describe 'firewalld' do
       end
 
       it do
-        should contain_exec('firewalld::set_log_denied').with(
+        is_expected.to contain_exec('firewalld::set_log_denied').with(
           command: "firewall-cmd --set-log-denied #{cond} && firewall-cmd --reload",
           unless: "[ \$\(firewall-cmd --get-log-denied) = #{cond} ]"
         )
@@ -220,7 +220,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_augeas('firewalld::cleanup_on_exit').with(
+      is_expected.to contain_augeas('firewalld::cleanup_on_exit').with(
         changes: ['set CleanupOnExit "yes"']
       )
     end
@@ -234,7 +234,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_augeas('firewalld::minimal_mark').with(
+      is_expected.to contain_augeas('firewalld::minimal_mark').with(
         changes: ['set MinimalMark "10"']
       )
     end
@@ -248,7 +248,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_augeas('firewalld::lockdown').with(
+      is_expected.to contain_augeas('firewalld::lockdown').with(
         changes: ['set Lockdown "yes"']
       )
     end
@@ -262,7 +262,7 @@ describe 'firewalld' do
     end
 
     it do
-      should contain_augeas('firewalld::ipv6_rpfilter').with(
+      is_expected.to contain_augeas('firewalld::ipv6_rpfilter').with(
         changes: ['set IPv6_rpfilter "yes"']
       )
     end

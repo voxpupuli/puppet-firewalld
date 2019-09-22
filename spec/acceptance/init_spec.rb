@@ -11,8 +11,8 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
     end
 
     describe command('firewall-cmd --list-ports') do
-      its(:stdout) { should match /6379/ }
-      its(:stdout) { should match /5666/ }
+      its(:stdout) { is_expected.to match /6379/ }
+      its(:stdout) { is_expected.to match /5666/ }
     end
   end
 end

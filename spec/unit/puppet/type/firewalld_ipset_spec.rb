@@ -9,16 +9,16 @@ describe Puppet::Type.type(:firewalld_ipset) do
   describe 'type' do
     context 'with no params' do
       describe 'when validating attributes' do
-        [  
+        [
           :name, :type, :options
         ].each do |param|
           it "should have a #{param} parameter" do
             expect(described_class.attrtype(param)).to eq(:param)
           end
         end
-      
-  
-        [  
+
+
+        [
           :entries
         ].each do |param|
           it "should have a #{param} parameter" do
@@ -48,7 +48,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
 
     let(:resource) {
       described_class.new(
-        name: 'whitelist', 
+        name: 'whitelist',
         entries: ['192.168.2.2', '10.72.1.100'])
     }
     let(:provider) {

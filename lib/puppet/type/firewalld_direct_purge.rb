@@ -25,10 +25,10 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
     newvalue(:purgable) do
     end
     newvalue(:purged) do
-      true 
+      true
     end
 
-      
+
 
     def retrieve
       if @resource.purge?

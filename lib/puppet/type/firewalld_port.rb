@@ -4,9 +4,9 @@ Puppet::Type.newtype(:firewalld_port) do
 
   @doc =%q{Assigns a port to a specific firewalld zone.
     firewalld_port will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this
-    
+
     Example:
-    
+
         firewalld_port {'Open port 8080 in the public Zone':
             ensure   => 'present',
             zone     => 'public',
@@ -14,7 +14,7 @@ Puppet::Type.newtype(:firewalld_port) do
             protocol => 'tcp',
         }
   }
-  
+
   ensurable do
     newvalue(:present) do
       @resource.provider.create
@@ -26,15 +26,15 @@ Puppet::Type.newtype(:firewalld_port) do
 
     defaultto(:present)
   end
-  
+
   newparam(:name, namevar: true) do
     desc 'Name of the port resource in Puppet'
   end
-  
+
   newparam(:zone) do
     desc 'Name of the zone to which you want to add the port'
   end
-  
+
   newparam(:port) do
     desc 'Specify the element as a port'
     defaultto { @resource[:name] }
@@ -46,10 +46,10 @@ Puppet::Type.newtype(:firewalld_port) do
   newparam(:protocol) do
     desc 'Specify the element as a protocol'
   end
-  
+
   autorequire(:firewalld_zone) do
     self[:zone]
   end
 
 end
-  
+

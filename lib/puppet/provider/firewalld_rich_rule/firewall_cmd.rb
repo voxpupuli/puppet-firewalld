@@ -76,7 +76,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     return [] unless @resource[:log]
     args = []
     args << 'log'
-    if @resource[:log].is_a?(Hash) 
+    if @resource[:log].is_a?(Hash)
       args << quote_keyval('prefix', @resource[:log]['prefix'])
       args << quote_keyval('level', @resource[:log]['level'])
       args << quote_keyval('limit value', @resource[:log]['limit'])
@@ -88,7 +88,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     return [] unless @resource[:audit]
     args = []
     args << 'audit'
-    if @resource[:audit].is_a?(Hash) 
+    if @resource[:audit].is_a?(Hash)
       args << quote_keyval('limit value', @resource[:log]['limit'])
     end
     args

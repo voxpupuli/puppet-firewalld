@@ -5,10 +5,10 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
 
   @doc =%q{Manages firewalld rich rules.
 
-    firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this  
+    firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this
 
     Example:
-    
+
       firewalld_rich_rule { 'Accept SSH from barny':
         ensure => present,
         zone   => 'restricted',
@@ -16,7 +16,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
         service => 'ssh',
         action  => 'accept',
       }
-  
+
   }
 
   ensurable
@@ -110,7 +110,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
 
- 
+
   def elements
     [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
   end

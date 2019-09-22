@@ -6,7 +6,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
   end
   context 'with no params' do
     describe 'when validating attributes' do
-      [  
+      [
          :family,
          :zone,
          :source,
@@ -182,21 +182,21 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
           @fakeclass = Class.new
         end
         let(:provider) { resource.provider }
-        let(:rawrule) { 
+        let(:rawrule) {
           'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept'
         }
-      
+
         it 'queries the status' do
           @fakeclass.stubs(:exitstatus).returns(0)
           provider.expects(:execute_firewall_cmd).with(['--query-rich-rule',rawrule], 'restricted', true, false).returns(@fakeclass)
           expect(provider.exists?).to be_truthy
         end
-    
+
         it 'creates' do
           provider.expects(:execute_firewall_cmd).with(['--add-rich-rule', rawrule])
           provider.create
         end
-    
+
         it 'destroys' do
           provider.expects(:execute_firewall_cmd).with(['--remove-rich-rule', rawrule])
           provider.destroy

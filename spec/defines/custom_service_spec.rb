@@ -5,7 +5,7 @@ describe 'firewalld::custom_service' do
   let(:xml) {
     File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'services', 'custom_service.xml'))
   }
-  
+
   let(:xml_port_range) {
     File.read(File.join(File.dirname(__FILE__), '..', 'fixtures', 'services', 'custom_service_port_range.xml'))
   }
@@ -180,6 +180,6 @@ describe 'firewalld::custom_service' do
       )
     end
   end
-end  
+end
 
 

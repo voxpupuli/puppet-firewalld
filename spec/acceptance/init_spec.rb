@@ -15,6 +15,6 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
       its(:stdout) { should match /6379/ }
       its(:stdout) { should match /5666/ }
     end
-    
+
   end
 end

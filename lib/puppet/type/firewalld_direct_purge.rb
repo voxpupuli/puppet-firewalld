@@ -52,7 +52,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
   end
 
   def purge?
-    @purge_resources.length > 0
+    !@purge_resources.empty?
   end
 
   def purge_resources

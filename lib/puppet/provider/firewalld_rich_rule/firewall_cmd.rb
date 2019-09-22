@@ -25,7 +25,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def eval_source
     args = []
-    return [] unless addr = @resource[:source]
+    return [] unless (addr = @resource[:source])
     invert = addr['invert'] ? ' NOT' : ''
     args << "source#{invert}"
     args << quote_keyval('address', addr['address'])
@@ -35,7 +35,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def eval_dest
     args = []
-    return [] unless addr = @resource[:dest]
+    return [] unless (addr = @resource[:dest])
     invert = addr['invert'] ? ' NOT' : ''
     args << "destination#{invert}"
     args << quote_keyval('address', addr['address'])
@@ -94,7 +94,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def eval_action
-    return [] unless action = @resource[:action]
+    return [] unless (action = @resource[:action])
     args = []
     if action.is_a?(Hash)
       args << action[:action]

@@ -2,7 +2,6 @@ require 'puppet'
 require 'puppet/type'
 require 'puppet/provider'
 class Puppet::Provider::Firewalld < Puppet::Provider
-
   @running = nil
   @runstate = nil
 
@@ -133,5 +132,4 @@ class Puppet::Provider::Firewalld < Puppet::Provider
       return true
     end
   end
-
 end

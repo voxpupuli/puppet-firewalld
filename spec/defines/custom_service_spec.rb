@@ -189,5 +189,3 @@ describe 'firewalld::custom_service' do
     end
   end
 end
-
-

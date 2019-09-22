@@ -245,4 +245,3 @@ Puppet::Type.newtype(:firewalld_zone) do
     desc 'Short description of the zone to add'
   end
 end
-

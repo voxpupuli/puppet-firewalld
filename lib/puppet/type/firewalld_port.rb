@@ -50,4 +50,3 @@ Puppet::Type.newtype(:firewalld_port) do
     self[:zone]
   end
 end
-

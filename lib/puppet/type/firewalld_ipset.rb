@@ -83,4 +83,3 @@ Puppet::Type.newtype(:firewalld_ipset) do
     end
   end
 end
-

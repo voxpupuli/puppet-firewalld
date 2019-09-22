@@ -34,5 +34,4 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
     ]
     rule.flatten
   end
-
 end

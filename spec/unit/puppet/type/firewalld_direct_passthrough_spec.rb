@@ -27,13 +27,10 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
       it 'raises an error if given malformed inet protocol' do
         expect { described_class.new(title: '-A OUTPUT -j OUTPUT_filter', inet_protocol: 'bad') }.to raise_error(Puppet::Error)
       end
-
     end
-
   end
 
   describe 'provider' do
-
     let(:resource) {
       described_class.new(
         name: 'Forward OUTPUT',

@@ -31,5 +31,4 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
     ]
     passt.flatten
   end
-
 end

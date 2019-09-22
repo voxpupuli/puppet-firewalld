@@ -127,5 +127,4 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   def destroy
     execute_firewall_cmd(['--remove-rich-rule', build_rich_rule])
   end
-
 end

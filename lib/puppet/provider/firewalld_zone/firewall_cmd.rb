@@ -58,7 +58,6 @@ Puppet::Type.type(:firewalld_zone).provide(
     (cur_interfaces - new_interfaces).each do |i|
       self.debug("Removing interface '#{i}' from zone #{@resource[:name]}")
       execute_firewall_cmd(['--remove-interface', i])
-
     end
   end
 
@@ -144,7 +143,6 @@ Puppet::Type.type(:firewalld_zone).provide(
     if !remove_blocks.empty?
       remove_blocks.each do |block|
         execute_firewall_cmd(['--remove-icmp-block', block])
-
       end
     end
     if !set_blocks.empty?
@@ -200,5 +198,4 @@ Puppet::Type.type(:firewalld_zone).provide(
   def short=(new_short)
     execute_firewall_cmd(['--set-short', new_short], @resource[:name], true, false)
   end
-
 end

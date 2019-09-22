@@ -1,7 +1,6 @@
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_direct_passthrough) do
-
   @doc =%q{Allow to create a custom passthroughhrough traffic in iptables/ip6tables/ebtables using firewalld direct interface.
 
     Example:
@@ -35,5 +34,4 @@ Puppet::Type.newtype(:firewalld_direct_passthrough) do
     isnamevar
     desc 'Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)'
   end
-
 end

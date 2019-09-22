@@ -36,12 +36,10 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
       it 'raises an error if given malformed inet protocol' do
         expect { described_class.new(attrs.merge({inet_protocol: 'bad'})) }.to raise_error(Puppet::Error)
       end
-
     end
   end
 
   describe 'provider' do
-
     let(:resource) {
       described_class.new(
           name: 'allow ssh',
@@ -77,6 +75,5 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
         expect(provider.parse_args(args)).to eq(['-j', 'LOG', '--log-prefix', '\'# IPTABLES DROPPED:\''])
       end
     end
-
   end
 end

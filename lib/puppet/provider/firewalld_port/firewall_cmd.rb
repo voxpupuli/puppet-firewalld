@@ -38,5 +38,4 @@ Puppet::Type.type(:firewalld_port).provide(
   def destroy
     execute_firewall_cmd(['--remove-port', build_port_rule])
   end
-
 end

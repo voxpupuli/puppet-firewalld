@@ -2,7 +2,6 @@ require 'puppet'
 require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:firewalld_direct_purge) do
-
   # Reference the types here so we know they are loaded.
   #
   Puppet::Type.type(:firewalld_direct_chain)
@@ -34,7 +33,6 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
         :purged
       end
     end
-
   end
 
   def generate

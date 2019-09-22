@@ -115,7 +115,6 @@ describe provider_class do
         provider.create
         provider.entries = ['192.168.14.0/24', '10.0.0.0/8']
       end
-
     end
   end
 end

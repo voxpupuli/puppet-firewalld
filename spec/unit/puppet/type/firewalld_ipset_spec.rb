@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_ipset) do
-
   before do
     Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true)
   end
@@ -43,7 +42,6 @@ describe Puppet::Type.type(:firewalld_ipset) do
   ## Provider tests for the firewalld_zone type
   #
   describe 'provider' do
-
     let(:resource) {
       described_class.new(
         name: 'whitelist',

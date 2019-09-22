@@ -2,7 +2,6 @@ require 'puppet'
 require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:firewalld_zone) do
-
   # Reference the types here so we know they are loaded
   #
   Puppet::Type.type(:firewalld_rich_rule)
@@ -121,11 +120,9 @@ Puppet::Type.newtype(:firewalld_zone) do
       return :false if @resource[:purge_rich_rules] == :false
       provider.resource.rich_rules_purgable ? :purgable : :true
     end
-
   end
 
   newproperty(:purge_services) do
-
     desc "When set to true any services associated with this zone
           that are not managed by Puppet will be removed.
          "
@@ -189,7 +186,6 @@ Puppet::Type.newtype(:firewalld_zone) do
       # the firewall and drop orphaned running rules
       #
       @rich_rules_purgable = true
-
     end
   end
 
@@ -248,6 +244,5 @@ Puppet::Type.newtype(:firewalld_zone) do
   newparam(:short) do
     desc 'Short description of the zone to add'
   end
-
 end
 

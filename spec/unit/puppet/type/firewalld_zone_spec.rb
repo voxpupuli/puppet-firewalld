@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_zone) do
-
   before do
     Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true)
   end
@@ -31,7 +30,6 @@ describe Puppet::Type.type(:firewalld_zone) do
   ## Provider tests for the firewalld_zone type
   #
   describe 'provider' do
-
     context 'with standard parameters' do
       let(:resource) {
         described_class.new(
@@ -160,7 +158,6 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).returns("yes\n")
         expect(provider.masquerade).to eq(:true)
       end
-
     end
   end
 end

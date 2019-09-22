@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'puppet/provider/firewalld'
 
 describe 'firewalld' do
-
   before do
     Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true)
   end
@@ -52,7 +51,6 @@ describe 'firewalld' do
       should contain_resources('firewalld_ipset')
         .with_purge(true)
     end
-
   end
 
   context 'with parameter ports' do
@@ -265,5 +263,4 @@ describe 'firewalld' do
         changes: ['set IPv6_rpfilter "yes"'])
     end
   end
-
 end

@@ -29,5 +29,4 @@ Puppet::Type.type(:firewalld_service).provide(
     execute_firewall_cmd([flag, @resource[:service]])
     reload_firewall
   end
-
 end

@@ -1,7 +1,6 @@
 require_relative '../../puppet_x/firewalld/property/positive_integer'
 
 Puppet::Type.newtype(:firewalld_ipset) do
-
   @doc =%q{
     Configure IPsets in Firewalld
 
@@ -83,6 +82,5 @@ Puppet::Type.newtype(:firewalld_ipset) do
       raise(Puppet::Error, "Ipset should not declare entries if it doesn't manage entries")
     end
   end
-
 end
 

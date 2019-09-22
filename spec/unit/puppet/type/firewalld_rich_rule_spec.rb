@@ -47,7 +47,6 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         action: {type: 'icmp-admin-prohibited', action: 'accepted'},
       ) end.to raise_error(/Authorized action values are `accept`, `reject`, `drop` or `mark`/)
     end
-
   end
 
   describe 'namevar validation' do
@@ -81,13 +80,11 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
     it 'converts dest into a hash' do
       expect(described_class.new(attrs)[:dest]).to be_a(Hash)
     end
-
   end
 
   ## Many more scenarios needed!
   #
   describe 'provider' do
-
     scenarios = {
       ## Test source
       {
@@ -171,9 +168,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
     }
 
     scenarios.each do |attrs, rawrule|
-
       context "for rule #{rawrule}" do
-
         let(:resource) {
           described_class.new(attrs)
         }

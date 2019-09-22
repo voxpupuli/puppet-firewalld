@@ -39,8 +39,6 @@ describe Puppet::Type.type(:firewalld_direct_chain) do
       it 'raises an error if given malformed inet protocol' do
         expect { described_class.new(title: '4vpi:filter:LOG_DROPS') }.to raise_error(Puppet::Error)
       end
-
     end
-
   end
 end

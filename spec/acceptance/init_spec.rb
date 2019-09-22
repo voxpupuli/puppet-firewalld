@@ -1,7 +1,6 @@
 require 'spec_helper_acceptance'
 
 describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
-
   context 'running with defaults' do
     it 'runs successfully' do
       pp = 'include firewalld'
@@ -15,6 +14,5 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
       its(:stdout) { should match /6379/ }
       its(:stdout) { should match /5666/ }
     end
-
   end
 end

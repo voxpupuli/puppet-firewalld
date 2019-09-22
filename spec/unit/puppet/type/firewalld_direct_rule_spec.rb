@@ -49,7 +49,7 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
           table: 'filter',
           chain: 'OUTPUT',
           priority: 4,
-          args: '-p tcp --dport=22 -j ACCEPT',
+          args: '-p tcp --dport=22 -j ACCEPT'
       )
     end
 

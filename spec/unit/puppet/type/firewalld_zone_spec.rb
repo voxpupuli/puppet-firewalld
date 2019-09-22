@@ -133,7 +133,7 @@ describe Puppet::Type.type(:firewalld_zone) do
         described_class.new(
           name: 'public',
           ensure: :present,
-          masquerade: true,
+          masquerade: true
         )
       end
       let(:provider) do

@@ -29,7 +29,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
       expect do
         described_class.new(
         name: 'white black',
-        type: 'hash:net',
+        type: 'hash:net'
         ) end.to raise_error(/IPset name must be a word with no spaces/)
     end
     it 'accept - in name' do

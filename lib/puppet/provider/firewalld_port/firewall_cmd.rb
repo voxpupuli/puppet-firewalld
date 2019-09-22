@@ -12,7 +12,7 @@ Puppet::Type.type(:firewalld_port).provide(
   def exists?
     @rule_args ||= build_port_rule
     output = execute_firewall_cmd(['--query-port', @rule_args], @resource[:zone], true, false)
-    output.exitstatus == 0
+    output.exitstatus.zero?
   end
 
   def quote_keyval(key, val)

@@ -89,9 +89,11 @@ class firewalld (
       enable => $service_enable,
     }
 
+    # firewall-cmd commands won't work if the service is stopped
     exec { 'firewalld::reload':
       command     => 'firewall-cmd --reload',
       refreshonly => true,
+      onlyif      => 'firewall-cmd --state',
     }
 
     exec { 'firewalld::complete-reload':

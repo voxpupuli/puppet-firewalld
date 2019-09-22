@@ -3,13 +3,13 @@ require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
 Puppet::Type.type(:firewalld_direct_rule).provide(
   :firewall_cmd,
-  :parent => Puppet::Provider::Firewalld
+  parent: Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
+  desc 'Interact with firewall-cmd'
 
   def exists?
     @rule_args ||= generate_raw
-    output=execute_firewall_cmd(['--direct', '--query-rule', @rule_args], nil, true, false)
+    output = execute_firewall_cmd(['--direct', '--query-rule', @rule_args], nil, true, false)
     output.include?('yes')
   end
 
@@ -23,7 +23,6 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
     execute_firewall_cmd(['--direct', '--remove-rule', @rule_args], nil)
   end
 
-
   def generate_raw
     rule = []
     rule << [
@@ -35,5 +34,4 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
     ]
     rule.flatten
   end
-
 end

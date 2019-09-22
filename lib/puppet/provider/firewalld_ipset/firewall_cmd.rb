@@ -3,29 +3,29 @@ require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
 Puppet::Type.type(:firewalld_ipset).provide(
   :firewall_cmd,
-  :parent => Puppet::Provider::Firewalld
+  parent: Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
+  desc 'Interact with firewall-cmd'
 
   mk_resource_methods
 
   def self.instances
-    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split(" ")
-    ipset_ids.collect do |ipset_id|
+    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split(' ')
+    ipset_ids.map do |ipset_id|
       ipset_raw = execute_firewall_cmd(["--info-ipset=#{ipset_id}"], nil)
-      raw_options = ipset_raw.match(/options: (.*)/)
+      raw_options = ipset_raw.match(%r{options: (.*)})
       options = {}
       if raw_options
-        raw_options[1].split(' ').each { |v|
+        raw_options[1].split(' ').each do |v|
           k, v = v.split('=')
           options[k.to_sym] = v
-        }
+        end
       end
       new(
         {
           ensure: :present,
           name: ipset_id,
-          type: ipset_raw.match(/type: (.*)/)[1],
+          type: ipset_raw.match(%r{type: (.*)})[1]
         }.merge(options)
       )
     end
@@ -48,21 +48,17 @@ Puppet::Type.type(:firewalld_ipset).provide(
     args << ["--new-ipset=#{@resource[:name]}"]
     args << ["--type=#{@resource[:type]}"]
     options = {
-      :family => @resource[:family],
-      :hashsize => @resource[:hashsize],
-      :maxelem => @resource[:maxelem],
-      :timeout => @resource[:timeout]
+      family: @resource[:family],
+      hashsize: @resource[:hashsize],
+      maxelem: @resource[:maxelem],
+      timeout: @resource[:timeout]
     }
     options = options.merge(@resource[:options]) if @resource[:options]
     options.each do |option_name, value|
-      if value
-        args << ["--option=#{option_name}=#{value}"]
-      end
+      args << ["--option=#{option_name}=#{value}"] if value
     end
     execute_firewall_cmd(args.flatten, nil)
-    if @resource[:manage_entries]
-      @resource[:entries].each { |e| add_entry(e) }
-    end
+    @resource[:entries].each { |e| add_entry(e) } if @resource[:manage_entries]
   end
 
   [:type, :maxelem, :family, :hashsize, :timeout].each do |method|
@@ -76,7 +72,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
 
   def entries
     if @resource[:manage_entries]
-      execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--get-entries"], nil).split("\n").sort
+      execute_firewall_cmd(["--ipset=#{@resource[:name]}", '--get-entries'], nil).split("\n").sort
     else
       @resource[:entries]
     end
@@ -96,8 +92,8 @@ Puppet::Type.type(:firewalld_ipset).provide(
       return
     end
     cur_entries = entries
-    delete_entries = cur_entries-should_entries
-    add_entries = should_entries-cur_entries
+    delete_entries = cur_entries - should_entries
+    add_entries = should_entries - cur_entries
     delete_entries.each { |e| remove_entry(e) }
     add_entries.each { |e| add_entry(e) }
   end

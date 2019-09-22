@@ -2,13 +2,12 @@ require 'puppet'
 require_relative '../../puppet_x/firewalld/property/rich_rule_action'
 
 Puppet::Type.newtype(:firewalld_rich_rule) do
+  @doc = "Manages firewalld rich rules.
 
-  @doc =%q{Manages firewalld rich rules.
-
-    firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this  
+    firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this
 
     Example:
-    
+
       firewalld_rich_rule { 'Accept SSH from barny':
         ensure => present,
         zone   => 'restricted',
@@ -16,92 +15,86 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
         service => 'ssh',
         action  => 'accept',
       }
-  
-  }
+
+  "
 
   ensurable
 
   newparam(:name) do
     isnamevar
-    desc "Name of the rule resource in Puppet"
+    desc 'Name of the rule resource in Puppet'
   end
 
   newparam(:zone) do
-    desc "Name of the zone"
+    desc 'Name of the zone'
   end
 
   newparam(:family) do
-    desc "IP family, one of ipv4 or ipv6, defauts to ipv4"
+    desc 'IP family, one of ipv4 or ipv6, defauts to ipv4'
     newvalues(:ipv4, :ipv6)
     defaultto :ipv4
-    munge do |value|
-      value.to_s
-    end
+    munge(&:to_s)
   end
 
   newparam(:source) do
-    desc "Specify source address, this can be a string of the IP address or a hash containing other options"
+    desc 'Specify source address, this can be a string of the IP address or a hash containing other options'
     munge do |value|
       if value.is_a?(String)
         { 'address' => value }
       else
-        errormsg = "Only one source type address or ipset may be specified."
-        if value.has_key?("address") && value.has_key?("ipset")
-          self.fail errormsg
-        end
+        errormsg = 'Only one source type address or ipset may be specified.'
+        raise errormsg if value.key?('address') && value.key?('ipset')
         value
       end
     end
   end
   newparam(:dest) do
-    desc "Specify destination address, this can be a string of the IP address or a hash containing other options"
+    desc 'Specify destination address, this can be a string of the IP address or a hash containing other options'
     munge do |value|
       if value.is_a?(String)
         { 'address' => value }
       else
-        errormsg = "Only one source type address or ipset may be specified."
-        if value.has_key?("address") && value.has_key?("ipset")
-          self.fail errormsg
-        end
+        errormsg = 'Only one source type address or ipset may be specified.'
+        raise errormsg if value.key?('address') && value.key?('ipset')
         value
       end
     end
   end
 
   newparam(:service) do
-    desc "Specify the element as a service"
+    desc 'Specify the element as a service'
   end
 
   newparam(:port) do
-    desc "Specify the element as a port"
+    desc 'Specify the element as a port'
   end
 
   newparam(:protocol) do
-    desc "Specify the element as a protocol"
+    desc 'Specify the element as a protocol'
   end
 
   newparam(:icmp_block) do
-    desc "Specify the element as an icmp-block"
+    desc 'Specify the element as an icmp-block'
   end
 
   newparam(:masquerade) do
-    desc "Specify the element as masquerade"
+    desc 'Specify the element as masquerade'
   end
 
   newparam(:forward_port) do
-    desc "Specify the element as forward-port"
+    desc 'Specify the element as forward-port'
   end
 
   newparam(:log) do
-    desc "doc"
+    desc 'doc'
   end
 
   newparam(:audit) do
-    desc "doc"
+    desc 'doc'
   end
 
-  newparam(:action, :parent => PuppetX::Firewalld::Property::RichRuleAction) do
-    desc "doc"
+  newparam(:action, parent: PuppetX::Firewalld::Property::RichRuleAction) do
+    desc 'doc'
   end
 
   newparam(:raw_rule) do
@@ -109,15 +102,13 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
           handle pruning of rules"
   end
 
-
- 
   def elements
     [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
   end
 
   validate do
     errormsg = "Only one element (#{elements.join(',')}) may be specified."
-    self.fail errormsg if elements.select { |e| self[e] }.size > 1
+    raise errormsg if elements.select { |e| self[e] }.size > 1
   end
 
   autorequire(:firewalld_zone) do
@@ -125,8 +116,6 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   autorequire(:ipset) do
-    self[:source]["ipset"] if self[:source].is_a?(Hash)
+    self[:source]['ipset'] if self[:source].is_a?(Hash)
   end
-
-
 end

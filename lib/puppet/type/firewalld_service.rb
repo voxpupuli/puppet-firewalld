@@ -1,8 +1,7 @@
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_service) do
-
-  @doc =%q{Assigns a service to a specific firewalld zone.
+  @doc = "Assigns a service to a specific firewalld zone.
     firewalld_service will autorequire the firewalld_zone specified in the zone parameter and the firewalld::custom_service
 		specified in the service parameter, so there is no need to add dependencies for this
 
@@ -14,7 +13,7 @@ Puppet::Type.newtype(:firewalld_service) do
             service => 'ssh',
         }
 
-  }
+  "
 
   ensurable do
     newvalue(:present) do
@@ -28,17 +27,17 @@ Puppet::Type.newtype(:firewalld_service) do
     defaultto(:present)
   end
 
-  newparam(:name, :namevar => :true) do
-    desc "Name of the service resource in Puppet"
+  newparam(:name, namevar: :true) do
+    desc 'Name of the service resource in Puppet'
   end
 
   newparam(:service) do
-    desc "Name of the service to add"
+    desc 'Name of the service to add'
     defaultto { @resource[:name] }
   end
 
   newparam(:zone) do
-    desc "Name of the zone to which you want to add the service"
+    desc 'Name of the zone to which you want to add the service'
   end
 
   autorequire(:firewalld_zone) do
@@ -46,8 +45,8 @@ Puppet::Type.newtype(:firewalld_service) do
   end
 
   autorequire(:service) do
-    self.catalog.resources.select { |res|
+    catalog.resources.select do |res|
       res.title == "Firewalld::Custom_service[#{self[:service]}]"
-    }
+    end
   end
 end

@@ -2,11 +2,11 @@ require 'beaker-rspec'
 require 'beaker/puppet_install_helper'
 require 'pry'
 
-UNSUPPORTED_PLATFORMS = %W('windows', 'Darwin').freeze
+UNSUPPORTED_PLATFORMS = %w[windows Darwin].freeze
 
 unless ENV['RS_PROVISION'] == 'no' || ENV['BEAKER_provision'] == 'no'
 
-  environment = ENV['http_proxy'] ? { http_proxy:  ENV['http_proxy'] } : {}
+  environment = ENV['http_proxy'] ? { http_proxy: ENV['http_proxy'] } : {}
 
   run_puppet_install_helper
 

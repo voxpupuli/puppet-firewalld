@@ -2,8 +2,6 @@ require 'puppet'
 require 'puppet/type'
 require 'puppet/provider'
 class Puppet::Provider::Firewalld < Puppet::Provider
-
-
   @running = nil
   @runstate = nil
 
@@ -13,9 +11,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def initialize(*args)
-    if state.nil?
-      check_running_state
-    end
+    check_running_state if state.nil?
     super
   end
 
@@ -32,28 +28,25 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def self.check_running_state
-    begin
-      self.debug("Executing --state command - current value #{@state}")
-      ret = execute_firewall_cmd(['--state'], nil, false, false, check_online=false)
-      Puppet::Provider::Firewalld.runstate = ret.exitstatus == 0 ? true : false
-      
-    rescue Puppet::MissingCommand => e
-      # This exception is caught in case the module is being run before
-      # the package provider has installed the firewalld package, if we
-      # cannot find the firewalld-cmd command then we silently continue
-      # leaving @running set to nil, this will cause it to be re-checked
-      # later in the execution process.
-      #
-      # See: https://github.com/crayfishx/puppet-firewalld/issues/96
-      #
-      self.debug('Could not determine state of firewalld because the executable is not available')
-      return nil
-    end
+    debug("Executing --state command - current value #{@state}")
+    ret = execute_firewall_cmd(['--state'], nil, false, false, check_online = false)
+    Puppet::Provider::Firewalld.runstate = ret.exitstatus == 0 ? true : false
+  rescue Puppet::MissingCommand => e
+    # This exception is caught in case the module is being run before
+    # the package provider has installed the firewalld package, if we
+    # cannot find the firewalld-cmd command then we silently continue
+    # leaving @running set to nil, this will cause it to be re-checked
+    # later in the execution process.
+    #
+    # See: https://github.com/crayfishx/puppet-firewalld/issues/96
+    #
+    debug('Could not determine state of firewalld because the executable is not available')
+    return nil
   end
 
   # v3.0.0
-  def self.execute_firewall_cmd(args,  zone=nil, perm=true, failonfail=true, check_online=true)
-    if check_online and not online?
+  def self.execute_firewall_cmd(args, zone = nil, perm = true, failonfail = true, check_online = true)
+    if check_online && !online?
       shell_cmd = 'firewall-offline-cmd'
       perm = false
     else
@@ -61,7 +54,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     end
     cmd_args = []
     cmd_args << '--permanent' if perm
-    cmd_args << [ '--zone', zone ] unless zone.nil?
+    cmd_args << ['--zone', zone] unless zone.nil?
 
     # Add the arguments to our command string, removing any quotes, the command
     # provider will sort the quotes out.
@@ -77,14 +70,12 @@ class Puppet::Provider::Firewalld < Puppet::Provider
       shell_cmd,
       Puppet::Util,
       Puppet::Util::Execution,
-      { :failonfail => failonfail }
+      failonfail: failonfail
     )
-   firewall_cmd.execute(cmd_args.flatten)
+    firewall_cmd.execute(cmd_args.flatten)
   end
 
-
-
-  def execute_firewall_cmd(args, zone=@resource[:zone], perm=true, failonfail=true)
+  def execute_firewall_cmd(args, zone = @resource[:zone], perm = true, failonfail = true)
     self.class.execute_firewall_cmd(args, zone, perm, failonfail)
   end
 
@@ -93,10 +84,8 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   # in one element
   #
   def parse_args(args)
-    if args.is_a?(Array)
-      args = args.flatten.join(" ")
-    end
-    args.split(/(\'[^\']*\'| )/).reject { |r| [ "", " "].include?(r) }
+    args = args.flatten.join(' ') if args.is_a?(Array)
+    args.split(%r{(\'[^\']*\'| )}).reject { |r| ['', ' '].include?(r) }
   end
 
   # Occasionally we need to restart firewalld in a transient way between resources
@@ -105,7 +94,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   def reload_firewall
     execute_firewall_cmd(['--reload'], nil, false) if online?
   end
-
 
   def offline?
     check_running_state if state.nil?
@@ -137,5 +125,4 @@ class Puppet::Provider::Firewalld < Puppet::Provider
       return true
     end
   end
-
 end

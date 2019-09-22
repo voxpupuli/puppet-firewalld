@@ -1,8 +1,7 @@
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_direct_passthrough) do
-
-  @doc =%q{Allow to create a custom passthroughhrough traffic in iptables/ip6tables/ebtables using firewalld direct interface.
+  @doc = "Allow to create a custom passthroughhrough traffic in iptables/ip6tables/ebtables using firewalld direct interface.
 
     Example:
 
@@ -18,22 +17,19 @@ Puppet::Type.newtype(:firewalld_direct_passthrough) do
             ensure        => 'present',
         }
 
-  }
+  "
 
   ensurable
 
   newparam(:inet_protocol) do
-    desc "Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)"
-    newvalues("ipv4", "ipv6")
-    defaultto("ipv4")
-    munge do |value|
-      value.to_s
-    end
+    desc 'Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)'
+    newvalues('ipv4', 'ipv6')
+    defaultto('ipv4')
+    munge(&:to_s)
   end
 
   newparam(:args) do
     isnamevar
-    desc "Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)"
+    desc 'Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)'
   end
-
 end

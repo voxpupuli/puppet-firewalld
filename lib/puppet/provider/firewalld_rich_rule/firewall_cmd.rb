@@ -3,31 +3,30 @@ require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
 Puppet::Type.type(:firewalld_rich_rule).provide(
   :firewall_cmd,
-  :parent => Puppet::Provider::Firewalld
+  parent: Puppet::Provider::Firewalld
 ) do
-  desc "Interact with firewall-cmd"
-
+  desc 'Interact with firewall-cmd'
 
   mk_resource_methods
 
   def exists?
     @rule_args ||= build_rich_rule
-    output=execute_firewall_cmd(['--query-rich-rule', @rule_args], @resource[:zone], true, false)
+    output = execute_firewall_cmd(['--query-rich-rule', @rule_args], @resource[:zone], true, false)
     output.exitstatus == 0
   end
 
-  def quote_keyval(key,val)
+  def quote_keyval(key, val)
     val ? "#{key}=\"#{val}\"" : ''
   end
 
-  def key_val_opt(opt, resource_param=opt)
+  def key_val_opt(opt, resource_param = opt)
     quote_keyval(opt, @resource[resource_param.to_s])
   end
 
   def eval_source
-    args=[]
+    args = []
     return [] unless addr = @resource[:source]
-    invert = addr['invert']  ? ' NOT' : ''
+    invert = addr['invert'] ? ' NOT' : ''
     args << "source#{invert}"
     args << quote_keyval('address', addr['address'])
     args << quote_keyval('ipset', addr['ipset'])
@@ -35,9 +34,9 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def eval_dest
-    args=[]
+    args = []
     return [] unless addr = @resource[:dest]
-    invert = addr['invert']  ? ' NOT' : ''
+    invert = addr['invert'] ? ' NOT' : ''
     args << "destination#{invert}"
     args << quote_keyval('address', addr['address'])
     args << quote_keyval('ipset', addr['ipset'])
@@ -45,13 +44,13 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def elements
-   [ :service, :port, :protocol, :icmp_block, :masquerade, :forward_port ]
+    [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
   end
 
   def eval_element
-    args=[]
+    args = []
     element = elements.select { |e| resource[e] }.first
-    args << element.to_s.gsub(/_/,'-')
+    args << element.to_s.tr('_', '-')
     case element
     when :service
       args << quote_keyval('name', @resource[:service])
@@ -76,7 +75,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     return [] unless @resource[:log]
     args = []
     args << 'log'
-    if @resource[:log].is_a?(Hash) 
+    if @resource[:log].is_a?(Hash)
       args << quote_keyval('prefix', @resource[:log]['prefix'])
       args << quote_keyval('level', @resource[:log]['level'])
       args << quote_keyval('limit value', @resource[:log]['limit'])
@@ -88,7 +87,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     return [] unless @resource[:audit]
     args = []
     args << 'audit'
-    if @resource[:audit].is_a?(Hash) 
+    if @resource[:audit].is_a?(Hash)
       args << quote_keyval('limit value', @resource[:log]['limit'])
     end
     args
@@ -96,7 +95,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def eval_action
     return [] unless action = @resource[:action]
-    args=[]
+    args = []
     if action.is_a?(Hash)
       args << action[:action]
       args << quote_keyval('type', action[:type])
@@ -107,7 +106,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def build_rich_rule
     return @resource[:raw_rule] if @resource[:raw_rule]
-    rule = [ 'rule' ]
+    rule = ['rule']
     rule << [
       key_val_opt('family'),
       eval_source,
@@ -115,9 +114,9 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
       eval_element,
       eval_log,
       eval_audit,
-      eval_action,
+      eval_action
     ]
-    @resource[:raw_rule] = raw_rule = rule.flatten.reject { |r| r.empty? }.join(" ")
+    @resource[:raw_rule] = raw_rule = rule.flatten.reject(&:empty?).join(' ')
     raw_rule
   end
 
@@ -128,5 +127,4 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   def destroy
     execute_firewall_cmd(['--remove-rich-rule', build_rich_rule])
   end
-
 end

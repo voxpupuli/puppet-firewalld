@@ -1,12 +1,11 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_zone) do
-
   before do
     Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true)
   end
 
-  describe "type" do
+  describe 'type' do
     context 'with no params' do
       describe 'when validating attributes' do
         [
@@ -28,45 +27,44 @@ describe Puppet::Type.type(:firewalld_zone) do
     end
   end
 
-
   ## Provider tests for the firewalld_zone type
   #
-  describe "provider" do
-
-    context "with standard parameters" do
-      let(:resource) {
+  describe 'provider' do
+    context 'with standard parameters' do
+      let(:resource) do
         described_class.new(
-          :name => 'restricted',
-          :target => '%%REJECT%%',
-          :interfaces => ['eth0'],
-          :icmp_blocks => [ 'redirect', 'router-advertisment' ],
-          :sources    => ['192.168.2.2', '10.72.1.100'])
-      }
-      let(:provider) {
+          name: 'restricted',
+          target: '%%REJECT%%',
+          interfaces: ['eth0'],
+          icmp_blocks: ['redirect', 'router-advertisment'],
+          sources: ['192.168.2.2', '10.72.1.100']
+        )
+      end
+      let(:provider) do
         resource.provider
-      }
+      end
 
-      it "should check if it exists" do
+      it 'checks if it exists' do
         provider.expects(:execute_firewall_cmd).with(['--get-zones'], nil).returns('public restricted')
-        expect(provider.exists?).to be_truthy
+        expect(provider).to be_exists
       end
 
-      it "should check if it doesnt exist" do
+      it 'checks if it doesnt exist' do
         provider.expects(:execute_firewall_cmd).with(['--get-zones'], nil).returns('public private')
-        expect(provider.exists?).to be_falsey
+        expect(provider).not_to be_exists
       end
 
-      it "should evalulate target" do
+      it 'evalulates target' do
         provider.expects(:execute_firewall_cmd).with(['--get-target']).returns('%%REJECT%%')
         expect(provider.target).to eq('%%REJECT%%')
       end
 
-      it "should evalulate target correctly when not surrounded with %%" do
+      it 'evalulates target correctly when not surrounded with %%' do
         provider.expects(:execute_firewall_cmd).with(['--get-target']).returns('REJECT')
         expect(provider.target).to eq('%%REJECT%%')
       end
 
-      it "should create" do
+      it 'creates' do
         provider.expects(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
         provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
 
@@ -81,88 +79,86 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.create
       end
 
-      it "should remove" do
+      it 'removes' do
         provider.expects(:execute_firewall_cmd).with(['--delete-zone', 'restricted'], nil)
         provider.destroy
       end
 
-      it "should set target" do
+      it 'sets target' do
         provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
-        provider.target=('%%REJECT%%')
+        provider.target = '%%REJECT%%'
       end
 
-      it "should get interfaces" do
-        provider.expects(:execute_firewall_cmd).with(['--list-interfaces']).returns("")
+      it 'gets interfaces' do
+        provider.expects(:execute_firewall_cmd).with(['--list-interfaces']).returns('')
         provider.interfaces
       end
 
-      it "should set interfaces" do
+      it 'sets interfaces' do
         provider.expects(:interfaces).returns(['eth1'])
         provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
         provider.expects(:execute_firewall_cmd).with(['--remove-interface', 'eth1'])
-        provider.interfaces=(['eth0'])
+        provider.interfaces = ['eth0']
       end
 
-      it "should get sources" do
-        provider.expects(:execute_firewall_cmd).with(['--list-sources']).returns("val val")
-        expect(provider.sources).to eq(["val", "val"])
+      it 'gets sources' do
+        provider.expects(:execute_firewall_cmd).with(['--list-sources']).returns('val val')
+        expect(provider.sources).to eq(%w[val val])
       end
 
-
-      it "sources should always return in alphanumerical order" do
-        provider.expects(:execute_firewall_cmd).with(['--list-sources']).returns("4.4.4.4/32 2.2.2.2/32 3.3.3.3/32")
-        expect(provider.sources).to eq(["2.2.2.2/32", "3.3.3.3/32","4.4.4.4/32"])
+      it 'sources should always return in alphanumerical order' do
+        provider.expects(:execute_firewall_cmd).with(['--list-sources']).returns('4.4.4.4/32 2.2.2.2/32 3.3.3.3/32')
+        expect(provider.sources).to eq(['2.2.2.2/32', '3.3.3.3/32', '4.4.4.4/32'])
       end
 
-      it "should set sources" do
-        provider.expects(:sources).returns(["valx"])
+      it 'sets sources' do
+        provider.expects(:sources).returns(['valx'])
         provider.expects(:execute_firewall_cmd).with(['--add-source', 'valy'])
         provider.expects(:execute_firewall_cmd).with(['--remove-source', 'valx'])
-        provider.sources=(['valy'])
+        provider.sources = ['valy']
       end
 
-      it "should get icmp_blocks" do
-        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks']).returns("val")
+      it 'gets icmp_blocks' do
+        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks']).returns('val')
         expect(provider.icmp_blocks).to eq(['val'])
       end
 
-      it "should list icmp types" do
-        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns("echo-reply echo-request")
+      it 'lists icmp types' do
+        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns('echo-reply echo-request')
         expect(provider.get_icmp_types).to eq(['echo-reply', 'echo-request'])
       end
     end
 
-    context "when specifiying masquerade" do
-      let(:resource) {
+    context 'when specifiying masquerade' do
+      let(:resource) do
         described_class.new(
-          :name => 'public',
-          :ensure => :present,
-          :masquerade => true,
+          name: 'public',
+          ensure: :present,
+          masquerade: true
         )
-      }
-      let(:provider) {
+      end
+      let(:provider) do
         resource.provider
-      }
+      end
 
-      it "should set masquerading" do
+      it 'sets masquerading' do
         provider.expects(:execute_firewall_cmd).with(['--add-masquerade'])
-        provider.masquerade=(:true)
+        provider.masquerade = :true
       end
 
-      it "should disable masquerading" do
+      it 'disables masquerading' do
         provider.expects(:execute_firewall_cmd).with(['--remove-masquerade'])
-        provider.masquerade=(:false)
+        provider.masquerade = :false
       end
 
-      it "should get masquerading state as false when not set" do
+      it 'gets masquerading state as false when not set' do
         provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).returns("no\n")
         expect(provider.masquerade).to eq(:false)
       end
-      it "should get masquerading state as true when set" do
+      it 'gets masquerading state as true when set' do
         provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).returns("yes\n")
         expect(provider.masquerade).to eq(:true)
       end
-
     end
   end
 end

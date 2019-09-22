@@ -13,7 +13,8 @@ describe provider_class do
     )
   end
   let(:provider) { resource.provider }
-  before :each do
+
+  before do
     provider.class.stubs(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('white black')
     provider.class.stubs(:execute_firewall_cmd).with(['--state'], nil, false, false, false).returns(Object.any_instance.stubs(exitstatus: 0))
     provider.class.stubs(:execute_firewall_cmd).with(['--info-ipset=white'], nil).returns('white
@@ -29,20 +30,20 @@ describe provider_class do
 
   describe 'self.instances' do
     it 'returns an array of ip sets' do
-      ipsets_names = provider.class.instances.collect(&:name)
+      ipsets_names = provider.class.instances.map(&:name)
       expect(ipsets_names).to include('black', 'white')
-      ipsets_families = provider.class.instances.collect(&:family)
+      ipsets_families = provider.class.instances.map(&:family)
       expect(ipsets_families).to include('inet', 'inet6')
-      ipsets_hashsize = provider.class.instances.collect(&:hashsize)
+      ipsets_hashsize = provider.class.instances.map(&:hashsize)
       expect(ipsets_hashsize).to include('2048')
-      ipsets_maxelem = provider.class.instances.collect(&:maxelem)
+      ipsets_maxelem = provider.class.instances.map(&:maxelem)
       expect(ipsets_maxelem).to include('200', '400')
     end
   end
 
   describe 'when creating' do
     context 'basic ipset' do
-      it 'should create a new ipset with entries' do
+      it 'creates a new ipset with entries' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once
         resource.expects(:[]).with(:family).returns('inet').at_least_once
@@ -62,7 +63,7 @@ describe provider_class do
 
   describe 'when modifying' do
     context 'hashsize' do
-      it 'should remove and create a new ipset' do
+      it 'removes and create a new ipset' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once
         resource.expects(:[]).with(:family).returns('inet').at_least_once
@@ -83,7 +84,7 @@ describe provider_class do
       end
     end
     context 'entries' do
-      it 'should remove and add entries' do
+      it 'removes and add entries' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once
         resource.expects(:[]).with(:family).returns('inet').at_least_once
@@ -102,7 +103,7 @@ describe provider_class do
         provider.create
         provider.entries = ['192.168.14.0/24', '10.0.0.0/8']
       end
-      it 'should ignore entries when manage_entries is false ' do
+      it 'ignores entries when manage_entries is false' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once
         resource.expects(:[]).with(:family).returns('inet').at_least_once
@@ -115,7 +116,6 @@ describe provider_class do
         provider.create
         provider.entries = ['192.168.14.0/24', '10.0.0.0/8']
       end
-
     end
   end
 end

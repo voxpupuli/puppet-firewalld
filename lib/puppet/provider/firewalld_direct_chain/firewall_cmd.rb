@@ -1,12 +1,12 @@
 require 'puppet'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
-Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, :parent => Puppet::Provider::Firewalld) do
-  desc "Provider for managing firewalld direct chains using firewall-cmd"
+Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, parent: Puppet::Provider::Firewalld) do
+  desc 'Provider for managing firewalld direct chains using firewall-cmd'
 
   def exists?
     @chain_args ||= generate_raw
-    output=execute_firewall_cmd(['--direct', '--query-chain', @chain_args], nil, true, false)
+    output = execute_firewall_cmd(['--direct', '--query-chain', @chain_args], nil, true, false)
     output.include?('yes')
   end
 
@@ -23,9 +23,9 @@ Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, :parent => Pup
   def generate_raw
     chain = []
     chain << [
-	    @resource[:inet_protocol],
-	    @resource[:table],
-	    @resource[:name]
+      @resource[:inet_protocol],
+      @resource[:table],
+      @resource[:name]
     ]
   end
 end

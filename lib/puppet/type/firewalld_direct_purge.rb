@@ -2,15 +2,13 @@ require 'puppet'
 require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:firewalld_direct_purge) do
-
-
   # Reference the types here so we know they are loaded.
   #
   Puppet::Type.type(:firewalld_direct_chain)
   Puppet::Type.type(:firewalld_direct_rule)
   Puppet::Type.type(:firewalld_direct_passthrough)
 
-  @doc =%q{Allow to purge direct rules in iptables/ip6tables/ebtables using firewalld direct interface.
+  @doc = "Allow to purge direct rules in iptables/ip6tables/ebtables using firewalld direct interface.
 
     Example:
 
@@ -18,17 +16,15 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
         firewalld_direct_purge {'passthrough': }
         firewalld_direct_purge {'rule': }
 
-  }
+  "
 
   ensurable do
     defaultto(:purged)
     newvalue(:purgable) do
     end
     newvalue(:purged) do
-      true 
+      true
     end
-
-      
 
     def retrieve
       if @resource.purge?
@@ -37,7 +33,6 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
         :purged
       end
     end
-
   end
 
   def generate
@@ -51,13 +46,13 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
     defaultto(:true)
   end
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc "Type of resource to purge, valid values are 'chain', 'passthrough' and 'rule'"
-    newvalues('chain','passthrough','rule')
+    newvalues('chain', 'passthrough', 'rule')
   end
 
   def purge?
-    @purge_resources.length > 0
+    !@purge_resources.empty?
   end
 
   def purge_resources
@@ -84,12 +79,12 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
       puppet_rules << res.provider.generate_raw.join(' ')
     end
 
-    provider.get_instances_of(resource_type).reject { |i|
+    provider.get_instances_of(resource_type).reject do |i|
       puppet_rules.include?(i)
-    }.each do |inst|
+    end.each do |inst|
       @purge_resources << inst
       unless Puppet.settings[:noop] || self[:noop]
-        provider.purge_resources(resource_type, inst.split(/ /))
+        provider.purge_resources(resource_type, inst.split(%r{ }))
       end
     end
   end

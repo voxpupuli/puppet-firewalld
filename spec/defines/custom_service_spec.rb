@@ -16,35 +16,35 @@ describe 'firewalld::custom_service' do
         short: 'myservice',
         description: 'My multi port service',
         port: [
-        {
-          'port'     => '8000',
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => '8000',
-          'protocol' => 'udp'
-        },
-        {
-          'port'     => '8001',
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => '8001',
-          'protocol' => 'udp'
-        },
-        {
-          'port'     => '8002',
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => '8002',
-          'protocol' => 'udp'
-        },
-        {
-          'port'     => '',
-          'protocol' => 'vrrp'
-        }
-      ],
+          {
+            'port'     => '8000',
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => '8000',
+            'protocol' => 'udp'
+          },
+          {
+            'port'     => '8001',
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => '8001',
+            'protocol' => 'udp'
+          },
+          {
+            'port'     => '8002',
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => '8002',
+            'protocol' => 'udp'
+          },
+          {
+            'port'     => '',
+            'protocol' => 'vrrp'
+          }
+        ],
         module: ['nf_conntrack_netbios_ns'],
         destination: {
           'ipv4' => '127.0.0.1',
@@ -66,34 +66,34 @@ describe 'firewalld::custom_service' do
         filename: 'myservice_file',
         description: 'My multi port service',
         port: [
-        {
-          'port'     => '8000',
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => '8000',
-          'protocol' => 'udp'
-        },
-        {
-          'port'     => '8001',
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => '8001',
-          'protocol' => 'udp'
-        },
-        {
-          'port'     => '8002',
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => '8002',
-          'protocol' => 'udp'
-        },
-        {
-          'protocol' => 'vrrp'
-        }
-      ],
+          {
+            'port'     => '8000',
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => '8000',
+            'protocol' => 'udp'
+          },
+          {
+            'port'     => '8001',
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => '8001',
+            'protocol' => 'udp'
+          },
+          {
+            'port'     => '8002',
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => '8002',
+            'protocol' => 'udp'
+          },
+          {
+            'protocol' => 'vrrp'
+          }
+        ],
         module: ['nf_conntrack_netbios_ns'],
         destination: {
           'ipv4' => '127.0.0.1',
@@ -115,36 +115,36 @@ describe 'firewalld::custom_service' do
         filename: 'myservice_file',
         description: 'My multi port service',
         port: [
-        {
-          'port'     => 8000,
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => 8000,
-          'protocol' => 'udp'
-        },
-        {
-          'port'     => 8001,
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => 8001,
-          'protocol' => 'udp'
-        },
-        {
-          'port'     => 8002,
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => 8002,
-          'protocol' => 'udp'
-        },
-        {
-          'port'     => '',
-          'protocol' => 'vrrp'
-        }
+          {
+            'port'     => 8000,
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => 8000,
+            'protocol' => 'udp'
+          },
+          {
+            'port'     => 8001,
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => 8001,
+            'protocol' => 'udp'
+          },
+          {
+            'port'     => 8002,
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => 8002,
+            'protocol' => 'udp'
+          },
+          {
+            'port'     => '',
+            'protocol' => 'vrrp'
+          }
 
-      ],
+        ],
         module: ['nf_conntrack_netbios_ns'],
         destination: {
           'ipv4' => '127.0.0.1',
@@ -165,15 +165,15 @@ describe 'firewalld::custom_service' do
         short: 'myservice',
         description: 'My multi port service',
         port: [
-        {
-          'port'     => '8000:8002',
-          'protocol' => 'tcp'
-        },
-        {
-          'port'     => '8000:8002',
-          'protocol' => 'udp'
-        }
-      ],
+          {
+            'port'     => '8000:8002',
+            'protocol' => 'tcp'
+          },
+          {
+            'port'     => '8000:8002',
+            'protocol' => 'udp'
+          }
+        ],
         module: ['nf_conntrack_netbios_ns'],
         destination: {
           'ipv4' => '127.0.0.1',

@@ -23,9 +23,9 @@ Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, parent: Puppet
   def generate_raw
     chain = []
     chain << [
-	    @resource[:inet_protocol],
-	    @resource[:table],
-	    @resource[:name]
+	     @resource[:inet_protocol],
+	     @resource[:table],
+	     @resource[:name]
     ]
   end
 end

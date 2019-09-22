@@ -166,7 +166,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     curr = execute_firewall_cmd(['--list-ports'], @resource[:name], false).split(' ')
 
     [perm, curr].flatten.uniq.map do |entry|
-      port, protocol = entry.split(/\//)
+      port, protocol = entry.split(%r{/})
       debug("get_ports() Found port #{port} protocol #{protocol}")
       { 'port' => port, 'protocol' => protocol }
     end

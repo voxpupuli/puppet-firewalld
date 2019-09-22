@@ -106,7 +106,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     case i
     when Array then
       get_icmp_blocks.each do |remove_block|
-        if !i.include?(remove_block)
+        unless i.include?(remove_block)
           debug("removing block #{remove_block} from zone #{@resource[:name]}")
           remove_blocks.push(remove_block)
         end
@@ -140,12 +140,12 @@ Puppet::Type.type(:firewalld_zone).provide(
     else
       raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'
     end
-    if !remove_blocks.empty?
+    unless remove_blocks.empty?
       remove_blocks.each do |block|
         execute_firewall_cmd(['--remove-icmp-block', block])
       end
     end
-    if !set_blocks.empty?
+    unless set_blocks.empty?
       set_blocks.each do |block|
         execute_firewall_cmd(['--add-icmp-block', block])
       end

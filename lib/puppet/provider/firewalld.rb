@@ -50,7 +50,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
 
   # v3.0.0
   def self.execute_firewall_cmd(args, zone = nil, perm = true, failonfail = true, check_online = true)
-    if check_online and not online?
+    if check_online and !online?
       shell_cmd = 'firewall-offline-cmd'
       perm = false
     else

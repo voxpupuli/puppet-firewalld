@@ -78,7 +78,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
   end
 
   validate do
-    if not self[:manage_entries] and self[:entries]
+    if !(self[:manage_entries]) and self[:entries]
       raise(Puppet::Error, "Ipset should not declare entries if it doesn't manage entries")
     end
   end

@@ -14,7 +14,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def create
-    self.debug("Creating new zone #{@resource[:name]} with target: '#{@resource[:target]}'")
+    debug("Creating new zone #{@resource[:name]} with target: '#{@resource[:target]}'")
     execute_firewall_cmd(['--new-zone', @resource[:name]], nil)
 
     self.target = (@resource[:target]) if @resource[:target]
@@ -26,7 +26,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def destroy
-    self.debug("Deleting zone #{@resource[:name]}")
+    debug("Deleting zone #{@resource[:name]}")
     execute_firewall_cmd(['--delete-zone', @resource[:name]], nil)
   end
 
@@ -40,7 +40,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def target=(t)
-    self.debug("Setting target for zone #{@resource[:name]} to #{@resource[:target]}")
+    debug("Setting target for zone #{@resource[:name]} to #{@resource[:target]}")
     execute_firewall_cmd(['--set-target', @resource[:target]])
   end
 
@@ -50,13 +50,13 @@ Puppet::Type.type(:firewalld_zone).provide(
 
   def interfaces=(new_interfaces)
     new_interfaces ||= []
-    cur_interfaces = self.interfaces
+    cur_interfaces = interfaces
     (new_interfaces - cur_interfaces).each do |i|
-      self.debug("Adding interface '#{i}' to zone #{@resource[:name]}")
+      debug("Adding interface '#{i}' to zone #{@resource[:name]}")
       execute_firewall_cmd(['--add-interface', i])
     end
     (cur_interfaces - new_interfaces).each do |i|
-      self.debug("Removing interface '#{i}' from zone #{@resource[:name]}")
+      debug("Removing interface '#{i}' from zone #{@resource[:name]}")
       execute_firewall_cmd(['--remove-interface', i])
     end
   end
@@ -67,13 +67,13 @@ Puppet::Type.type(:firewalld_zone).provide(
 
   def sources=(new_sources)
     new_sources ||= []
-    cur_sources = self.sources
+    cur_sources = sources
     (new_sources - cur_sources).each do |s|
-      self.debug("Adding source '#{s}' to zone #{@resource[:name]}")
+      debug("Adding source '#{s}' to zone #{@resource[:name]}")
       execute_firewall_cmd(['--add-source', s])
     end
     (cur_sources - new_sources).each do |s|
-      self.debug("Removing source '#{s}' from zone #{@resource[:name]}")
+      debug("Removing source '#{s}' from zone #{@resource[:name]}")
       execute_firewall_cmd(['--remove-source', s])
     end
   end
@@ -107,7 +107,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     when Array then
       get_icmp_blocks.each do |remove_block|
         if !i.include?(remove_block)
-          self.debug("removing block #{remove_block} from zone #{@resource[:name]}")
+          debug("removing block #{remove_block} from zone #{@resource[:name]}")
           remove_blocks.push(remove_block)
         end
       end
@@ -115,7 +115,7 @@ Puppet::Type.type(:firewalld_zone).provide(
       i.each do |block|
         if block.is_a?(String)
           if get_icmp_types().include?(block)
-            self.debug("adding block #{block} to zone #{@resource[:name]}")
+            debug("adding block #{block} to zone #{@resource[:name]}")
             set_blocks.push(block)
           else
             valid_types = get_icmp_types().join(', ')
@@ -127,11 +127,11 @@ Puppet::Type.type(:firewalld_zone).provide(
       end
     when String then
       get_icmp_blocks.reject { |x| x == i }.each do |remove_block|
-        self.debug("removing block #{remove_block} from zone #{@resource[:name]}")
+        debug("removing block #{remove_block} from zone #{@resource[:name]}")
         remove_blocks.push(remove_block)
       end
       if get_icmp_types().include?(i)
-        self.debug("adding block #{i} to zone #{@resource[:name]}")
+        debug("adding block #{i} to zone #{@resource[:name]}")
         set_blocks.push(i)
       else
         valid_types = get_icmp_types().join(', ')
@@ -170,7 +170,7 @@ Puppet::Type.type(:firewalld_zone).provide(
 
     [perm, curr].flatten.uniq.map do |entry|
       port, protocol = entry.split(/\//)
-      self.debug("get_ports() Found port #{port} protocol #{protocol}")
+      debug("get_ports() Found port #{port} protocol #{protocol}")
       { 'port' => port, 'protocol' => protocol }
     end
   end

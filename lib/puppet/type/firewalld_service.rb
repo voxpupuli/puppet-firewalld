@@ -45,7 +45,7 @@ Puppet::Type.newtype(:firewalld_service) do
   end
 
   autorequire(:service) do
-    self.catalog.resources.select do |res|
+    catalog.resources.select do |res|
       res.title == "Firewalld::Custom_service[#{self[:service]}]"
     end
   end

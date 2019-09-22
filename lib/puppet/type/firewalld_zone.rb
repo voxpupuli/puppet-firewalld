@@ -165,11 +165,11 @@ Puppet::Type.newtype(:firewalld_zone) do
     purge_rules = []
     puppet_rules = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_rich_rule) }.each do |fwr|
-      self.debug("not purging puppet controlled rich rule #{fwr[:name]}")
+      debug("not purging puppet controlled rich rule #{fwr[:name]}")
       puppet_rules << fwr.provider.build_rich_rule
     end
     provider.get_rules.reject { |p| puppet_rules.include?(p) }.each do |purge|
-      self.debug("should purge rich rule #{purge}")
+      debug("should purge rich rule #{purge}")
       res_type = Puppet::Type.type(:firewalld_rich_rule).new(
         name: purge,
         raw_rule: purge,
@@ -195,12 +195,12 @@ Puppet::Type.newtype(:firewalld_zone) do
     puppet_services = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_service) }.each do |fws|
       if fws[:zone] == self[:name]
-        self.debug("not purging puppet controlled service #{fws[:service]}")
+        debug("not purging puppet controlled service #{fws[:service]}")
         puppet_services << (fws[:service]).to_s
       end
     end
     provider.get_services.reject { |p| puppet_services.include?(p) }.each do |purge|
-      self.debug("should purge service #{purge}")
+      debug("should purge service #{purge}")
       res_type = Puppet::Type.type(:firewalld_service).new(
         name: "#{self[:name]}-#{purge}",
         ensure: :absent,
@@ -219,12 +219,12 @@ Puppet::Type.newtype(:firewalld_zone) do
     puppet_ports = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_port) }.each do |fwp|
       if fwp[:zone] == self[:name]
-        self.debug("Not purging puppet controlled port #{fwp[:port]}")
+        debug("Not purging puppet controlled port #{fwp[:port]}")
         puppet_ports << { 'port' => fwp[:port], 'protocol' => fwp[:protocol] }
       end
     end
     provider.get_ports.reject { |p| puppet_ports.include?(p) }.each do |purge|
-      self.debug("Should purge port #{purge['port']} proto #{purge['protocol']}")
+      debug("Should purge port #{purge['port']} proto #{purge['protocol']}")
       res_type = Puppet::Type.type(:firewalld_port).new(
         name: "#{self[:name]}-#{purge['port']}-#{purge['protocol']}-purge",
         port: purge['port'],

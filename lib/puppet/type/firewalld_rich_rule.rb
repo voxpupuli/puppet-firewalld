@@ -46,7 +46,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
       else
         errormsg = 'Only one source type address or ipset may be specified.'
         if value.has_key?('address') && value.has_key?('ipset')
-          self.fail errormsg
+          raise errormsg
         end
         value
       end
@@ -60,7 +60,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
       else
         errormsg = 'Only one source type address or ipset may be specified.'
         if value.has_key?('address') && value.has_key?('ipset')
-          self.fail errormsg
+          raise errormsg
         end
         value
       end
@@ -114,7 +114,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
 
   validate do
     errormsg = "Only one element (#{elements.join(',')}) may be specified."
-    self.fail errormsg if elements.select { |e| self[e] }.size > 1
+    raise errormsg if elements.select { |e| self[e] }.size > 1
   end
 
   autorequire(:firewalld_zone) do

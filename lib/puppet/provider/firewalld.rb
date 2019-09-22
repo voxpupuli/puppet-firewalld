@@ -31,7 +31,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
 
   def self.check_running_state
     begin
-      self.debug("Executing --state command - current value #{@state}")
+      debug("Executing --state command - current value #{@state}")
       ret = execute_firewall_cmd(['--state'], nil, false, false, check_online = false)
       Puppet::Provider::Firewalld.runstate = ret.exitstatus == 0 ? true : false
 
@@ -44,7 +44,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
       #
       # See: https://github.com/crayfishx/puppet-firewalld/issues/96
       #
-      self.debug('Could not determine state of firewalld because the executable is not available')
+      debug('Could not determine state of firewalld because the executable is not available')
       return nil
     end
   end

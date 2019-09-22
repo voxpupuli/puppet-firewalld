@@ -12,13 +12,13 @@ Puppet::Type.type(:firewalld_service).provide(
   end
 
   def create
-    self.debug("Adding new service to firewalld: #{@resource[:service]}")
+    debug("Adding new service to firewalld: #{@resource[:service]}")
     execute_firewall_cmd(['--add-service', @resource[:service]])
     reload_firewall
   end
 
   def destroy
-    self.debug("Removing service from firewalld: #{@resource[:service]}")
+    debug("Removing service from firewalld: #{@resource[:service]}")
 
     if online?
       flag = '--remove-service'

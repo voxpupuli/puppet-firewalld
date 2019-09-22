@@ -13,7 +13,7 @@ describe 'firewalld' do
   context 'when defining a default zone' do
     let(:params) do
       {
-        default_zone: 'restricted',
+        default_zone: 'restricted'
       }
     end
 

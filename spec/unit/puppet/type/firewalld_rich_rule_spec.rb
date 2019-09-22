@@ -19,7 +19,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
          :log,
          :audit,
          :action,
-         :raw_rule,
+         :raw_rule
       ].each do |param|
         it "should have a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
@@ -95,7 +95,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         source: { 'address' => '10.0.1.2/24' },
         service: 'ssh',
         log: { 'level' => 'debug' },
-        action: 'accept',
+        action: 'accept'
       } => 'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept',
       ## Test ipset
       {
@@ -106,7 +106,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         source: { 'ipset' => 'whitelist' },
         service: 'ssh',
         log: { 'level' => 'debug' },
-        action: 'accept',
+        action: 'accept'
       } => 'rule family="ipv4" source ipset="whitelist" service name="ssh" log level="debug" accept',
 
       ## Test destination
@@ -118,7 +118,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         dest: '10.0.1.2/24',
         service: 'ssh',
         log: { 'level' => 'debug' },
-        action: 'accept',
+        action: 'accept'
       } => 'rule family="ipv4" destination address="10.0.1.2/24" service name="ssh" log level="debug" accept',
 
       ## Test address invertion
@@ -130,7 +130,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         source: { 'address' => '10.0.1.2/24', 'invert' => true },
         service: 'ssh',
         log: { 'level' => 'debug' },
-        action: 'accept',
+        action: 'accept'
       } => 'rule family="ipv4" source NOT address="10.0.1.2/24" service name="ssh" log level="debug" accept',
       {
         name: 'accept ssh',
@@ -140,7 +140,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         dest: { 'address' => '10.0.1.2/24', 'invert' => true },
         service: 'ssh',
         log: { 'level' => 'debug' },
-        action: 'accept',
+        action: 'accept'
       } => 'rule family="ipv4" destination NOT address="10.0.1.2/24" service name="ssh" log level="debug" accept',
 
       ## test port
@@ -152,7 +152,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         dest: '10.0.1.2/24',
         port: { 'port' => '22', 'protocol' => 'tcp' },
         log: { 'level' => 'debug' },
-        action: 'accept',
+        action: 'accept'
       } => 'rule family="ipv4" destination address="10.0.1.2/24" port port="22" protocol="tcp" log level="debug" accept',
 
       ## test forward port
@@ -162,8 +162,8 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         family: 'ipv4',
         forward_port: { 'port' => '8080', 'protocol' => 'tcp', 'to_addr' => '10.72.1.10', 'to_port' => '80' },
         zone: 'restricted',
-        log: { 'level' => 'debug' },
-      } => 'rule family="ipv4" forward-port port="8080" protocol="tcp" to-port="80" to-addr="10.72.1.10" log level="debug"',
+        log: { 'level' => 'debug' }
+      } => 'rule family="ipv4" forward-port port="8080" protocol="tcp" to-port="80" to-addr="10.72.1.10" log level="debug"'
 
     }
 

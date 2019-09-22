@@ -114,7 +114,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
       eval_element,
       eval_log,
       eval_audit,
-      eval_action,
+      eval_action
     ]
     @resource[:raw_rule] = raw_rule = rule.flatten.reject { |r| r.empty? }.join(' ')
     raw_rule

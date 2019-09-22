@@ -17,32 +17,32 @@ describe 'firewalld::custom_service' do
       port: [
         {
             'port'     => '8000',
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => '8000',
-            'protocol' => 'udp',
+            'protocol' => 'udp'
         },
         {
             'port'     => '8001',
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => '8001',
-            'protocol' => 'udp',
+            'protocol' => 'udp'
         },
         {
             'port'     => '8002',
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => '8002',
-            'protocol' => 'udp',
+            'protocol' => 'udp'
         },
         {
             'port'     => '',
-            'protocol' => 'vrrp',
-        },
+            'protocol' => 'vrrp'
+        }
       ],
       module: ['nf_conntrack_netbios_ns'],
       destination: {
@@ -65,31 +65,31 @@ describe 'firewalld::custom_service' do
       port: [
         {
             'port'     => '8000',
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => '8000',
-            'protocol' => 'udp',
+            'protocol' => 'udp'
         },
         {
             'port'     => '8001',
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => '8001',
-            'protocol' => 'udp',
+            'protocol' => 'udp'
         },
         {
             'port'     => '8002',
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => '8002',
-            'protocol' => 'udp',
+            'protocol' => 'udp'
         },
         {
-            'protocol' => 'vrrp',
-        },
+            'protocol' => 'vrrp'
+        }
       ],
       module: ['nf_conntrack_netbios_ns'],
       destination: {
@@ -112,32 +112,32 @@ describe 'firewalld::custom_service' do
       port: [
         {
             'port'     => 8000,
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => 8000,
-            'protocol' => 'udp',
+            'protocol' => 'udp'
         },
         {
             'port'     => 8001,
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => 8001,
-            'protocol' => 'udp',
+            'protocol' => 'udp'
         },
         {
             'port'     => 8002,
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => 8002,
-            'protocol' => 'udp',
+            'protocol' => 'udp'
         },
         {
             'port'     => '',
-            'protocol' => 'vrrp',
-        },
+            'protocol' => 'vrrp'
+        }
 
       ],
       module: ['nf_conntrack_netbios_ns'],
@@ -160,12 +160,12 @@ describe 'firewalld::custom_service' do
       port: [
         {
             'port'     => '8000:8002',
-            'protocol' => 'tcp',
+            'protocol' => 'tcp'
         },
         {
             'port'     => '8000:8002',
-            'protocol' => 'udp',
-        },
+            'protocol' => 'udp'
+        }
       ],
       module: ['nf_conntrack_netbios_ns'],
       destination: {

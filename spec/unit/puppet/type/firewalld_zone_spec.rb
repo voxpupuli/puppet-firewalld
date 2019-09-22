@@ -85,7 +85,7 @@ describe Puppet::Type.type(:firewalld_zone) do
 
       it 'sets target' do
         provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
-        provider.target = ('%%REJECT%%')
+        provider.target = '%%REJECT%%'
       end
 
       it 'gets interfaces' do
@@ -97,7 +97,7 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.expects(:interfaces).returns(['eth1'])
         provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
         provider.expects(:execute_firewall_cmd).with(['--remove-interface', 'eth1'])
-        provider.interfaces = (['eth0'])
+        provider.interfaces = ['eth0']
       end
 
       it 'gets sources' do
@@ -114,7 +114,7 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.expects(:sources).returns(['valx'])
         provider.expects(:execute_firewall_cmd).with(['--add-source', 'valy'])
         provider.expects(:execute_firewall_cmd).with(['--remove-source', 'valx'])
-        provider.sources = (['valy'])
+        provider.sources = ['valy']
       end
 
       it 'gets icmp_blocks' do
@@ -142,12 +142,12 @@ describe Puppet::Type.type(:firewalld_zone) do
 
       it 'sets masquerading' do
         provider.expects(:execute_firewall_cmd).with(['--add-masquerade'])
-        provider.masquerade = (:true)
+        provider.masquerade = :true
       end
 
       it 'disables masquerading' do
         provider.expects(:execute_firewall_cmd).with(['--remove-masquerade'])
-        provider.masquerade = (:false)
+        provider.masquerade = :false
       end
 
       it 'gets masquerading state as false when not set' do

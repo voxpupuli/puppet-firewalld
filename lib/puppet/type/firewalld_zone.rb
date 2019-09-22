@@ -140,7 +140,7 @@ Puppet::Type.newtype(:firewalld_zone) do
   newproperty(:purge_ports) do
     desc "When set to true any ports associated with this zone
           that are not managed by Puppet will be removed."
-    newvalue (:false)
+    newvalue :false
     newvalue(:true) do
       true
     end

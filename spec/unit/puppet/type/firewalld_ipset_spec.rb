@@ -39,7 +39,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
         name: 'white-blue',
         type: 'hash:net'
         )
-      end.to_not raise_error
+      end.not_to raise_error
     end
   end
 

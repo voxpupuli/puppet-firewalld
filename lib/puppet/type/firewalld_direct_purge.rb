@@ -56,7 +56,6 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
   end
 
   def purge_resources
-    resources = []
     resource_type = self[:name].to_sym
     klass = nil
 
@@ -69,7 +68,6 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
       klass = Puppet::Type::Firewalld_direct_rule
     end
 
-    purge_rules = []
     puppet_rules = []
 
     catalog.resources.select { |r| r.is_a?(klass) }.each do |res|

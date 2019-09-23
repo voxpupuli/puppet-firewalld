@@ -85,7 +85,7 @@ Puppet::Type.newtype(:firewalld_zone) do
       end
     end
 
-    def is_to_s(value = [])
+    def is_to_s(value = []) # rubocop:disable Style/PredicateName
       '[' + value.join(', ') + ']'
     end
 

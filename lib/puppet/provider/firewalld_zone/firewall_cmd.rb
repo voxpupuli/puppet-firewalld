@@ -149,6 +149,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     end
   end
 
+  # rubocop:disable Style/AccessorMethodName
   def get_rules
     perm = execute_firewall_cmd(['--list-rich-rules']).split(%r{\n})
     curr = execute_firewall_cmd(['--list-rich-rules'], @resource[:name], false).split(%r{\n})
@@ -179,6 +180,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   def get_icmp_types
     execute_firewall_cmd(['--get-icmptypes'], nil).split(' ')
   end
+  # rubocop:enable Style/AccessorMethodName
 
   def description
     execute_firewall_cmd(['--get-description'], @resource[:name], true, false)

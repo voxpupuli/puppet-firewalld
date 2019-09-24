@@ -17,8 +17,10 @@ describe provider_class do
   let(:provider) { resource.provider }
 
   before do
+    # rubocop:disable RSpec/AnyInstance
     provider.class.stubs(:execute_firewall_cmd).returns(Object.any_instance.stubs(exitstatus: 0))
     provider.class.stubs(:execute_firewall_cmd).with(['--list-interfaces']).returns(Object.any_instance.stubs(exitstatus: 0, chomp: ''))
+    # rubocop:enable RSpec/AnyInstance
   end
 
   describe 'when creating' do

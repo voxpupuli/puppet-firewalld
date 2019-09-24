@@ -3,7 +3,7 @@ require 'puppet/provider/firewalld'
 
 describe 'firewalld' do
   before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true)
+    Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true) # rubocop:disable RSpec/AnyInstance
   end
 
   context 'with defaults for all parameters' do

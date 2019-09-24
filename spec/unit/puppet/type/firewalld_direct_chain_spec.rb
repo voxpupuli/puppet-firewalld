@@ -24,11 +24,18 @@ describe Puppet::Type.type(:firewalld_direct_chain) do
         expect(resource.name).to eq('LOG_DROPS')
       end
 
-      it 'splits the title pattern if comma delimited' do
-        resource = described_class.new(title: 'ipv4:filter:LOG_DROPS')
-        expect(resource.name).to eq('LOG_DROPS')
-        expect(resource[:table]).to eq('filter')
-        expect(resource[:inet_protocol]).to eq('ipv4')
+      context 'colon delimited title pattern' do
+        let(:resource) { described_class.new(title: 'ipv4:filter:LOG_DROPS') }
+
+        it 'sets resource `name` correctly' do
+          expect(resource.name).to eq('LOG_DROPS')
+        end
+        it 'sets resource `table` parameter correctly' do
+          expect(resource[:table]).to eq('filter')
+        end
+        it 'sets resource `inet_protocol` parameter correctly' do
+          expect(resource[:inet_protocol]).to eq('ipv4')
+        end
       end
 
       it 'defaults inet_protocol to ipv4' do

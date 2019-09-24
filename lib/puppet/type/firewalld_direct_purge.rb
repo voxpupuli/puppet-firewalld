@@ -77,9 +77,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
       puppet_rules << res.provider.generate_raw.join(' ')
     end
 
-    provider.get_instances_of(resource_type).reject do |i|
-      puppet_rules.include?(i)
-    end.each do |inst|
+    provider.get_instances_of(resource_type).reject { |i| puppet_rules.include?(i) }.each do |inst|
       @purge_resources << inst
       unless Puppet.settings[:noop] || self[:noop]
         provider.purge_resources(resource_type, inst.split(%r{ }))

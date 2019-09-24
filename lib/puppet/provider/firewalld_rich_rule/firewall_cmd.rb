@@ -59,7 +59,8 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
       args << quote_keyval('protocol', @resource[:port]['protocol'])
     when :icmp_block
       args << quote_keyval('name', @resource[:icmp_block])
-    when :masquerade
+    # when :masquerade
+    #   `masquerade` doesn't accept any arguments.
     when :forward_port
       args << quote_keyval('port',     @resource[:forward_port]['port'])
       args << quote_keyval('protocol', @resource[:forward_port]['protocol'])

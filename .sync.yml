@@ -1,0 +1,19 @@
+---
+.travis.yml:
+  secure: "nTZlteHjgcJaRlDUOszRMuyvqOxi0TJIHWuC6nvwTauD9dSOiOXfRsbQIyvtC+pb+HESGJjLOOg78er3KHxZFe8flCXHChzgiKj7oCvAbGfka3bccw3q3518JxnJgbaqfbJUxEths5D/0x1M91IDHduwgEFeG4J6UmLsA4jFPr5Qp+DB82VEvWs4JwEe46iPlP8pUBqems4HE9fRDnrv8ydPXEBplQvCa7Nc7Gzh2WIVYVVJ8Wd6tQIYIMlX9Soi+939L4i1eBRYv6tTUUXWPdFeSM7tUAJg8s6/bwuy+IuJMehAEjF3p9YT24dGLYMjHoJe+Ru9xvFaxJeq6aajJKIqfOmIpYYSCzYgZQq5Qme/JwfgBES+IDVb6z3M5Thhwt20eFU4H0jtXavdM3S1aHgaL1IlNedwN2vq/SD2Hpx/4IsNXSFFjo7osHBCjCW6Xfm/pZSMBe9CZP0JgovJEfnejWnbXSoUboIWDs34AKi/cTHEx0H1o4pmlIoggxZmWoUqlVBshAPAgOIhBNeqtd8VIwe9s4tZ47qnei/hkDQq+c+KrYt45WktZjAiMJEzpZ1M0x5XqE97J3kjHIA+ZickQx2FqLeoHG65wSMEJLaG9UbBRuS4dfoaBJnDcWC5yt3rPk20qZrVb/5MAV6fxoUP7K/s2AtOS7L3OHj7vFI="
+spec/spec_helper.rb:
+  mock_with: ':mocha'
+spec/acceptance/nodesets/ec2/amazonlinux-2016091.yml:
+  delete: true
+spec/acceptance/nodesets/ec2/image_templates.yaml:
+  delete: true
+spec/acceptance/nodesets/ec2/rhel-73-x64.yml:
+  delete: true
+spec/acceptance/nodesets/ec2/sles-12sp2-x64.yml:
+  delete: true
+spec/acceptance/nodesets/ec2/ubuntu-1604-x64.yml:
+  delete: true
+spec/acceptance/nodesets/ec2/windows-2016-base-x64.yml:
+  delete: true
+spec/acceptance/nodesets/archlinux-2-x64.yml:
+  delete: true

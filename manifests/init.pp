@@ -31,17 +31,9 @@
 #
 #
 class firewalld (
-  Enum[
-    'present',
-    'absent',
-    'latest',
-    'installed'
-  ]       $package_ensure            = 'installed',
-  String  $package                   = 'firewalld',
-  Enum[
-    'stopped',
-    'running'
-  ]       $service_ensure            = 'running',
+  Enum['present','absent','latest','installed'] $package_ensure = 'installed',
+  String $package = 'firewalld',
+  Stdlib::Ensure::Service $service_ensure = 'running',
   String  $config_package            = 'firewall-config',
   Boolean $install_gui               = false,
   Boolean $service_enable            = true,

@@ -32,19 +32,17 @@
 #
 #
 define firewalld::custom_service (
-  String $short                   = $name,
-  Optional[String] $description   = undef,
-  Optional[Array[Hash]] $port     = undef,
-  Optional[Array[String]] $module = undef,
+  String                   $short       = $name,
+  Optional[String]         $description = undef,
+  Optional[Array[Hash]]    $port        = undef,
+  Optional[Array[String]]  $module      = undef,
   Optional[Hash[
     Enum['ipv4', 'ipv6'],
     String
-  ]] $destination                 = undef,
-  String $filename                = $short,
-  Stdlib::Unixpath $config_dir    = '/etc/firewalld/services',
-  Enum['present',
-    'absent'
-  ] $ensure                       = 'present',
+  ]]                       $destination = undef,
+  String                   $filename    = $short,
+  Stdlib::Unixpath         $config_dir  = '/etc/firewalld/services',
+  Enum['present','absent'] $ensure      = 'present',
 ) {
 
   file{"${config_dir}/${filename}.xml":

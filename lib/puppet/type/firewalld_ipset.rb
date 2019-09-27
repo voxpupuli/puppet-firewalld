@@ -1,5 +1,3 @@
-require_relative '../../puppet_x/firewalld/property/positive_integer'
-
 Puppet::Type.newtype(:firewalld_ipset) do
   @doc = "
     Configure IPsets in Firewalld
@@ -12,6 +10,12 @@ Puppet::Type.newtype(:firewalld_ipset) do
             entries  => ['192.168.0.0/24']
         }
   "
+
+  def po2?(n)
+    # A power of two value in binary representation only has one "1" in it.
+    # ie. 01 10, 100 etc. are all power of 2.
+    n.to_s(2).count('1') == 1
+  end
 
   ensurable
 
@@ -60,16 +64,23 @@ Puppet::Type.newtype(:firewalld_ipset) do
     newvalues(:inet6, :inet)
   end
 
-  newproperty(:hashsize, parent: PuppetX::Firewalld::Property::PositiveInteger) do
+  newproperty(:hashsize) do
     desc 'Initial hash size of the IPSet'
+    validate do |value|
+      raise ArgumentError, 'hashsize must be an integer' unless Puppet::Pops::Types::TypeParser.singleton.parse('Init[Integer]').instance?(value)
+      raise ArgumentError, 'hashsize must be a positive integer' unless value.to_i > 0
+      raise ArgumentError, 'hashsize must be a power of 2' unless @resource.po2?(value.to_i)
+    end
   end
 
-  newproperty(:maxelem, parent: PuppetX::Firewalld::Property::PositiveInteger) do
+  newproperty(:maxelem) do
     desc 'Maximal number of elements that can be stored in the set'
+    newvalues(%r{^[1-9]\d*$})
   end
 
-  newproperty(:timeout, parent: PuppetX::Firewalld::Property::PositiveInteger) do
-    desc 'Timeout in seconds before entries expiry'
+  newproperty(:timeout) do
+    desc 'Timeout in seconds before entries expiry. 0 means entry is permanent'
+    newvalues(%r{^\d+$})
   end
 
   newparam(:manage_entries, parent: Puppet::Parameter::Boolean) do

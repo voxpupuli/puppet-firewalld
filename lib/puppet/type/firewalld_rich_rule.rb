@@ -1,6 +1,3 @@
-require 'puppet'
-require_relative '../../puppet_x/firewalld/property/rich_rule_action'
-
 Puppet::Type.newtype(:firewalld_rich_rule) do
   @doc = "Manages firewalld rich rules.
 
@@ -93,8 +90,20 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     desc 'doc'
   end
 
-  newparam(:action, parent: PuppetX::Firewalld::Property::RichRuleAction) do
-    desc 'doc'
+  newparam(:action) do
+    def _validate_action(value)
+      raise Puppet::Error, "Authorized action values are `accept`, `reject`, `drop` or `mark`, got #{value}" unless %w[accept drop reject mark].include? value
+    end
+    validate do |value|
+      if value.is_a?(Hash)
+        if value.keys.sort != [:action, :type]
+          raise Puppet::Error, "Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`. Got #{value}"
+        end
+        _validate_action(value[:action])
+      elsif value.is_a?(String)
+        _validate_action(value)
+      end
+    end
   end
 
   newparam(:raw_rule) do

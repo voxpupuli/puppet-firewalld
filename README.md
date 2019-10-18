@@ -377,7 +377,7 @@ firewalld::ipsets:
 
 * `entries`: An array of entries for the IPset
 * `type`: Type of ipset (default: `hash:ip`)
-* `options`: A hash of options for the IPset (eg: `{ "family" => "ipv6"}`)
+* `options`: A hash of options for the IPset (eg: `{ "family" => "inet6"}`)
 
 Note that `type` and `options` are parameters used when creating the IPset and are not managed after creation - to change the type or options of an ipset you must delete the existing ipset first.
 

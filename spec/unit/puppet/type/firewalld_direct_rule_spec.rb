@@ -78,4 +78,30 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
       end
     end
   end
+
+  context 'autorequires' do
+    before :each do
+      @firewalld_service = Puppet::Type.type(:service).new(:name => 'firewalld')
+      @catalog = Puppet::Resource::Catalog.new
+      @catalog.add_resource(@firewalld_service)
+    end
+
+    let(:attrs) do
+      {
+        title: 'Allow SSH',
+        ensure: 'present',
+        table: 'filter',
+        chain: 'OUTPUT',
+        priority: 1,
+        args: '-p tcp ---dport=22 -j ACCEPT'
+      }
+    end
+
+    it 'should autorequire the firewalld service' do
+      @resource = described_class.new(attrs)
+      @catalog.add_resource(@resource)
+
+      expect(@resource.autorequire.map{|rp| rp.source.to_s}).to include('Service[firewalld]')
+    end
+  end
 end

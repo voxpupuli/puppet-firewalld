@@ -204,4 +204,31 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       end
     end
   end
+
+  context 'autorequires' do
+    before :each do
+      @firewalld_service = Puppet::Type.type(:service).new(:name => 'firewalld')
+      @catalog = Puppet::Resource::Catalog.new
+      @catalog.add_resource(@firewalld_service)
+    end
+
+    let(:attrs) do
+      {
+        title: 'SSH from barny',
+        ensure: 'present',
+        zone: 'restricted',
+        source: '192.168.1.2/32',
+        dest: '192.168.99.2/32',
+        service: 'ssh',
+        action: 'accept'
+      }
+    end
+
+    it 'should autorequire the firewalld service' do
+      @resource = described_class.new(attrs)
+      @catalog.add_resource(@resource)
+
+      expect(@resource.autorequire.map{|rp| rp.source.to_s}).to include('Service[firewalld]')
+    end
+  end
 end

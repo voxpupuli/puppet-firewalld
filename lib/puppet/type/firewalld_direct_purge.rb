@@ -51,6 +51,10 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
     newvalues('chain', 'passthrough', 'rule')
   end
 
+  autorequire(:service) do
+    ['firewalld']
+  end
+
   def purge?
     !@purge_resources.empty?
   end

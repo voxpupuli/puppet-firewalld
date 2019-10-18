@@ -93,4 +93,8 @@ Puppet::Type.newtype(:firewalld_ipset) do
       raise(Puppet::Error, "Ipset should not declare entries if it doesn't manage entries")
     end
   end
+
+  autorequire(:service) do
+    ['firewalld']
+  end
 end

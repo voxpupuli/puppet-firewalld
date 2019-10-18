@@ -44,4 +44,8 @@ Puppet::Type.newtype(:firewalld_direct_rule) do
   newparam(:args) do
     desc '<args> can be all iptables, ip6tables and ebtables command line arguments'
   end
+
+  autorequire(:service) do
+    ['firewalld']
+  end
 end

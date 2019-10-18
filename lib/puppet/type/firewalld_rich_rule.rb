@@ -127,4 +127,8 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   autorequire(:ipset) do
     self[:source]['ipset'] if self[:source].is_a?(Hash)
   end
+
+  autorequire(:service) do
+    ['firewalld']
+  end
 end

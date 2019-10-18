@@ -32,4 +32,8 @@ Puppet::Type.newtype(:firewalld_direct_passthrough) do
     isnamevar
     desc 'Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)'
   end
+
+  autorequire(:service) do
+    ['firewalld']
+  end
 end

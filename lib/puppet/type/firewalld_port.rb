@@ -47,4 +47,8 @@ Puppet::Type.newtype(:firewalld_port) do
   autorequire(:firewalld_zone) do
     self[:zone]
   end
+
+  autorequire(:service) do
+    ['firewalld']
+  end
 end

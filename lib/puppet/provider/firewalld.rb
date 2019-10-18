@@ -10,17 +10,13 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     attr_accessor :runstate
   end
 
-  def initialize(*args)
-    check_running_state if state.nil?
-    super
-  end
-
   def state
     self.class.state
   end
 
   def self.state
     Puppet::Provider::Firewalld.runstate
+    check_running_state
   end
 
   def check_running_state

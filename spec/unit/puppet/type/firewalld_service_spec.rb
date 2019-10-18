@@ -22,17 +22,19 @@ describe Puppet::Type.type(:firewalld_service) do
   end
 
   context 'autorequires' do
-    before :each do
-      @firewalld_service = Puppet::Type.type(:service).new(:name => 'firewalld')
+    # rubocop:disable RSpec/InstanceVariable
+    before do
+      @firewalld_service = Puppet::Type.type(:service).new(name: 'firewalld')
       @catalog = Puppet::Resource::Catalog.new
       @catalog.add_resource(@firewalld_service)
     end
 
-    it 'should autorequire the firewalld service' do
-      @resource = described_class.new(:name => 'test', :service => 'test')
+    it 'autorequires the firewalld service' do
+      @resource = described_class.new(name: 'test', service: 'test')
       @catalog.add_resource(@resource)
 
-      expect(@resource.autorequire.map{|rp| rp.source.to_s}).to include('Service[firewalld]')
+      expect(@resource.autorequire.map { |rp| rp.source.to_s }).to include('Service[firewalld]')
     end
+    # rubocop:enable RSpec/InstanceVariable
   end
 end

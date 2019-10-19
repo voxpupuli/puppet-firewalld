@@ -155,4 +155,21 @@ describe Puppet::Type.type(:firewalld_ipset) do
       end.to raise_error(%r{Ipset should not declare entries if it doesn't manage entries})
     end
   end
+
+  context 'autorequires' do
+    # rubocop:disable RSpec/InstanceVariable
+    before do
+      @firewalld_service = Puppet::Type.type(:service).new(name: 'firewalld')
+      @catalog = Puppet::Resource::Catalog.new
+      @catalog.add_resource(@firewalld_service)
+    end
+
+    it 'autorequires the firewalld service' do
+      @resource = described_class.new(name: 'test', hashsize: 128)
+      @catalog.add_resource(@resource)
+
+      expect(@resource.autorequire.map { |rp| rp.source.to_s }).to include('Service[firewalld]')
+    end
+    # rubocop:enable RSpec/InstanceVariable
+  end
 end

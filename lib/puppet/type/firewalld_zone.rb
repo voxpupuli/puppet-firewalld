@@ -52,6 +52,14 @@ Puppet::Type.newtype(:firewalld_zone) do
     desc 'Name of the zone'
   end
 
+  newparam(:description) do
+    desc 'Description of the zone to add'
+  end
+
+  newparam(:short) do
+    desc 'Short description of the zone to add'
+  end
+
   newproperty(:target) do
     desc 'Specify the target for the zone'
   end
@@ -151,6 +159,10 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
   end
 
+  autorequire(:service) do
+    ['firewalld']
+  end
+
   def purge_resource(res_type)
     if Puppet.settings[:noop] || self[:noop]
       Puppet.debug "Would have purged #{res_type.ref}, (noop)"
@@ -232,13 +244,5 @@ Puppet::Type.newtype(:firewalld_zone) do
       purge_resource(res_type)
       @ports_purgable = true
     end
-  end
-
-  newparam(:description) do
-    desc 'Description of the zone to add'
-  end
-
-  newparam(:short) do
-    desc 'Short description of the zone to add'
   end
 end

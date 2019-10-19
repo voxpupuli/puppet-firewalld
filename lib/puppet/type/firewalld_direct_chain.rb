@@ -45,4 +45,8 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
     desc 'Name of the table type to add (e.g: filter, nat, mangle, raw)'
     isnamevar
   end
+
+  autorequire(:service) do
+    ['firewalld']
+  end
 end

@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.1.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.1.0) (2019-10-22)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.0.0...v4.1.0)
+
+**Implemented enhancements:**
+
+- Make native types `autorequire` the `firewalld` service [\#234](https://github.com/voxpupuli/puppet-firewalld/pull/234) ([trevor-vaughan](https://github.com/trevor-vaughan))
+
+**Fixed bugs:**
+
+- Fix firewall commands being run on compiler [\#232](https://github.com/voxpupuli/puppet-firewalld/pull/232) ([trevor-vaughan](https://github.com/trevor-vaughan))
+
+**Closed issues:**
+
+- README has invalid `'family' =\> 'ipv6'` example for `firewalld\_ipset` `options`. [\#231](https://github.com/voxpupuli/puppet-firewalld/issues/231)
+- All native firewalld providers are attempting to access the firewall on the compiler [\#225](https://github.com/voxpupuli/puppet-firewalld/issues/225)
+- The native types should all autorequire the firewalld service [\#224](https://github.com/voxpupuli/puppet-firewalld/issues/224)
+- Adding a 'firewalld\_direct\_purge' resource to the catalog hangs rspec-puppet [\#205](https://github.com/voxpupuli/puppet-firewalld/issues/205)
+
+**Merged pull requests:**
+
+- Update README with correct ipset ipv6 example [\#233](https://github.com/voxpupuli/puppet-firewalld/pull/233) ([Phurion](https://github.com/Phurion))
+
 ## [v4.0.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.0.0) (2019-10-14)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/3.4.0...v4.0.0)

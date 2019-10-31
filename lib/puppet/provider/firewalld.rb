@@ -102,6 +102,10 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def self.online?
+    # always re-check state unless we are already online:
+    # see #117 / 813141cbfebf98c4348b64189cb472b6f3238c99
+    # That means, `self.state` will be re-run, even if it has a valid value, such as `false`
+    Puppet::Provider::Firewalld.runstate = check_running_state unless state == true
     state == true
   end
 

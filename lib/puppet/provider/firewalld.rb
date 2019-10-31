@@ -94,7 +94,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def offline?
-    check_running_state if state.nil?
     state == false || state.nil?
   end
 
@@ -103,7 +102,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def self.online?
-    check_running_state unless state == true
     state == true
   end
 
@@ -116,7 +114,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def self.available?
-    check_running_state if state.nil?
     !state.nil?
   end
 end

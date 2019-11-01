@@ -15,8 +15,10 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def self.state
+    if Puppet::Provider::Firewalld.runstate.nil?
+      Puppet::Provider::Firewalld.runstate = check_running_state
+    end
     Puppet::Provider::Firewalld.runstate
-    check_running_state
   end
 
   def check_running_state
@@ -26,7 +28,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   def self.check_running_state
     debug("Executing --state command - current value #{@state}")
     ret = execute_firewall_cmd(['--state'], nil, false, false, false)
-    Puppet::Provider::Firewalld.runstate = ret.exitstatus.zero?
+    ret.exitstatus.zero?
   rescue Puppet::MissingCommand
     # This exception is caught in case the module is being run before
     # the package provider has installed the firewalld package, if we
@@ -92,7 +94,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def offline?
-    check_running_state if state.nil?
     state == false || state.nil?
   end
 
@@ -101,7 +102,10 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def self.online?
-    check_running_state unless state == true
+    # always re-check state unless we are already online:
+    # see #117 / 813141cbfebf98c4348b64189cb472b6f3238c99
+    # That means, `self.state` will be re-run, even if it has a valid value, such as `false`
+    Puppet::Provider::Firewalld.runstate = check_running_state unless state == true
     state == true
   end
 
@@ -114,7 +118,6 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def self.available?
-    check_running_state if state.nil?
     !state.nil?
   end
 end

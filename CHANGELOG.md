@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.1.1](https://github.com/voxpupuli/puppet-firewalld/tree/v4.1.1) (2019-11-01)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.1.0...v4.1.1)
+
+**Fixed bugs:**
+
+- Reoccurring firewall-cmd command execution [\#240](https://github.com/voxpupuli/puppet-firewalld/issues/240)
+
+**Merged pull requests:**
+
+- memoize self.state [\#241](https://github.com/voxpupuli/puppet-firewalld/pull/241) ([igalic](https://github.com/igalic))
+
 ## [v4.1.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.1.0) (2019-10-22)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.0.0...v4.1.0)

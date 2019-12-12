@@ -27,10 +27,10 @@ group :test do
   gem 'metadata-json-lint',                                         :require => false
   gem 'rubocop', '~> 0.49.1',                                       :require => false
   gem 'rubocop-rspec', '~> 1.15.0',                                 :require => false
-  gem 'mocha', '~> 1.4.0',                                          :require => false
   gem 'coveralls',                                                  :require => false
   gem 'simplecov-console',                                          :require => false
   gem 'parallel_tests',                                             :require => false
+  gem 'mocha', '~> 1.10.0',                                         :require => false
 end
 
 group :development do
@@ -62,6 +62,7 @@ group :system_tests do
   gem 'rbnacl-libsodium',                   :require => false
   gem 'bcrypt_pbkdf',                       :require => false
   gem 'ed25519',                            :require => false
+  gem 'beaker-vagrant',                     :require => false
 end
 
 group :release do

@@ -1,6 +1,19 @@
 HOSTS:
   centos-7-x64:
-    platform: el-7-x86_64 
-    box: puppetlabs/centos-7.0-64-nocm
+    roles:
+      - default
+    platform: el-7-x86_64
+    box: centos/7
     hypervisor: vagrant
 
+  centos-8-x64:
+    platform: el-8-x86_64
+    box: centos/8
+    hypervisor: vagrant
+
+CONFIG:
+  type: aio
+  vagrant_memsize: 256
+  log_level: verbose
+  synced_folder: disabled
+  puppet_collection: puppet6

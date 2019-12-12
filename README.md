@@ -11,7 +11,7 @@
 
 ## Description
 
-This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones, ports, and rich rules.
+This module manages firewalld, the userland interface that replaces iptables and ships with RHEL7+.  The module manages firewalld itself as well as providing types and providers for managing firewalld zones, ports, and rich rules.
 
 ## Compatibility
 
@@ -531,8 +531,28 @@ firewalld::direct_passthroughs:
 * `args`: Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)
 
 
+## Testing
 
+### Unit Testing
 
+Unit tests can be executed by running the following commands:
+  * `bundle install`
+  * `bundle exec rake spec`
+
+### Acceptance Testing
+
+Acceptance tests are performed using [Beaker](https://github.com/puppetlabs/beaker) and require [Vagrant](https://vagrantup.com) and [VirtualBox](https://www.virtualbox.org) to run successfully.
+
+It is **HIGHLY RECOMMENDED** that you use the upstream Vagrant package and not one from your OS provider.
+
+To run the acceptance tests:
+  * `bundle install`
+  * `bundle exec rake beaker`
+
+To leave the Vagrant hosts running on failure for debugging:
+  * `BEAKER_destroy=onpass bundle exec rake beaker`
+  * `cd .vagrant/beaker_vagrant_files/default.yml`
+  * `vagrant ssh <host>`
 
 # Author
 

@@ -7,7 +7,7 @@ describe Puppet::Type.type(:firewalld_service) do
 
   context 'with no params' do
     describe 'when validating attributes' do
-      [:name, :service, :zone].each do |param|
+      %i[name service zone].each do |param|
         it "should have a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end

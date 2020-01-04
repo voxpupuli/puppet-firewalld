@@ -7,7 +7,7 @@ describe Puppet::Type.type(:firewalld_direct_chain) do
 
   context 'with no params' do
     describe 'when validating attributes' do
-      [:name, :inet_protocol, :table].each do |param|
+      %i[name inet_protocol table].each do |param|
         it "should have a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end
@@ -16,7 +16,7 @@ describe Puppet::Type.type(:firewalld_direct_chain) do
 
     describe 'namevar validation' do
       it 'has :name, :inet_protocol and :table as its namevars' do
-        expect(described_class.key_attributes).to eq([:name, :inet_protocol, :table])
+        expect(described_class.key_attributes).to eq(%i[name inet_protocol table])
       end
 
       it 'uses the title as the name when non-delimited' do

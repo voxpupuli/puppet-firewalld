@@ -46,6 +46,7 @@ class { 'firewalld': }
 * `purge_direct_rules`: True or false, whether to purge [firewalld direct rules](#firewalld-direct-rules)
 * `purge_direct_chains`: True or false, whether to purge [firewalld direct chains](#firewalld-direct-chains)
 * `purge_direct_passthroughs`: True or false, whether to purge [firewalld direct passthroughs](#firewalld-direct-passthroughs)
+* `purge_zones`: True or false, whether to purge unmanaged firewalld zones (default: false)
 
 
 

@@ -17,3 +17,8 @@ spec/acceptance/nodesets/ec2/windows-2016-base-x64.yml:
   delete: true
 spec/acceptance/nodesets/archlinux-2-x64.yml:
   delete: true
+
+.rubocop.yml:
+  default_configs:
+    Style/SymbolArray:
+      Enabled: false

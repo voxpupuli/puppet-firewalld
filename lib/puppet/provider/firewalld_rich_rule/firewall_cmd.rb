@@ -44,7 +44,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def elements
-    %i[service port protocol icmp_block masquerade forward_port]
+    [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
   end
 
   def eval_element

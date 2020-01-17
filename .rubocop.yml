@@ -13,6 +13,10 @@ AllCops:
     - Rakefile
     - Guardfile
     - Vagrantfile
+
+Style/SymbolArray:
+  Enabled: false
+
 Lint/ConditionPosition:
   Enabled: True
 

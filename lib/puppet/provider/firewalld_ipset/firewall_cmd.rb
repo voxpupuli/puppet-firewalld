@@ -61,7 +61,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
     @resource[:entries].each { |e| add_entry(e) } if @resource[:manage_entries]
   end
 
-  %i[type maxelem family hashsize timeout].each do |method|
+  [:type, :maxelem, :family, :hashsize, :timeout].each do |method|
     define_method("#{method}=") do |should|
       info("Destroying and creating ipset #{@resource[:name]}")
       destroy

@@ -27,7 +27,10 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   "
 
-  ensurable
+  ensurable do
+    defaultvalues
+    defaultto :present
+  end
 
   # When set to 1 these variables cause the purge_* options to indicate to Puppet
   # that we are in a changed state

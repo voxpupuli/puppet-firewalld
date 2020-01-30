@@ -14,7 +14,10 @@ Puppet::Type.newtype(:firewalld_direct_chain) do
 
   "
 
-  ensurable
+  ensurable do
+    defaultvalues
+    defaultto :present
+  end
 
   def self.title_patterns
     [

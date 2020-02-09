@@ -56,6 +56,7 @@ class firewalld (
   Optional[Integer] $minimal_mark = undef,
   Optional[Enum['yes', 'no']] $lockdown = undef,
   Optional[Enum['yes', 'no']] $ipv6_rpfilter = undef,
+  Optional[Enum['iptables', 'nftables']] $firewall_backend = undef,
   Optional[String] $default_service_zone  = undef,
   Optional[String] $default_port_zone     = undef,
   Optional[String] $default_port_protocol = undef,
@@ -231,6 +232,15 @@ class firewalld (
         'firewalld::ipv6_rpfilter':
           changes => [
             "set IPv6_rpfilter \"${ipv6_rpfilter}\"",
+          ];
+      }
+    }
+
+    if $firewall_backend {
+      augeas {
+        'firewalld::firewall_backend':
+          changes => [
+            "set FirewallBackend \"${firewall_backend}\"",
           ];
       }
     }

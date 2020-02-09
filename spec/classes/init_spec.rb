@@ -8,6 +8,7 @@ describe 'firewalld' do
 
   context 'with defaults for all parameters' do
     it { is_expected.to contain_class('firewalld') }
+    it { is_expected.not_to contain_augeas('firewalld::firewallbackend') }
   end
 
   context 'when defining a default zone' do
@@ -250,6 +251,20 @@ describe 'firewalld' do
     it do
       is_expected.to contain_augeas('firewalld::lockdown').with(
         changes: ['set Lockdown "yes"']
+      )
+    end
+  end
+
+  context 'with parameter firewall_backend' do
+    let(:params) do
+      {
+        firewall_backend: 'nftables'
+      }
+    end
+
+    it do
+      is_expected.to contain_augeas('firewalld::firewall_backend').with(
+        changes: ['set FirewallBackend "nftables"']
       )
     end
   end

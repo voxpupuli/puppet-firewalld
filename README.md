@@ -31,6 +31,7 @@ class { 'firewalld': }
 * `service_ensure`: Whether the service should be running or not (default: running)
 * `service_enable`: Whether to enable the service
 * `default_zone`: Optional, set the default zone for interfaces (default: undef)
+* `firewall_backend`: Optional, set the firewall backend for firewalld (default: undef)
 * `default_service_zone`: Optional, set the default zone for services (default: undef)
 * `default_port_zone`: Optional, set the default zone for ports (default: undef)
 * `default_port_protocol`: Optional, set the default protocol for ports (default: undef)

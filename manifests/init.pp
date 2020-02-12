@@ -31,35 +31,35 @@
 #
 #
 class firewalld (
-  Enum['present','absent','latest','installed'] $package_ensure = 'installed',
-  String $package = 'firewalld',
-  Stdlib::Ensure::Service $service_ensure = 'running',
-  String  $config_package            = 'firewall-config',
-  Boolean $install_gui               = false,
-  Boolean $service_enable            = true,
-  Hash    $zones                     = {},
-  Hash    $ports                     = {},
-  Hash    $services                  = {},
-  Hash    $rich_rules                = {},
-  Hash    $custom_services           = {},
-  Hash    $ipsets                    = {},
-  Hash    $direct_rules              = {},
-  Hash    $direct_chains             = {},
-  Hash    $direct_passthroughs       = {},
-  Boolean $purge_direct_rules        = false,
-  Boolean $purge_direct_chains       = false,
-  Boolean $purge_direct_passthroughs = false,
-  Boolean $purge_unknown_ipsets      = false,
-  Optional[String] $default_zone     = undef,
-  Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied = undef,
-  Optional[Enum['yes', 'no']] $cleanup_on_exit = undef,
-  Optional[Integer] $minimal_mark = undef,
-  Optional[Enum['yes', 'no']] $lockdown = undef,
-  Optional[Enum['yes', 'no']] $ipv6_rpfilter = undef,
-  Optional[Enum['iptables', 'nftables']] $firewall_backend = undef,
-  Optional[String] $default_service_zone  = undef,
-  Optional[String] $default_port_zone     = undef,
-  Optional[String] $default_port_protocol = undef,
+  Enum['present','absent','latest','installed']                 $package_ensure            = 'installed',
+  String                                                        $package                   = 'firewalld',
+  Stdlib::Ensure::Service                                       $service_ensure            = 'running',
+  String                                                        $config_package            = 'firewall-config',
+  Boolean                                                       $install_gui               = false,
+  Boolean                                                       $service_enable            = true,
+  Hash                                                          $zones                     = {},
+  Hash                                                          $ports                     = {},
+  Hash                                                          $services                  = {},
+  Hash                                                          $rich_rules                = {},
+  Hash                                                          $custom_services           = {},
+  Hash                                                          $ipsets                    = {},
+  Hash                                                          $direct_rules              = {},
+  Hash                                                          $direct_chains             = {},
+  Hash                                                          $direct_passthroughs       = {},
+  Boolean                                                       $purge_direct_rules        = false,
+  Boolean                                                       $purge_direct_chains       = false,
+  Boolean                                                       $purge_direct_passthroughs = false,
+  Boolean                                                       $purge_unknown_ipsets      = false,
+  Optional[String]                                              $default_zone              = undef,
+  Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied                = undef,
+  Optional[Enum['yes', 'no']]                                   $cleanup_on_exit           = undef,
+  Optional[Integer]                                             $minimal_mark              = undef,
+  Optional[Enum['yes', 'no']]                                   $lockdown                  = undef,
+  Optional[Enum['yes', 'no']]                                   $ipv6_rpfilter             = undef,
+  Optional[Enum['iptables', 'nftables']]                        $firewall_backend          = undef,
+  Optional[String]                                              $default_service_zone      = undef,
+  Optional[String]                                              $default_port_zone         = undef,
+  Optional[String]                                              $default_port_protocol     = undef,
 ) {
 
     package { $package:
@@ -236,7 +236,10 @@ class firewalld (
       }
     }
 
-    if $firewall_backend {
+    if $facts['firewalld_version'] and
+       (versioncmp($facts['firewalld_version'], '0.6.0') >= 0) and
+       $firewall_backend
+    {
       augeas {
         'firewalld::firewall_backend':
           changes => [

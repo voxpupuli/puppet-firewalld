@@ -6,6 +6,12 @@ describe 'firewalld' do
     Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true) # rubocop:disable RSpec/AnyInstance
   end
 
+  let(:facts) do
+    {
+      firewalld_version: '0.5.0'
+    }
+  end
+
   context 'with defaults for all parameters' do
     it { is_expected.to contain_class('firewalld') }
     it { is_expected.not_to contain_augeas('firewalld::firewallbackend') }
@@ -256,16 +262,40 @@ describe 'firewalld' do
   end
 
   context 'with parameter firewall_backend' do
-    let(:params) do
-      {
-        firewall_backend: 'nftables'
-      }
-    end
+    context 'with firewalld version' do
+      let(:params) do
+        {
+          firewall_backend: 'nftables'
+        }
+      end
 
-    it do
-      is_expected.to contain_augeas('firewalld::firewall_backend').with(
-        changes: ['set FirewallBackend "nftables"']
-      )
+      ['0.6.0', '1.0.0'].each do |version|
+        let(:facts) do
+          {
+            firewalld_version: version
+          }
+        end
+
+        context version do
+          it do
+            is_expected.to contain_augeas('firewalld::firewall_backend').with(
+              changes: ['set FirewallBackend "nftables"']
+            )
+          end
+        end
+      end
+
+      context '0.5.0' do
+        let(:facts) do
+          {
+            firewalld_version: '0.5.0'
+          }
+        end
+
+        it do
+          is_expected.not_to contain_augeas('firewalld::firewall_backend')
+        end
+      end
     end
   end
 

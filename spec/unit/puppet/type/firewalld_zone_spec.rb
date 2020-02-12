@@ -16,8 +16,8 @@ describe Puppet::Type.type(:firewalld_zone) do
           end
         end
 
-        %i[
-          target icmp_blocks sources purge_rich_rules purge_services purge_ports
+        [
+          :target, :icmp_blocks, :sources, :purge_rich_rules, :purge_services, :purge_ports
         ].each do |param|
           it "should have a #{param} parameter" do
             expect(described_class.attrtype(param)).to eq(:property)

@@ -7,7 +7,7 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
 
   context 'with no params' do
     describe 'when validating attributes' do
-      %i[inet_protocol args].each do |param|
+      [:inet_protocol, :args].each do |param|
         it "should have a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end

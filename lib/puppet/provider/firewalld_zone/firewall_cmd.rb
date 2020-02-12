@@ -8,7 +8,26 @@ Puppet::Type.type(:firewalld_zone).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  mk_resource_methods
+
+  def self.instances
+    zones = execute_firewall_cmd(['--get-zones'], nil).split(' ')
+    zones.map do |zone|
+      debug("Zone: #{zone}")
+      new(ensure: :present, name: zone)
+    end
+  end
+
+  def self.prefetch(resources)
+    instances.each do |prov|
+      if (resource = resources[prov.name])
+        resource.provider = prov
+      end
+    end
+  end
+
   def exists?
+    @property_hash[:ensure] = :present
     @resource[:zone] = @resource[:name]
     execute_firewall_cmd(['--get-zones'], nil).split(' ').include?(@resource[:name])
   end
@@ -35,7 +54,8 @@ Puppet::Type.type(:firewalld_zone).provide(
     # The firewall-cmd may or may not return the target surrounded by
     # %% depending on the version. See:
     # https://github.com/crayfishx/puppet-firewalld/issues/111
-    return @resource[:target] if @resource[:target].delete('%') == zone_target
+
+    return @resource[:target] if !@resource[:target].nil? && @resource[:target].delete('%') == zone_target
     zone_target
   end
 

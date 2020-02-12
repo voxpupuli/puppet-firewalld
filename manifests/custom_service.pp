@@ -55,6 +55,7 @@ define firewalld::custom_service (
   exec{ "firewalld::custom_service::reload-${name}":
     path        =>'/usr/bin:/bin',
     command     => 'firewall-cmd --reload',
+    onlyif      => 'firewall-cmd --state',
     refreshonly => true,
   }
 

@@ -6,20 +6,20 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
   end
   context 'with no params' do
     describe 'when validating attributes' do
-      %i[
-        family
-        zone
-        source
-        service
-        action
-        protocol
-        icmp_block
-        masquerade
-        forward_port
-        log
-        audit
-        action
-        raw_rule
+      [
+        :family,
+        :zone,
+        :source,
+        :service,
+        :action,
+        :protocol,
+        :icmp_block,
+        :masquerade,
+        :forward_port,
+        :log,
+        :audit,
+        :action,
+        :raw_rule
       ].each do |param|
         it "should have a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)

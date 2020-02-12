@@ -7,16 +7,16 @@ describe Puppet::Type.type(:firewalld_ipset) do
 
   describe 'type' do
     describe 'when validating attributes' do
-      %i[
-        name type options manage_entries
+      [
+        :name, :type, :options, :manage_entries
       ].each do |param|
         it "should have a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end
       end
 
-      %i[
-        entries family hashsize maxelem timeout
+      [
+        :entries, :family, :hashsize, :maxelem, :timeout
       ].each do |prop|
         it "should have a #{prop} property" do
           expect(described_class.attrtype(prop)).to eq(:property)

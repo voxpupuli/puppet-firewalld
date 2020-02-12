@@ -7,17 +7,13 @@ describe Puppet::Type.type(:firewalld_ipset) do
 
   describe 'type' do
     describe 'when validating attributes' do
-      [
-        :name, :type, :options, :manage_entries
-      ].each do |param|
+      [:name, :type, :options, :manage_entries].each do |param|
         it "should have a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end
       end
 
-      [
-        :entries, :family, :hashsize, :maxelem, :timeout
-      ].each do |prop|
+      [:entries, :family, :hashsize, :maxelem, :timeout].each do |prop|
         it "should have a #{prop} property" do
           expect(described_class.attrtype(prop)).to eq(:property)
         end
@@ -159,16 +155,16 @@ describe Puppet::Type.type(:firewalld_ipset) do
   context 'autorequires' do
     # rubocop:disable RSpec/InstanceVariable
     before do
-      @firewalld_service = Puppet::Type.type(:service).new(name: 'firewalld')
+      firewalld_service = Puppet::Type.type(:service).new(name: 'firewalld')
       @catalog = Puppet::Resource::Catalog.new
-      @catalog.add_resource(@firewalld_service)
+      @catalog.add_resource(firewalld_service)
     end
 
     it 'autorequires the firewalld service' do
-      @resource = described_class.new(name: 'test', hashsize: 128)
-      @catalog.add_resource(@resource)
+      resource = described_class.new(name: 'test', hashsize: 128)
+      @catalog.add_resource(resource)
 
-      expect(@resource.autorequire.map { |rp| rp.source.to_s }).to include('Service[firewalld]')
+      expect(resource.autorequire.map { |rp| rp.source.to_s }).to include('Service[firewalld]')
     end
     # rubocop:enable RSpec/InstanceVariable
   end

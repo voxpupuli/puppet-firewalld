@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.2.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.2.0) (2020-02-16)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.1.1...v4.2.0)
+
+**Implemented enhancements:**
+
+- \#235 Backend Firewall [\#252](https://github.com/voxpupuli/puppet-firewalld/pull/252) ([florianfa](https://github.com/florianfa))
+- Add support for EL8 [\#247](https://github.com/voxpupuli/puppet-firewalld/pull/247) ([trevor-vaughan](https://github.com/trevor-vaughan))
+- Add default ensure to present [\#177](https://github.com/voxpupuli/puppet-firewalld/pull/177) ([jfroche](https://github.com/jfroche))
+- Use an ip range instead of looping [\#176](https://github.com/voxpupuli/puppet-firewalld/pull/176) ([jovandeginste](https://github.com/jovandeginste))
+
+**Closed issues:**
+
+- The module should support the FirewallBackend option in firewalld.conf [\#256](https://github.com/voxpupuli/puppet-firewalld/issues/256)
+- The module should have a firewalld\_version fact [\#254](https://github.com/voxpupuli/puppet-firewalld/issues/254)
+- Replace %i syntax to support older ruby/jruby [\#250](https://github.com/voxpupuli/puppet-firewalld/issues/250)
+- Firewalld needs to support EL8 [\#246](https://github.com/voxpupuli/puppet-firewalld/issues/246)
+- Backend Firewall [\#235](https://github.com/voxpupuli/puppet-firewalld/issues/235)
+
+**Merged pull requests:**
+
+- Add firewalld\_version fact [\#255](https://github.com/voxpupuli/puppet-firewalld/pull/255) ([trevor-vaughan](https://github.com/trevor-vaughan))
+- check for running firewalld in custom\_service::reload [\#253](https://github.com/voxpupuli/puppet-firewalld/pull/253) ([domfi](https://github.com/domfi))
+- \(\#250\) Replace newer ruby %i syntax with older supported syntax [\#251](https://github.com/voxpupuli/puppet-firewalld/pull/251) ([typerlc](https://github.com/typerlc))
+
 ## [v4.1.1](https://github.com/voxpupuli/puppet-firewalld/tree/v4.1.1) (2019-11-01)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.1.0...v4.1.1)
@@ -30,7 +55,7 @@ These should not affect the functionality of the module.
 
 **Closed issues:**
 
-- README has invalid `'family' =\> 'ipv6'` example for `firewalld\_ipset` `options`. [\#231](https://github.com/voxpupuli/puppet-firewalld/issues/231)
+- README has invalid `'family' => 'ipv6'` example for `firewalld_ipset` `options`. [\#231](https://github.com/voxpupuli/puppet-firewalld/issues/231)
 - All native firewalld providers are attempting to access the firewall on the compiler [\#225](https://github.com/voxpupuli/puppet-firewalld/issues/225)
 - The native types should all autorequire the firewalld service [\#224](https://github.com/voxpupuli/puppet-firewalld/issues/224)
 - Adding a 'firewalld\_direct\_purge' resource to the catalog hangs rspec-puppet [\#205](https://github.com/voxpupuli/puppet-firewalld/issues/205)
@@ -55,15 +80,15 @@ In this release, Puppet 6 is officially supported and [support for Puppet 4](htt
 
 - Support ruby 1.9 \(Puppetserver 5 JRuby 1.7\) [\#207](https://github.com/voxpupuli/puppet-firewalld/pull/207) ([alexjfisher](https://github.com/alexjfisher))
 - Add validation for rich rule action [\#174](https://github.com/voxpupuli/puppet-firewalld/pull/174) ([jfroche](https://github.com/jfroche))
-- Replace deprecated `validate\_` functions in `firewalld::custom\_service` with data types [\#172](https://github.com/voxpupuli/puppet-firewalld/pull/172) ([jfroche](https://github.com/jfroche))
-- Add new properties to `firewalld\_ipset` type and improve logging of changes [\#170](https://github.com/voxpupuli/puppet-firewalld/pull/170) ([jfroche](https://github.com/jfroche))
+- Replace deprecated `validate_` functions in `firewalld::custom_service` with data types [\#172](https://github.com/voxpupuli/puppet-firewalld/pull/172) ([jfroche](https://github.com/jfroche))
+- Add new properties to `firewalld_ipset` type and improve logging of changes [\#170](https://github.com/voxpupuli/puppet-firewalld/pull/170) ([jfroche](https://github.com/jfroche))
 - Add description and short option for firewalld zone [\#169](https://github.com/voxpupuli/puppet-firewalld/pull/169) ([jfroche](https://github.com/jfroche))
 - Add firewalld config options [\#168](https://github.com/voxpupuli/puppet-firewalld/pull/168) ([jfroche](https://github.com/jfroche))
 
 **Fixed bugs:**
 
 - Bugfix/setting service ensure to stopped causes failure [\#197](https://github.com/voxpupuli/puppet-firewalld/pull/197) ([jschoewe](https://github.com/jschoewe))
-- Allow hypens in `firewalld\_ipset` names [\#173](https://github.com/voxpupuli/puppet-firewalld/pull/173) ([jfroche](https://github.com/jfroche))
+- Allow hypens in `firewalld_ipset` names [\#173](https://github.com/voxpupuli/puppet-firewalld/pull/173) ([jfroche](https://github.com/jfroche))
 - Fix ordering when checking insync [\#166](https://github.com/voxpupuli/puppet-firewalld/pull/166) ([markeganfuller](https://github.com/markeganfuller))
 
 **Closed issues:**

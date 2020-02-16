@@ -26,7 +26,7 @@ namespace :check do
   desc 'Check for trailing whitespace'
   task :trailing_whitespace do
     Dir.glob('**/*.md', File::FNM_DOTMATCH).sort.each do |filename|
-      next if filename =~ %r{^((modules|acceptance|\.?vendor|spec/fixtures|pkg)/|REFERENCE.md)}
+      next if filename =~ %r{^((modules|acceptance|\.?vendor|spec/fixtures|pkg)/|REFERENCE.md|CHANGELOG.md)}
       File.foreach(filename).each_with_index do |line, index|
         if line =~ %r{\s\n$}
           puts "#{filename} has trailing whitespace on line #{index + 1}"

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.2.2](https://github.com/voxpupuli/puppet-firewalld/tree/v4.2.2) (2020-02-16)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.2.1...v4.2.2)
+
+**Merged pull requests:**
+
+- Fix travis secret [\#261](https://github.com/voxpupuli/puppet-firewalld/pull/261) ([alexjfisher](https://github.com/alexjfisher))
+
 ## [v4.2.1](https://github.com/voxpupuli/puppet-firewalld/tree/v4.2.1) (2020-02-16)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.1.1...v4.2.1)

@@ -6,8 +6,12 @@ describe 'firewalld_version' do
 
     Process.stubs(:uid).returns(0)
     Facter::Core::Execution.stubs(:exec).with('uname -s').returns('Linux')
-    Facter::Util::Resolution.stubs(:which).with('firewall-cmd').returns('/usr/bin/firewall-cmd')
-    Facter::Core::Execution.stubs(:execute).with('/usr/bin/firewall-cmd --version', on_fail: :failed).returns(firewalld_version)
+    Facter::Util::Resolution.stubs(:which).with('firewall-offline-cmd').returns('/usr/bin/firewall-offline-cmd')
+    Facter::Core::Execution.stubs(:execute).with('/usr/bin/firewall-offline-cmd --version', on_fail: :failed).returns(firewalld_version)
+  end
+
+  let(:python_args) do
+    %{-c 'import firewall.config; print(firewall.config.__dict__["VERSION"])'}
   end
 
   context 'as a regular user' do
@@ -32,6 +36,9 @@ describe 'firewalld_version' do
     let(:firewalld_version) { :failed }
 
     it 'does not return a fact' do
+      Facter::Util::Resolution.stubs(:which).with('python').returns('/usr/bin/python')
+      Facter::Core::Execution.stubs(:execute).with("/usr/bin/python #{python_args}", on_fail: :failed).returns(:failed)
+
       expect(Facter.fact('firewalld_version').value).to be_nil
     end
   end

@@ -62,7 +62,7 @@ group :system_tests do
   gem 'rbnacl-libsodium',                   :require => false
   gem 'bcrypt_pbkdf',                       :require => false
   gem 'ed25519',                            :require => false
-  gem 'beaker-vagrant',                     :require => false
+  gem 'simp-beaker-helpers',                :require => false
 end
 
 group :release do

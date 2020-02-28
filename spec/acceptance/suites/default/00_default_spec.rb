@@ -59,6 +59,11 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
         test_services = on(host, 'firewall-cmd --list-services --zone=test').output.strip.split(%r{\s+})
         expect(test_services).to include('test_sshd')
       end
+
+      it 'returns a fact when firewalld is not running' do
+        on(host, 'puppet resource service firewalld ensure=stopped')
+        expect(pfact_on(host, 'firewalld_version')).to match(%r{^\d})
+      end
     end
   end
 end

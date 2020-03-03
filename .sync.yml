@@ -24,7 +24,7 @@ Gemfile:
       - gem: 'mocha'
         version: '~> 1.10.0'
     ':system_tests':
-      - gem: 'beaker-vagrant'
+      - gem: 'simp-beaker-helpers'
 
 .rubocop.yml:
   default_configs:

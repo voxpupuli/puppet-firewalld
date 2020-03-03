@@ -1,30 +1,34 @@
 require 'beaker-rspec'
-require 'pry'
+require 'tmpdir'
+require 'yaml'
+require 'simp/beaker_helpers'
+include Simp::BeakerHelpers
 
 UNSUPPORTED_PLATFORMS = %w[windows Darwin].freeze
 
-unless ENV['RS_PROVISION'] == 'no' || ENV['BEAKER_provision'] == 'no'
+unless ENV['BEAKER_provision'] == 'no'
+  hosts.each do |host|
+    # Install Puppet
+    if host.is_pe?
+      install_pe
+    else
+      install_puppet
+    end
+  end
+end
 
-  require 'beaker/puppet_install_helper'
+RSpec.configure do |c|
+  # ensure that environment OS is ready on each host
+  fix_errata_on hosts
 
-  run_puppet_install_helper('agent', ENV['PUPPET_VERSION'])
+  # Readable test descriptions
+  c.formatter = :documentation
 
-  RSpec.configure do |c|
-    # Project root
-    proj_root = File.expand_path(File.join(__dir__, '..'))
-
-    # Readable test descriptions
-    c.formatter = :documentation
-
-    # Don't burn resources if we don't have to
-    c.fail_fast = true
-
-    # Configure all nodes in nodeset
-    c.before :suite do
-      hosts.each do |host|
-        install_dev_puppet_module_on(host, source: proj_root, module_name: 'firewalld')
-        install_puppet_module_via_pmt_on(host, module_name: 'puppetlabs/stdlib')
-      end
+  # Configure all nodes in nodeset
+  c.before :suite do
+    begin
+      # Install modules and dependencies from spec/fixtures/modules
+      copy_fixture_modules_to(hosts)
     end
   end
 end

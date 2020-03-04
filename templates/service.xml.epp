@@ -1,0 +1,40 @@
+<%- |
+  String                  $short,
+  Optional[String]        $description,
+  Optional[Array[Hash]]   $port,
+  Optional[Array[String]] $module,
+  Optional[Hash]          $destination,
+  String                  $filename     = $short,
+  Stdlib::Unixpath        $config_dir,
+  String                  $ensure
+| -%>
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+    <short><%= $short %></short>
+    <%- if $description { -%>
+    <description><%= $description %></description>
+    <%- } -%>
+
+<%
+  if $port {
+    $port.each |$i| {
+      if $i['port'] and $i['port'] != '' {
+-%>
+    <port<% if $i['protocol'] { %> protocol="<%= $i['protocol'] %>"<% } %> port="<%= regsubst("${i['port']}", ':', '-', 'G') %>" />
+<%    } else { -%>
+    <port protocol="<%= $i['protocol'] %>" port="" />
+<%    } -%>
+<%  } -%>
+
+<% } -%>
+<% if $module {
+     sort($module).each |$j| {
+-%>
+    <module name="<%= $j %>" />
+<%   } -%>
+
+<% } -%>
+<% if $destination { -%>
+    <destination<% if $destination['ipv4'] { %> ipv4="<%= $destination['ipv4'] %>"<% } %><% if $destination['ipv6'] { %> ipv6="<%= $destination['ipv6'] %>"<% } %> />
+<% } -%>
+</service>

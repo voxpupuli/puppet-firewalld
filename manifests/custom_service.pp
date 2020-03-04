@@ -45,18 +45,28 @@ define firewalld::custom_service (
   Enum['present','absent'] $ensure      = 'present',
 ) {
 
-  file{"${config_dir}/${filename}.xml":
+  include firewalld::reload
+
+  # Service files may only contain alphanumeric characters and underscores.
+  # This is not documented, but has been experimentally confirmed.
+  $_safe_filename = firewalld::safe_filename($filename)
+
+  $_content = epp(
+    "${module_name}/service.xml.epp",
+    'short'       => $short,
+    'description' => $description,
+    'port'        => $port,
+    'module'      => $module,
+    'destination' => $destination,
+    'filename'    => $filename,
+    'config_dir'  => $config_dir,
+    'ensure'      => $ensure
+  )
+
+  file{ "${config_dir}/${_safe_filename}.xml":
     ensure  => $ensure,
-    content => template('firewalld/service.xml.erb'),
+    content => $_content,
     mode    => '0644',
-    notify  => Exec["firewalld::custom_service::reload-${name}"],
+    notify  => Class['firewalld::reload'],
   }
-
-  exec{ "firewalld::custom_service::reload-${name}":
-    path        =>'/usr/bin:/bin',
-    command     => 'firewall-cmd --reload',
-    onlyif      => 'firewall-cmd --state',
-    refreshonly => true,
-  }
-
 }

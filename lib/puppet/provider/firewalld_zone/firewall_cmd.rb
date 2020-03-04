@@ -197,4 +197,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   def short=(new_short)
     execute_firewall_cmd(['--set-short', new_short], @resource[:name], true, false)
   end
+
+  def flush
+    reload_firewall
+  end
 end

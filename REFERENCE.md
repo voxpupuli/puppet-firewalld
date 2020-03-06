@@ -20,7 +20,7 @@
 * [`firewalld_ipset`](#firewalld_ipset): Configure IPsets in Firewalld  Example:     firewalld_ipset {'internal net':         ensure   => 'present',         type     => 'hash:net',  
 * [`firewalld_port`](#firewalld_port): Assigns a port to a specific firewalld zone. firewalld_port will autorequire the firewalld_zone specified in the zone parameter so there is n
 * [`firewalld_rich_rule`](#firewalld_rich_rule): Manages firewalld rich rules.  firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need t
-* [`firewalld_service`](#firewalld_service): Assigns a service to a specific firewalld zone.     firewalld_service will autorequire the firewalld_zone specified in the zone parameter and
+* [`firewalld_service`](#firewalld_service): Assigns a service to a specific firewalld zone.
 * [`firewalld_zone`](#firewalld_zone): Creates and manages firewalld zones.
 
 ## Classes
@@ -833,16 +833,22 @@ handle pruning of rules
 ### firewalld_service
 
 Assigns a service to a specific firewalld zone.
-    firewalld_service will autorequire the firewalld_zone specified in the zone parameter and the firewalld::custom_service
-specified in the service parameter, so there is no need to add dependencies for this
 
-    Example:
+`firewalld_service` will autorequire the `firewalld_zone` specified in the
+`zone` parameter and the `firewalld::custom_service` specified in the `service`
+parameter. There is no need to manually add dependencies for this.
 
-        firewalld_service {'Allow SSH in the public Zone':
-            ensure  => 'present',
-            zone    => 'public',
-            service => 'ssh',
-        }
+#### Examples
+
+##### Allowing SSH
+
+```puppet
+firewalld_service {'Allow SSH in the public Zone':
+    ensure  => present,
+    zone    => 'public',
+    service => 'ssh',
+}
+```
 
 #### Properties
 

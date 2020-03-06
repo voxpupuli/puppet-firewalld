@@ -1,19 +1,23 @@
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_service) do
-  @doc = "Assigns a service to a specific firewalld zone.
-    firewalld_service will autorequire the firewalld_zone specified in the zone parameter and the firewalld::custom_service
-		specified in the service parameter, so there is no need to add dependencies for this
+  desc <<-DOC
+  @summary
+    Assigns a service to a specific firewalld zone.
 
-    Example:
+  Assigns a service to a specific firewalld zone.
 
-        firewalld_service {'Allow SSH in the public Zone':
-            ensure  => 'present',
-            zone    => 'public',
-            service => 'ssh',
-        }
+  `firewalld_service` will autorequire the `firewalld_zone` specified in the
+  `zone` parameter and the `firewalld::custom_service` specified in the `service`
+  parameter. There is no need to manually add dependencies for this.
 
-  "
+  @example Allowing SSH
+    firewalld_service {'Allow SSH in the public Zone':
+        ensure  => present,
+        zone    => 'public',
+        service => 'ssh',
+    }
+  DOC
 
   ensurable do
     newvalue(:present) do

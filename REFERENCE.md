@@ -21,7 +21,7 @@
 * [`firewalld_port`](#firewalld_port): Assigns a port to a specific firewalld zone. firewalld_port will autorequire the firewalld_zone specified in the zone parameter so there is n
 * [`firewalld_rich_rule`](#firewalld_rich_rule): Manages firewalld rich rules.  firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need t
 * [`firewalld_service`](#firewalld_service): Assigns a service to a specific firewalld zone.     firewalld_service will autorequire the firewalld_zone specified in the zone parameter and
-* [`firewalld_zone`](#firewalld_zone): Creates and manages firewald zones. Note that setting ensure => 'absent' to the built in firewalld zones will not work, and will generate an 
+* [`firewalld_zone`](#firewalld_zone): Creates and manages firewalld zones.
 
 ## Classes
 
@@ -257,6 +257,14 @@ Default value: `undef`
 ##### `ipv6_rpfilter`
 
 Data type: `Optional[Enum['yes', 'no']]`
+
+
+
+Default value: `undef`
+
+##### `firewall_backend`
+
+Data type: `Optional[Enum['iptables', 'nftables']]`
 
 
 
@@ -868,22 +876,27 @@ Name of the zone to which you want to add the service
 
 ### firewalld_zone
 
-Creates and manages firewald zones.
-Note that setting ensure => 'absent' to the built in firewalld zones will
+Creates and manages firewalld zones.
+
+Note that setting `ensure => 'absent'` to the built in firewalld zones will
 not work, and will generate an error. This is a limitation of firewalld itself, not the module.
 
-Example:
+#### Examples
 
-  firewalld_zone { 'restricted':
-    ensure           => present,
-    target           => '%%REJECT%%',
-    interfaces       => [],
-    sources          => [],
-    purge_rich_rules => true,
-    purge_services   => true,
-    purge_ports      => true,
-    icmp_blocks      => 'router-advertisement'
-  }
+##### Create a zone called `restricted`
+
+```puppet
+firewalld_zone { 'restricted':
+  ensure           => present,
+  target           => '%%REJECT%%',
+  interfaces       => [],
+  sources          => [],
+  purge_rich_rules => true,
+  purge_services   => true,
+  purge_ports      => true,
+  icmp_blocks      => 'router-advertisement'
+}
+```
 
 #### Properties
 

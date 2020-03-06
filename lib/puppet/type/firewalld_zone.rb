@@ -8,12 +8,16 @@ Puppet::Type.newtype(:firewalld_zone) do
   Puppet::Type.type(:firewalld_service)
   Puppet::Type.type(:firewalld_port)
 
-  @doc = "Creates and manages firewald zones.
-    Note that setting ensure => 'absent' to the built in firewalld zones will
+  desc <<-DOC
+    @summary
+      Creates and manages firewalld zones.
+
+    Creates and manages firewalld zones.
+
+    Note that setting `ensure => 'absent'` to the built in firewalld zones will
     not work, and will generate an error. This is a limitation of firewalld itself, not the module.
 
-    Example:
-
+    @example Create a zone called `restricted`
       firewalld_zone { 'restricted':
         ensure           => present,
         target           => '%%REJECT%%',
@@ -24,8 +28,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         purge_ports      => true,
         icmp_blocks      => 'router-advertisement'
       }
-
-  "
+  DOC
 
   ensurable do
     defaultvalues

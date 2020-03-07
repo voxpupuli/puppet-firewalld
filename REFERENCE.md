@@ -5,7 +5,9 @@
 
 **Classes**
 
-* [`firewalld`](#firewalld): == Class: firewalld  Manage the firewalld service  See the README.md for usage instructions for the firewalld_zone and firewalld_rich_rule ty
+* [`firewalld`](#firewalld): Manage the firewalld service
+* [`firewalld::reload`](#firewalldreload): A common point for triggering an intermediary firewalld reload using firewall-cmd
+* [`firewalld::reload::complete`](#firewalldreloadcomplete): A common point for triggering an intermediary firewalld full reload using firewall-cmd
 
 **Defined types**
 
@@ -23,13 +25,13 @@
 * [`firewalld_service`](#firewalld_service): Assigns a service to a specific firewalld zone.
 * [`firewalld_zone`](#firewalld_zone): Creates and manages firewalld zones.
 
+**Functions**
+
+* [`firewalld::safe_filename`](#firewalldsafe_filename): Returns a string that is safe for firewalld filenames
+
 ## Classes
 
 ### firewalld
-
-== Class: firewalld
-
-Manage the firewalld service
 
 See the README.md for usage instructions for the firewalld_zone and
 firewalld_rich_rule types
@@ -47,8 +49,6 @@ firewalld_rich_rule types
    class{'firewalld':
      install_gui => true,
    }
-
-
 
 === Authors
 
@@ -293,6 +293,14 @@ Data type: `Optional[String]`
 
 
 Default value: `undef`
+
+### firewalld::reload
+
+A common point for triggering an intermediary firewalld reload using firewall-cmd
+
+### firewalld::reload::complete
+
+A common point for triggering an intermediary firewalld full reload using firewall-cmd
 
 ## Defined types
 
@@ -981,4 +989,109 @@ Description of the zone to add
 ##### `short`
 
 Short description of the zone to add
+
+## Functions
+
+### firewalld::safe_filename
+
+Type: Puppet Language
+
+Returns a string that is safe for firewalld filenames
+
+#### Examples
+
+##### Regular Filename
+
+```puppet
+$filename = 'B@d Characters!'
+firewalld::safe_filename($orig_string)
+
+Result => 'B_d_Characters_'
+```
+
+##### Filename with Options
+
+```puppet
+$filename = 'B@d Characters!.txt'
+firewalld::safe_filename(
+  $filename,
+  {
+    'replacement_string' => '--',
+    'file_extension'     => '.txt'
+  }
+)
+
+Result => 'B--d--Characters--.txt'
+```
+
+#### `firewalld::safe_filename(String[1] $filename, Struct[
+    {
+      'replacement_string' => Pattern[/[\w-]/],
+      'file_extension'     => Optional[String[1]]
+    }
+  ] $options = { 'replacement_string' => '_'})`
+
+The firewalld::safe_filename function.
+
+Returns: `String` Processed string
+
+##### Examples
+
+###### Regular Filename
+
+```puppet
+$filename = 'B@d Characters!'
+firewalld::safe_filename($orig_string)
+
+Result => 'B_d_Characters_'
+```
+
+###### Filename with Options
+
+```puppet
+$filename = 'B@d Characters!.txt'
+firewalld::safe_filename(
+  $filename,
+  {
+    'replacement_string' => '--',
+    'file_extension'     => '.txt'
+  }
+)
+
+Result => 'B--d--Characters--.txt'
+```
+
+##### `filename`
+
+Data type: `String[1]`
+
+The String to process
+
+##### `options`
+
+Data type: `Struct[
+    {
+      'replacement_string' => Pattern[/[\w-]/],
+      'file_extension'     => Optional[String[1]]
+    }
+  ]`
+
+Various processing options
+
+Options:
+
+* **file_extension** `String[1]`: This will be stripped from the end of the string prior to processing and
+re-added afterwards
+
+##### `options`
+
+Data type: `String[1]`
+
+replacement_string
+The String to use when replacing invalid characters
+
+Options:
+
+* **file_extension** `String[1]`: This will be stripped from the end of the string prior to processing and
+re-added afterwards
 

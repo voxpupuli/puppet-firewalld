@@ -49,8 +49,8 @@ describe 'firewalld::safe_filename' do
   end
 
   it 'raises an error if provided with an invalid replacement_string' do
-    expect{
-      is_expected.to run.with_params('test', { 'replacement_string' => '@' })
-    }.to raise_error(/expects a match for.+got '@'/)
+    expect do
+      is_expected.to run.with_params('test', 'replacement_string' => '@')
+    end.to raise_error(%r{expects a match for.+got '@'})
   end
 end

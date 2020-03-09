@@ -52,6 +52,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   newparam(:name) do
     desc 'Name of the rule resource in Puppet'
+    isnamevar
   end
 
   newparam(:zone) do
@@ -162,6 +163,14 @@ Puppet::Type.newtype(:firewalld_zone) do
     def retrieve
       return :false if @resource[:purge_ports] == :false
       provider.resource.ports_purgable ? :purgable : :true
+    end
+  end
+
+  validate do
+    [:zone, :name].each do |attr|
+      if self[attr] && (self[attr]).to_s.length > 17
+        raise(Puppet::Error, "Zone identifier '#{attr}' must be less than 18 characters long")
+      end
     end
   end
 

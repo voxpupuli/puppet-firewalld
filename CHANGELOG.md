@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.2.3](https://github.com/voxpupuli/puppet-firewalld/tree/v4.2.3) (2020-03-09)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.2.2...v4.2.3)
+
+**Fixed bugs:**
+
+- Service filename bugfix [\#266](https://github.com/voxpupuli/puppet-firewalld/pull/266) ([trevor-vaughan](https://github.com/trevor-vaughan))
+
+**Closed issues:**
+
+- firewalld::custom\_service creates files with invalid names [\#265](https://github.com/voxpupuli/puppet-firewalld/issues/265)
+- The firewalld\_version fact is incorrect when firewalld is not running [\#263](https://github.com/voxpupuli/puppet-firewalld/issues/263)
+
+**Merged pull requests:**
+
+- Convert `firewalld_zone` docs to puppet-strings [\#268](https://github.com/voxpupuli/puppet-firewalld/pull/268) ([alexjfisher](https://github.com/alexjfisher))
+- Convert `firewalld_service` docs to puppet-strings [\#267](https://github.com/voxpupuli/puppet-firewalld/pull/267) ([alexjfisher](https://github.com/alexjfisher))
+- Fix the firewalld\_version fact [\#264](https://github.com/voxpupuli/puppet-firewalld/pull/264) ([trevor-vaughan](https://github.com/trevor-vaughan))
+
 ## [v4.2.2](https://github.com/voxpupuli/puppet-firewalld/tree/v4.2.2) (2020-02-16)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.2.1...v4.2.2)

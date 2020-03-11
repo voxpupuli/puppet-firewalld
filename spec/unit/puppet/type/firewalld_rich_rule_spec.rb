@@ -14,6 +14,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         :action,
         :protocol,
         :icmp_block,
+        :icmp_type,
         :masquerade,
         :forward_port,
         :log,
@@ -171,7 +172,19 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         forward_port: { 'port' => '8080', 'protocol' => 'tcp', 'to_addr' => '10.72.1.10', 'to_port' => '80' },
         zone: 'restricted',
         log: { 'level' => 'debug' }
-      } => 'rule family="ipv4" forward-port port="8080" protocol="tcp" to-port="80" to-addr="10.72.1.10" log level="debug"'
+      } => 'rule family="ipv4" forward-port port="8080" protocol="tcp" to-port="80" to-addr="10.72.1.10" log level="debug"',
+
+      ## test icmp-type
+      {
+        name: 'accept echo',
+        ensure: 'present',
+        family: 'ipv4',
+        zone: 'restricted',
+        dest: '10.0.1.2/24',
+        icmp_type: 'echo',
+        log: { 'level' => 'debug' },
+        action: 'accept'
+      } => 'rule family="ipv4" destination address="10.0.1.2/24" icmp-type name="echo" log level="debug" accept'
 
     }
 

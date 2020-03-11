@@ -77,6 +77,10 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     desc 'Specify the element as an icmp-block'
   end
 
+  newparam(:icmp_type) do
+    desc 'Specify the element as an icmp-type'
+  end
+
   newparam(:masquerade) do
     desc 'Specify the element as masquerade'
   end
@@ -115,7 +119,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   def elements
-    [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
+    [:service, :port, :protocol, :icmp_block, :icmp_type, :masquerade, :forward_port]
   end
 
   validate do

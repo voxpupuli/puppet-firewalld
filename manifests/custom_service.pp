@@ -53,16 +53,14 @@ define firewalld::custom_service (
 
   $_content = epp(
     "${module_name}/service.xml.epp",
-    {
-      'short'       => $short,
-      'description' => $description,
-      'port'        => $port,
-      'module'      => $module,
-      'destination' => $destination,
-      'filename'    => $filename,
-      'config_dir'  => $config_dir,
-      'ensure'      => $ensure
-    }
+    'short'       => $short,
+    'description' => $description,
+    'port'        => $port,
+    'module'      => $module,
+    'destination' => $destination,
+    'filename'    => $filename,
+    'config_dir'  => $config_dir,
+    'ensure'      => $ensure
   )
 
   file{ "${config_dir}/${_safe_filename}.xml":

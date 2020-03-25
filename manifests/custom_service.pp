@@ -1,10 +1,10 @@
-# == Type: firewalld::custom_service
+# @summary Creates a new service definition for use in firewalld
 #
-# Creates a new service definition for use in firewalld
+# **DEPRECATED**: Please use the `firewalld_custom_service` native type moving forward
 #
-# See the README.md for usage instructions for this defined type
+# This defined type will be removed in a future release
 #
-# === Examples
+# @example
 #
 #    firewalld::custom_service{'My Custom Service':
 #      short       => 'MyService',
@@ -26,10 +26,8 @@
 #      }
 #    }
 #
-# === Authors
-#
 # Andrew Patik <andrewpatik@gmail.com>
-#
+# Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 define firewalld::custom_service (
   String                   $short       = $name,
@@ -45,30 +43,28 @@ define firewalld::custom_service (
   Enum['present','absent'] $ensure      = 'present',
 ) {
 
-  include firewalld::reload
+  $_args = delete_undef_values({
+    'ensure'           => $ensure,
+    'short'            => $short,
+    'description'      => $description,
+    'ports'            => $port,
+    'modules'          => $module,
+    'ipv4_destination' => $destination.dig('ipv4'),
+    'ipv6_destination' => $destination.dig('ipv6'),
+  })
 
-  # Service files may only contain alphanumeric characters and underscores.
-  # This is not documented, but has been experimentally confirmed.
   $_safe_filename = firewalld::safe_filename($filename)
 
-  $_content = epp(
-    "${module_name}/service.xml.epp",
-    {
-      'short'       => $short,
-      'description' => $description,
-      'port'        => $port,
-      'module'      => $module,
-      'destination' => $destination,
-      'filename'    => $filename,
-      'config_dir'  => $config_dir,
-      'ensure'      => $ensure
+  # Remove legacy files so that we don't end up with conflicts
+  #
+  # This functionality will be removed in a future release
+  unless $_safe_filename == $short {
+    file { "${config_dir}/${short}.xml":
+      ensure => absent,
     }
-  )
+  }
 
-  file{ "${config_dir}/${_safe_filename}.xml":
-    ensure  => $ensure,
-    content => $_content,
-    mode    => '0644',
-    notify  => Class['firewalld::reload'],
+  firewalld_custom_service { $_safe_filename:
+    * => $_args,
   }
 }

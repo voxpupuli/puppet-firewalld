@@ -216,6 +216,17 @@ The following paramters are the element of the rich rule, only _one_ may be used
 
 The `firewalld::custom_service` defined type creates and manages custom services. It makes the service usable by firewalld, but does not add it to any zones. To do that, use the firewalld::service type.
 
+---
+
+> The `firewalld::custom_service` is **DEPRECATED** and will be removed in a
+> future release. Please use the `firewalld_custom_service` native type.
+>
+> Please note that there are slight differences in the parameters that will
+> require modifications to the `firewalld::custom_services` Hash if utilized from
+> Hiera.
+
+---
+
 _Example in Class_:
 
 ```puppet

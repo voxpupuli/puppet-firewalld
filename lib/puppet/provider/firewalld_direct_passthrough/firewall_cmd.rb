@@ -27,7 +27,7 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
     passt = []
     passt << [
       @resource[:inet_protocol],
-      @resource[:args].split(' ')
+      parse_args(@resource[:args])
     ]
     passt.flatten
   end

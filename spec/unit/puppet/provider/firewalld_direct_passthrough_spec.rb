@@ -73,5 +73,4 @@ describe provider_class do
       expect(provider_absent.exists?).to eq(true)
     end
   end
-
 end

@@ -7,6 +7,12 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  def initialize(value = {})
+    super(value)
+    @in_perm = false
+    @in_run = false
+  end
+
   def exists?
     @rule_args ||= generate_raw
     @in_perm = execute_firewall_cmd(['--direct', '--query-rule', @rule_args], nil, true, false).include?('yes')
@@ -20,12 +26,12 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
 
   def create
     @rule_args ||= generate_raw
-    execute_firewall_cmd(['--direct', '--add-rule', @rule_args], nil)  unless @in_perm
+    execute_firewall_cmd(['--direct', '--add-rule', @rule_args], nil) unless @in_perm
   end
 
   def destroy
     @rule_args ||= generate_raw
-    execute_firewall_cmd(['--direct', '--remove-rule', @rule_args], nil)  if @in_perm
+    execute_firewall_cmd(['--direct', '--remove-rule', @rule_args], nil) if @in_perm
   end
 
   def generate_raw

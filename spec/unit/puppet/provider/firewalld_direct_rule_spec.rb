@@ -11,7 +11,7 @@ describe provider_class do
       table: 'filter',
       chain: 'OUTPUT',
       priority: 1,
-      args: '-p tcp --dport=22 -j ACCEPT',
+      args: '-p tcp --dport=22 -j ACCEPT'
     )
   end
   let(:provider) { resource.provider }
@@ -62,7 +62,7 @@ describe provider_class do
         table: 'filter',
         chain: 'OUTPUT',
         priority: 1,
-        args: '-p tcp --dport=22 -j ACCEPT',
+        args: '-p tcp --dport=22 -j ACCEPT'
       )
     end
     let(:provider_absent) { resource_absent.provider }

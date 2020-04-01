@@ -12,7 +12,7 @@ describe provider_class do
     )
   end
   let(:provider) { resource.provider }
-  let(:chain_args) { provider.generate_raw }
+  let(:chain_args) { [%w[ipv4 filter LOG_DROPS]] }
 
   describe 'when creating' do
     it 'direct rule should not be created if rule exists in permanent' do

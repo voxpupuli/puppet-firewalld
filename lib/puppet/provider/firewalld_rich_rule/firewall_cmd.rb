@@ -7,7 +7,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
-  attr_accessor :in_perm,:in_run
+  attr_accessor :in_perm, :in_run
 
   mk_resource_methods
 

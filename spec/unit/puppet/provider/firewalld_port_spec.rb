@@ -9,7 +9,7 @@ describe provider_class do
       name: 'Open port 8080 in the public zone',
       zone: 'public',
       port: '8080',
-      protocol: 'tcp',
+      protocol: 'tcp'
     )
   end
   let(:provider) { resource.provider }
@@ -39,7 +39,7 @@ describe provider_class do
     end
 
     it 'remove port should not execute if rule does not exist in permanent' do
-      provider.in_perm=false
+      provider.in_perm = false
       provider.expects(:execute_firewall_cmd).with(['--remove-port', args]).never
       provider.destroy
     end
@@ -52,8 +52,8 @@ describe provider_class do
         name: 'Open port 8080 in the public zone',
         zone: 'public',
         port: '8080',
-        protocol: 'tcp',
-        )
+        protocol: 'tcp'
+      )
     end
     let(:provider_absent) { resource_absent.provider }
 

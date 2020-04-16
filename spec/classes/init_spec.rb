@@ -192,10 +192,41 @@ describe 'firewalld' do
     end
 
     it do
+      is_expected.not_to contain_file('/etc/firewalld/services/MyService.xml')
+
       is_expected.to contain_firewalld__custom_service('MyService').
         with_ensure('present').
         with_short('MyService').
         with_port([{ 'port' => '1234', 'protocol' => 'tcp' }, { 'port' => '1234', 'protocol' => 'udp' }])
+    end
+
+    context 'with an invalid filename' do
+      let(:params) do
+        {
+          'custom_services' =>
+          {
+            'MyService' =>
+              {
+                'ensure' => 'present',
+                'short' => 'My Service',
+                'description' => 'My Custom service',
+                'port' => [
+                  { 'port' => '1234', 'protocol' => 'tcp' },
+                  { 'port' => '1234', 'protocol' => 'udp' }
+                ]
+              }
+          }
+        }
+      end
+
+      it do
+        is_expected.to contain_file('/etc/firewalld/services/My Service.xml').with_ensure('absent')
+
+        is_expected.to contain_firewalld__custom_service('MyService').
+          with_short('My Service').
+          with_ensure('present').
+          with_port([{ 'port' => '1234', 'protocol' => 'tcp' }, { 'port' => '1234', 'protocol' => 'udp' }])
+      end
     end
   end
 

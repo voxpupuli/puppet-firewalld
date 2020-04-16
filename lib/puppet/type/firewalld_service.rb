@@ -49,9 +49,10 @@ Puppet::Type.newtype(:firewalld_service) do
   end
 
   autorequire(:service) do
-    ['firewalld'] +
-      catalog.resources.select do |res|
-        res.title == "Firewalld::Custom_service[#{self[:service]}]"
-      end
+    ['firewalld']
+  end
+
+  autorequire(:firewalld_custom_service) do
+    self[:service].gsub(%r{[^\w-]}, '_') if self[:service]
   end
 end

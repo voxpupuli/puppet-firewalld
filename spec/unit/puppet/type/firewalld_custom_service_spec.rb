@@ -258,7 +258,7 @@ describe Puppet::Type.type(:firewalld_custom_service) do
               name: 'test',
               ipv4_destination: destination
             )
-          end. to raise_error(%r{(Valid values match|invalid address|not an IPv4)})
+          end. to raise_error(%r{(invalid address|not an IPv4)})
         end
       end
     end
@@ -300,7 +300,7 @@ describe Puppet::Type.type(:firewalld_custom_service) do
               name: 'test',
               ipv6_destination: destination
             )
-          end. to raise_error(%r{(Valid values match|invalid address|not an IPv6)})
+          end. to raise_error(%r{(invalid address|not an IPv6)})
         end
       end
     end

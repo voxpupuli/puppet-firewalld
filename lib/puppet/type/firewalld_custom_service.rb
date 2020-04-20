@@ -153,8 +153,6 @@ Puppet::Type.newtype(:firewalld_custom_service) do
   newproperty(:ipv4_destination) do
     desc 'The IPv4 destination network of the service'
 
-    newvalues(%r{^[^/]+(/\d+)?$})
-
     defaultto(:unset)
 
     validate do |value|
@@ -179,8 +177,6 @@ Puppet::Type.newtype(:firewalld_custom_service) do
 
   newproperty(:ipv6_destination) do
     desc 'The IPv6 destination network of the service'
-
-    newvalues(%r{^[^/]+(/\d+)?$})
 
     defaultto(:unset)
 

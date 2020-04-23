@@ -10,9 +10,9 @@ Puppet::Type.type(:firewalld_ipset).provide(
   mk_resource_methods
 
   def self.instances
-    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil,true).split(' ')
+    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil, true).split(' ')
     ipset_ids.map do |ipset_id|
-      ipset_raw = execute_firewall_cmd(["--info-ipset=#{ipset_id}"], nil,true)
+      ipset_raw = execute_firewall_cmd(["--info-ipset=#{ipset_id}"], nil, true)
       raw_options = ipset_raw.match(%r{options: (.*)})
       options = {}
       if raw_options
@@ -75,7 +75,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
 
   def entries
     if @resource[:manage_entries]
-      execute_firewall_cmd(["--ipset=#{@resource[:name]}", '--get-entries'], nil,true).split("\n").sort
+      execute_firewall_cmd(["--ipset=#{@resource[:name]}", '--get-entries'], nil, true).split("\n").sort
     else
       @resource[:entries]
     end
@@ -103,8 +103,6 @@ Puppet::Type.type(:firewalld_ipset).provide(
 
   def destroy
     ipsets_in_perm = execute_firewall_cmd(['--get-ipsets'], nil).split(' ')
-    if ipsets_in_perm.include?(@resource[:name])
-      execute_firewall_cmd(["--delete-ipset=#{@resource[:name]}"], nil)
-    end
+    execute_firewall_cmd(["--delete-ipset=#{@resource[:name]}"], nil) if ipsets_in_perm.include?(@resource[:name])
   end
 end

@@ -85,7 +85,7 @@ Puppet::Type.newtype(:firewalld_custom_service) do
           port_regexp = Regexp.new('^\d+(-\d+)?$')
           raise Puppet::ParseError, "Ports must match #{port_regexp}" unless port_regexp.match?(test_value)
 
-          invalid_ports = test_value.split('-').select { |x| (x == '0') || (x > '65535') }
+          invalid_ports = test_value.split('-').reject { |x| x.to_i.between?(1, 65_535) }
           raise Puppet::ParseError, %(Ports must be between 1-65535 instead of '#{invalid_ports.join("' ,'")}') unless invalid_ports.empty?
         end
 

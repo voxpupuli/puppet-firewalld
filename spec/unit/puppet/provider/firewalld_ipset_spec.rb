@@ -15,17 +15,18 @@ describe provider_class do
   let(:provider) { resource.provider }
 
   before do
+    provider.class.stubs(:execute_firewall_cmd).with(['--get-ipsets'], nil,true).returns('white black')
     provider.class.stubs(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('white black')
     provider.class.stubs(:execute_firewall_cmd).with(['--state'], nil, false, false, false).returns(Object.any_instance.stubs(exitstatus: 0)) # rubocop:disable RSpec/AnyInstance
-    provider.class.stubs(:execute_firewall_cmd).with(['--info-ipset=white'], nil).returns('white
+    provider.class.stubs(:execute_firewall_cmd).with(['--info-ipset=white'], nil, true).returns('white
   type: hash:ip
   options: maxelem=200 family=inet6
   entries:')
-    provider.class.stubs(:execute_firewall_cmd).with(['--info-ipset=black'], nil).returns('black
+    provider.class.stubs(:execute_firewall_cmd).with(['--info-ipset=black'], nil, true).returns('black
   type: hash:ip
   options: maxelem=400 family=inet hashsize=2048
   entries:')
-    provider.class.stubs(:execute_firewall_cmd).with(['--ipset=white', '--get-entries'], nil).returns('')
+    provider.class.stubs(:execute_firewall_cmd).with(['--ipset=white', '--get-entries'], nil, true).returns('')
   end
 
   describe 'self.instances' do

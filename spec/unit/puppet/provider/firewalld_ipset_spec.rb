@@ -74,6 +74,8 @@ describe provider_class do
   describe 'when modifying' do
     context 'hashsize' do
       it 'removes and create a new ipset' do
+        ipsets_sequence = sequence('ipsets')
+
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once
         resource.expects(:[]).with(:family).returns('inet').at_least_once
@@ -84,12 +86,12 @@ describe provider_class do
         resource.expects(:[]).with(:options).returns({}).at_least_once
         resource.expects(:[]).with(:manage_entries).returns(true).at_least_once
         resource.expects(:[]).with(:entries).returns(['192.168.0/24', '10.0.0/8']).at_least_once
-        provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('')
-        provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('white')
+        provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('').in_sequence(ipsets_sequence)
         provider.expects(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet'], nil)
         provider.expects(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet', '--option=hashsize=2048'], nil)
         provider.expects(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=192.168.0/24'], nil).at_least_once
         provider.expects(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=10.0.0/8'], nil).at_least_once
+        provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('white').in_sequence(ipsets_sequence)
         provider.expects(:execute_firewall_cmd).with(['--delete-ipset=white'], nil)
         provider.create
         provider.hashsize = 2048

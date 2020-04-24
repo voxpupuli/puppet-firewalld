@@ -93,6 +93,7 @@ describe provider_class do
         provider.expects(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=10.0.0/8'], nil).at_least_once
         provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('white').in_sequence(ipsets_sequence)
         provider.expects(:execute_firewall_cmd).with(['--delete-ipset=white'], nil)
+        provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('').in_sequence(ipsets_sequence)
         provider.create
         provider.hashsize = 2048
       end

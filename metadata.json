@@ -1,6 +1,6 @@
 {
   "name": "puppet-firewalld",
-  "version": "4.3.0",
+  "version": "4.3.1-rc0",
   "author": "Vox Pupuli",
   "summary": "Configure firewalld zones, services, and rich rules and direct config",
   "license": "Apache-2.0",

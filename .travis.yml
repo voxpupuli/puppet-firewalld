@@ -24,8 +24,8 @@ matrix:
     env: PUPPET_VERSION="~> 5.0" CHECK=build DEPLOY_TO_FORGE=yes
 branches:
   only:
-    - master
-    - /^v\d/
+  - master
+  - /^v\d/
 notifications:
   email: false
   webhooks: https://voxpupu.li/incoming/travis

@@ -83,6 +83,14 @@ describe Puppet::Type.type(:firewalld_ipset) do
         )
       end.not_to raise_error
     end
+    it 'accept . in name' do
+      expect do
+        described_class.new(
+          name: 'white.blue',
+          type: 'hash:net'
+        )
+      end.not_to raise_error
+    end
   end
 
   ## Provider tests for the firewalld_zone type

@@ -227,8 +227,8 @@ class firewalld (
     }
   }
 
-  if $facts['firewalld_version'] and
-    (versioncmp($facts['firewalld_version'], '0.6.0') >= 0) and
+  if $::facts['firewalld_version'] and
+    (versioncmp($::facts['firewalld_version'], '0.6.0') >= 0) and
     $firewall_backend
   {
     augeas {

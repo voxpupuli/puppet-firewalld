@@ -80,6 +80,7 @@ describe Puppet::Type.type(:firewalld_custom_service) do
       '65535/tcp',
       'tcp',
       { 'protocol' => 'tcp' },
+      { 'port' => '1234:4567', 'protocol' => 'tcp' },
       { 'port' => 1234, 'protocol' => 'tcp' },
       { 'port' => 1234, 'protocol' => 'udp' },
       { 'port' => 1234, 'protocol' => 'sctp' },

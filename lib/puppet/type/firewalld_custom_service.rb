@@ -51,7 +51,8 @@ Puppet::Type.newtype(:firewalld_custom_service) do
       return value if value == :unset
 
       if value.is_a?(Hash)
-        value = Hash[value.map { |k, v| [k, v.to_s] }]
+        # Handle the legacy format from the module translate : to -
+        value = Hash[value.map { |k, v| [k, v.to_s.tr(':', '-')] }]
       else
         port, protocol = value.split('/')
 

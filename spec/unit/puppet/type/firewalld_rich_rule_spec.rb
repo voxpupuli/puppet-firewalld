@@ -91,6 +91,41 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
     end
   end
 
+  describe 'priority validation' do
+    it 'raises an error if invalid priority' do
+      expect do
+        described_class.new(
+          title: 'SSH from barny',
+          priority: 'none'
+        )
+      end.to raise_error(%r{Priority must be between -32768 and 32767})
+    end
+    it 'raises an error if too low priority' do
+      expect do
+        described_class.new(
+          title: 'SSH from barny',
+          priority: -32769
+        )
+      end.to raise_error(%r{Priority must be between -32768 and 32767})
+    end
+    it 'raises an error if too high priority' do
+      expect do
+        described_class.new(
+          title: 'SSH from barny',
+          priority: 32768
+        )
+      end.to raise_error(%r{Priority must be between -32768 and 32767})
+    end
+    it 'does not raises an error if priority is valid' do
+      expect do
+        described_class.new(
+          title: 'SSH from barny',
+          priority: 10
+        )
+      end.not_to raise_error()
+    end
+  end
+
   ## Many more scenarios needed!
   #
   describe 'provider' do

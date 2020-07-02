@@ -36,6 +36,15 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     munge(&:to_s)
   end
 
+  newparam(:priority) do
+    desc 'Rule priority, it can be in the range of -32768 to 32767'
+    munge(&:to_s)
+
+    validate do |value|
+      raise Puppet::Error, 'Priority must be between -32768 and 32767' unless value.to_i.to_s == value.to_s && (-32768..32767).include?(value.to_i)
+    end
+  end
+
   newparam(:source) do
     desc 'Specify source address, this can be a string of the IP address or a hash containing other options'
     munge do |value|

@@ -26,6 +26,7 @@ describe provider_class do
   describe 'when creating' do
     context 'with basic parameters' do
       it 'builds the rich rule' do
+        resource.expects(:[]).with(:priority).returns(nil)
         resource.expects(:[]).with(:source).returns('192.168.1.2/32').at_least_once
         resource.expects(:[]).with(:service).returns('ssh').at_least_once
         resource.expects(:[]).with('family').returns('ipv4').at_least_once
@@ -45,6 +46,7 @@ describe provider_class do
     end
     context 'with reject type' do
       it 'builds the rich rule' do
+        resource.expects(:[]).with(:priority).returns(nil)
         resource.expects(:[]).with(:source).returns(nil).at_least_once
         resource.expects(:[]).with(:service).returns('ssh').at_least_once
         resource.expects(:[]).with('family').returns('ipv4').at_least_once
@@ -60,6 +62,26 @@ describe provider_class do
         resource.expects(:[]).with(:raw_rule).returns(nil)
         resource.expects(:[]).with(:action).returns(action: 'reject', type: 'icmp-admin-prohibited')
         expect(provider.build_rich_rule).to eq('rule family="ipv4" destination address="192.168.0.1/32" service name="ssh" reject type="icmp-admin-prohibited"')
+      end
+    end
+    context 'with priority' do
+      it 'builds the rich rule' do
+        resource.expects(:[]).with(:priority).returns(1200)
+        resource.expects(:[]).with(:source).returns(nil).at_least_once
+        resource.expects(:[]).with(:service).returns('ssh').at_least_once
+        resource.expects(:[]).with('family').returns('ipv4').at_least_once
+        resource.expects(:[]).with(:dest).returns('address' => '192.168.0.1/32')
+        resource.expects(:[]).with(:port).returns(nil)
+        resource.expects(:[]).with(:protocol).returns(nil)
+        resource.expects(:[]).with(:icmp_block).returns(nil)
+        resource.expects(:[]).with(:icmp_type).returns(nil)
+        resource.expects(:[]).with(:masquerade).returns(nil)
+        resource.expects(:[]).with(:forward_port).returns(nil)
+        resource.expects(:[]).with(:log).returns(nil)
+        resource.expects(:[]).with(:audit).returns(nil)
+        resource.expects(:[]).with(:raw_rule).returns(nil)
+        resource.expects(:[]).with(:action).returns(action: 'reject', type: 'icmp-admin-prohibited')
+        expect(provider.build_rich_rule).to eq('rule family="ipv4" priority="1200" destination address="192.168.0.1/32" service name="ssh" reject type="icmp-admin-prohibited"')
       end
     end
   end

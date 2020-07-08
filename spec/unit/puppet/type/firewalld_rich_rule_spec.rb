@@ -189,16 +189,31 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         it 'queries the status' do
           fakeclass.stubs(:exitstatus).returns(0)
           provider.expects(:execute_firewall_cmd).with(['--query-rich-rule', rawrule], 'restricted', true, false).returns(fakeclass)
+          provider.expects(:execute_firewall_cmd).with(['--query-rich-rule', rawrule], 'restricted', false, false).returns(fakeclass)
           expect(provider).to be_exists
         end
 
-        it 'creates' do
+        it 'add rich rule executed when rule does not exist in permanent' do
+          provider.in_perm = false
           provider.expects(:execute_firewall_cmd).with(['--add-rich-rule', rawrule])
           provider.create
         end
 
-        it 'destroys' do
+        it 'remove rich rule executed when rule does exist in permanent' do
+          provider.in_perm = true
           provider.expects(:execute_firewall_cmd).with(['--remove-rich-rule', rawrule])
+          provider.destroy
+        end
+
+        it 'add rich rule does not execute when exist in permanent' do
+          provider.in_perm = true
+          provider.expects(:execute_firewall_cmd).with(['--add-rich-rule', rawrule]).never
+          provider.create
+        end
+
+        it 'remove rich rule does not execute when rule does not exist in permanent' do
+          provider.in_perm = false
+          provider.expects(:execute_firewall_cmd).with(['--remove-rich-rule', rawrule]).never
           provider.destroy
         end
       end

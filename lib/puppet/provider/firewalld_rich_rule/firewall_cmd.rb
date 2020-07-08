@@ -57,7 +57,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def elements
-    [:service, :port, :protocol, :icmp_block, :masquerade, :forward_port]
+    [:service, :port, :protocol, :icmp_block, :icmp_type, :masquerade, :forward_port]
   end
 
   def eval_element
@@ -72,6 +72,8 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
       args << quote_keyval('protocol', @resource[:port]['protocol'])
     when :icmp_block
       args << quote_keyval('name', @resource[:icmp_block])
+    when :icmp_type
+      args << quote_keyval('name', @resource[:icmp_type])
     # when :masquerade
     #   `masquerade` doesn't accept any arguments.
     when :forward_port

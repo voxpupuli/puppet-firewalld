@@ -11,10 +11,11 @@
 
 **Defined types**
 
-* [`firewalld::custom_service`](#firewalldcustom_service): == Type: firewalld::custom_service  Creates a new service definition for use in firewalld  See the README.md for usage instructions for this 
+* [`firewalld::custom_service`](#firewalldcustom_service): Creates a new service definition for use in firewalld
 
 **Resource types**
 
+* [`firewalld_custom_service`](#firewalld_custom_service): Creates a custom firewalld service.
 * [`firewalld_direct_chain`](#firewalld_direct_chain): Allow to create a custom chain in iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_direct_chain {'Add c
 * [`firewalld_direct_passthrough`](#firewalld_direct_passthrough): Allow to create a custom passthroughhrough traffic in iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_
 * [`firewalld_direct_purge`](#firewalld_direct_purge): Allow to purge direct rules in iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_direct_purge {'chain': 
@@ -306,37 +307,39 @@ A common point for triggering an intermediary firewalld full reload using firewa
 
 ### firewalld::custom_service
 
-== Type: firewalld::custom_service
+**DEPRECATED**: Please use the `firewalld_custom_service` native type moving forward
 
-Creates a new service definition for use in firewalld
-
-See the README.md for usage instructions for this defined type
-
-=== Examples
-
-   firewalld::custom_service{'My Custom Service':
-     short       => 'MyService',
-     description => 'My Custom Service is a daemon that does whatever',
-     port        => [
-       {
-           'port'     => '1234'
-           'protocol' => 'tcp'
-       },
-       {
-           'port'     => '1234'
-           'protocol' => 'udp'
-       },
-     ],
-     module      => ['nf_conntrack_netbios_ns'],
-     destination => {
-       'ipv4' => '127.0.0.1',
-       'ipv6' => '::1'
-     }
-   }
-
-=== Authors
+This defined type will be removed in a future release
 
 Andrew Patik <andrewpatik@gmail.com>
+Trevor Vaughan <tvaughan@onyxpoint.com>
+
+#### Examples
+
+##### 
+
+```puppet
+
+firewalld::custom_service{'My Custom Service':
+  short       => 'MyService',
+  description => 'My Custom Service is a daemon that does whatever',
+  port        => [
+    {
+        'port'     => '1234'
+        'protocol' => 'tcp'
+    },
+    {
+        'port'     => '1234'
+        'protocol' => 'udp'
+    },
+  ],
+  module      => ['nf_conntrack_netbios_ns'],
+  destination => {
+    'ipv4' => '127.0.0.1',
+    'ipv6' => '::1'
+  }
+}
+```
 
 #### Parameters
 
@@ -410,6 +413,96 @@ Data type: `Enum['present','absent']`
 Default value: 'present'
 
 ## Resource types
+
+### firewalld_custom_service
+
+You will still need to create a `firewalld_service` resource to bind your new
+service to a zone.
+
+#### Examples
+
+##### Creating a custom 'test' service
+
+```puppet
+firewalld_custom_service {'test':
+    ensure  => present,
+    ports   => [{'port' => '1234', 'protocol' => 'tcp'}]
+}
+```
+
+#### Properties
+
+The following properties are available in the `firewalld_custom_service` type.
+
+##### `ensure`
+
+Valid values: present, absent
+
+The basic property that the resource should be in.
+
+Default value: present
+
+##### `short`
+
+Valid values: %r{.+}
+
+The short description of the service
+
+##### `description`
+
+Valid values: %r{.+}
+
+The long description of the service
+
+##### `ports`
+
+An Array of allowed port/protocol Hashes or Strings of the form `port/protocol`
+
+Default value: unset
+
+##### `protocols`
+
+Valid values: %r{^[^\s#]+$}
+
+Protocols allowed by the service as defined in /etc/protocols
+
+Default value: unset
+
+##### `modules`
+
+Valid values: %r{^[\w-]+$}
+
+The list of netfilter modules to add to the service
+
+Default value: unset
+
+##### `ipv4_destination`
+
+Valid values: %r{^[^/]+(/\d+)?$}
+
+The IPv4 destination network of the service
+
+Default value: unset
+
+##### `ipv6_destination`
+
+Valid values: %r{^[^/]+(/\d+)?$}
+
+The IPv6 destination network of the service
+
+Default value: unset
+
+#### Parameters
+
+The following parameters are available in the `firewalld_custom_service` type.
+
+##### `name`
+
+Valid values: %r{.+}
+
+namevar
+
+The target filename of the resource (without the .xml suffix)
 
 ### firewalld_direct_chain
 
@@ -1026,7 +1119,7 @@ Result => 'B--d--Characters--.txt'
 
 #### `firewalld::safe_filename(String[1] $filename, Struct[
     {
-      'replacement_string' => Pattern[/[\w-]/],
+      'replacement_string' => Pattern[/^[\w-]+$/],
       'file_extension'     => Optional[String[1]]
     }
   ] $options = { 'replacement_string' => '_'})`
@@ -1071,7 +1164,7 @@ The String to process
 
 Data type: `Struct[
     {
-      'replacement_string' => Pattern[/[\w-]/],
+      'replacement_string' => Pattern[/^[\w-]+$/],
       'file_extension'     => Optional[String[1]]
     }
   ]`

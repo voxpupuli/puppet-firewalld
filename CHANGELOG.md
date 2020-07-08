@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.3.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.3.0) (2020-04-25)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.2.4...v4.3.0)
+
+The highlight of this release is a new native puppet type [`firewalld_custom_service`](https://github.com/voxpupuli/puppet-firewalld/blob/master/REFERENCE.md#firewalld_custom_service) that can be used instead of the defined type [`firewalld::custom_service`](https://github.com/voxpupuli/puppet-firewalld/blob/99861cde923f413e1aa68c409e9aff3d693a640d/REFERENCE.md#firewalldcustom_service).
+
+`firewalld::custom_service` is **deprecated** and will be removed in a future release.  Please migrate to using its replacement.
+
+**Implemented enhancements:**
+
+- Parse arguments to passthrough provider with spaces correctly [\#278](https://github.com/voxpupuli/puppet-firewalld/pull/278) ([cmusik](https://github.com/cmusik))
+- Native firewalld custom service [\#277](https://github.com/voxpupuli/puppet-firewalld/pull/277) ([trevor-vaughan](https://github.com/trevor-vaughan))
+- Add icmp-type support to rich rules [\#271](https://github.com/voxpupuli/puppet-firewalld/pull/271) ([ananace](https://github.com/ananace))
+
+**Fixed bugs:**
+
+- The firewalld module has loop issues when chaining dependent class resources [\#275](https://github.com/voxpupuli/puppet-firewalld/issues/275)
+- Fix `firewalld_custom_service` `port` validation [\#284](https://github.com/voxpupuli/puppet-firewalld/pull/284) ([alexjfisher](https://github.com/alexjfisher))
+
+**Merged pull requests:**
+
+- Fix several markdown lint issues [\#282](https://github.com/voxpupuli/puppet-firewalld/pull/282) ([dhoppe](https://github.com/dhoppe))
+
 ## [v4.2.4](https://github.com/voxpupuli/puppet-firewalld/tree/v4.2.4) (2020-03-13)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.2.3...v4.2.4)

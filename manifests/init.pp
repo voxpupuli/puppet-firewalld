@@ -239,11 +239,6 @@ class firewalld (
     }
   }
 
-  # Custom service files have to be in place before the zone is triggered
-  # otherwise you may end up with the zone being unable to find declared
-  # services.
-  Firewalld::Custom_service <||> -> Firewalld_zone <||>
-
   # TODO: Replace these with a native firewalld_reload type and automatically
   # hook the types together properly.
   Firewalld_direct_chain <||> ~> Class['firewalld::reload']

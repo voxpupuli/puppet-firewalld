@@ -38,7 +38,7 @@ function firewalld::safe_filename(
   String[1] $filename,
   Struct[
     {
-      'replacement_string' => Pattern[/[\w-]/],
+      'replacement_string' => Pattern[/^[\w-]+$/],
       'file_extension'     => Optional[String[1]]
     }
   ]         $options  = { 'replacement_string' => '_'}

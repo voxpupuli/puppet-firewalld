@@ -28,8 +28,8 @@ Puppet::Type.newtype(:firewalld_direct_rule) do
   end
 
   newparam(:inet_protocol) do
-    desc 'Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)'
-    newvalues('ipv4', 'ipv6')
+    desc 'Name of the TCP/IP protocol to use (e.g: ipv4, ipv6, eb)'
+    newvalues('ipv4', 'ipv6', 'eb')
     defaultto('ipv4')
     munge(&:to_s)
   end

@@ -636,7 +636,7 @@ firewalld::direct_chains:
 #### Parameters (Firewalld Direct Chains)
 
 * `name`: name of the chain, eg `LOG_DROPS`  (namevar)
-* `inet_protocol`: ipv4 or ipv6, defaults to ipv4 (namevar)
+* `inet_protocol`: ipv4, ipv6 or eb, defaults to ipv4 (namevar)
 * `table`: The table (eg: filter) to apply the chain (namevar)
 
 ### Firewalld Direct Rules
@@ -674,7 +674,7 @@ firewalld::direct_rules:
 
 * `name`: Resource name in Puppet
 * `ensure`: present or absent
-* `inet_protocol`: ipv4 or ipv6, defaults to ipv4
+* `inet_protocol`: ipv4, ipv6 or eb, defaults to ipv4
 * `table`: Table (eg: filter) which to apply the rule
 * `chain`: Chain (eg: OUTPUT) which to apply the rule
 * `priority`: The priority number of the rule (e.g: 0, 1, 2, ... 99)
@@ -709,7 +709,7 @@ firewalld::direct_passthroughs:
 
 * `name`: Resource name in Puppet
 * `ensure`: present or absent
-* `inet_protocol`: ipv4 or ipv6, defaults to ipv4
+* `inet_protocol`: ipv4, ipv6 or eb, defaults to ipv4
 * `args`: Name of the passthroughhrough to add (e.g:
   -A OUTPUT -j OUTPUT_filter)
 

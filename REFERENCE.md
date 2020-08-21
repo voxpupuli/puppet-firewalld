@@ -490,11 +490,11 @@ The following parameters are available in the `firewalld_direct_chain` type.
 
 ##### <a name="-firewalld_direct_chain--inet_protocol"></a>`inet_protocol`
 
-Valid values: `ipv4`, `ipv6`
+Valid values: `ipv4`, `ipv6`, `eb`
 
 namevar
 
-Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)
+Name of the TCP/IP protocol to use (e.g: ipv4, ipv6, eb)
 
 Default value: `ipv4`
 
@@ -559,9 +559,9 @@ Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)
 
 ##### <a name="-firewalld_direct_passthrough--inet_protocol"></a>`inet_protocol`
 
-Valid values: `ipv4`, `ipv6`
+Valid values: `ipv4`, `ipv6`, `eb`
 
-Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)
+Name of the TCP/IP protocol to use (e.g: ipv4, ipv6, eb)
 
 Default value: `ipv4`
 
@@ -669,9 +669,9 @@ Name of the chain type to add (e.g: INPUT, OUTPUT, FORWARD)
 
 ##### <a name="-firewalld_direct_rule--inet_protocol"></a>`inet_protocol`
 
-Valid values: `ipv4`, `ipv6`
+Valid values: `ipv4`, `ipv6`, `eb`
 
-Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)
+Name of the TCP/IP protocol to use (e.g: ipv4, ipv6, eb)
 
 Default value: `ipv4`
 
@@ -1043,9 +1043,9 @@ Specify destination address, this can be a string of the IP address or a hash co
 
 ##### <a name="-firewalld_rich_rule--family"></a>`family`
 
-Valid values: `ipv4`, `ipv6`
+Valid values: `ipv4`, `ipv6`, `eb`
 
-IP family, one of ipv4 or ipv6, defauts to ipv4
+IP family, one of ipv4, ipv6 or eb, defauts to ipv4
 
 Default value: `ipv4`
 

@@ -81,6 +81,32 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
     end
   end
 
+  describe 'eb protocol' do
+    let(:resource) do
+      described_class.new(
+        name: 'disable vnet stp',
+        ensure: 'present',
+        inet_protocol: 'eb',
+        table: 'filter',
+        chain: 'FORWARD',
+        priority: 10,
+        args: '-i vnet+ -d BGA -j DROP'
+      )
+    end
+
+    let(:provider) { resource.provider }
+
+    it 'creates' do
+      provider.expects(:execute_firewall_cmd).with(['--direct', '--add-rule', ['eb', 'filter', 'FORWARD', '10', '-i', 'vnet+', '-d', 'BGA', '-j', 'DROP']], nil)
+      provider.create
+    end
+
+    it 'destroys' do
+      provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-rule', ['eb', 'filter', 'FORWARD', '10', '-i', 'vnet+', '-d', 'BGA', '-j', 'DROP']], nil)
+      provider.destroy
+    end
+  end
+
   context 'autorequires' do
     # rubocop:disable RSpec/InstanceVariable
     before do

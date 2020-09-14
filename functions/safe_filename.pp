@@ -41,18 +41,15 @@ function firewalld::safe_filename(
       'replacement_string' => Pattern[/^[\w-]+$/],
       'file_extension'     => Optional[String[1]]
     }
-  ]         $options  = { 'replacement_string' => '_'}
+  ]         $options  = { 'replacement_string' => '_' }
 ) {
-
   $_badchar_regex = '[^\w-]'
 
   # If we have an extension defined
   if $options['file_extension'] {
-
     # See if the string ends with the extension
     $_extension_length = length($options['file_extension'])
     if $filename[-($_extension_length), -1] == $options['file_extension'] {
-
       # And extract the base filename
       $_basename = $filename[0, -($_extension_length) - 1]
     }

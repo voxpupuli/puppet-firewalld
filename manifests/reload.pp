@@ -3,8 +3,8 @@
 class firewalld::reload {
   assert_private()
 
-  exec{ 'firewalld::reload':
-    path        =>'/usr/bin:/bin',
+  exec { 'firewalld::reload':
+    path        => '/usr/bin:/bin',
     command     => 'firewall-cmd --reload',
     onlyif      => 'firewall-cmd --state',
     refreshonly => true,

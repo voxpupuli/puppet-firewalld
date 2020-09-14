@@ -35,22 +35,21 @@ define firewalld::custom_service (
   Optional[Array[Hash]]    $port        = undef,
   Optional[Array[String]]  $module      = undef,
   Optional[Hash[
-    Enum['ipv4', 'ipv6'],
-    String
+      Enum['ipv4', 'ipv6'],
+      String
   ]]                       $destination = undef,
   String                   $filename    = $short,
   Stdlib::Unixpath         $config_dir  = '/etc/firewalld/services',
   Enum['present','absent'] $ensure      = 'present',
 ) {
-
-  $_args = delete_undef_values({
-    'ensure'           => $ensure,
-    'short'            => $short,
-    'description'      => $description,
-    'ports'            => $port,
-    'modules'          => $module,
-    'ipv4_destination' => $destination.dig('ipv4'),
-    'ipv6_destination' => $destination.dig('ipv6'),
+  $_args = delete_undef_values( {
+      'ensure'           => $ensure,
+      'short'            => $short,
+      'description'      => $description,
+      'ports'            => $port,
+      'modules'          => $module,
+      'ipv4_destination' => $destination.dig('ipv4'),
+      'ipv6_destination' => $destination.dig('ipv6'),
   })
 
   $_safe_filename = firewalld::safe_filename($filename)

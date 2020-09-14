@@ -1,4 +1,3 @@
-
 class { 'firewalld':
   log_denied => 'multicast',
 }

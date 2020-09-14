@@ -5,7 +5,7 @@ class firewalld::reload::complete {
 
   include firewalld::reload
 
-  exec{ 'firewalld::complete-reload':
+  exec { 'firewalld::complete-reload':
     path        => '/usr/bin:/bin',
     command     => 'firewall-cmd --complete-reload',
     refreshonly => true,

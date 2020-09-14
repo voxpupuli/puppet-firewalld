@@ -56,7 +56,6 @@ class firewalld (
   Optional[String]                                              $default_port_zone         = undef,
   Optional[String]                                              $default_port_protocol     = undef,
 ) {
-
   include firewalld::reload
   include firewalld::reload::complete
 
@@ -228,9 +227,8 @@ class firewalld (
   }
 
   if $facts['firewalld_version'] and
-    (versioncmp($facts['firewalld_version'], '0.6.0') >= 0) and
-    $firewall_backend
-  {
+  (versioncmp($facts['firewalld_version'], '0.6.0') >= 0) and
+  $firewall_backend {
     augeas {
       'firewalld::firewall_backend':
         changes => [

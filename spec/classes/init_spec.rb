@@ -276,6 +276,20 @@ describe 'firewalld' do
     end
   end
 
+  context 'with parameter zone_drifting' do
+    let(:params) do
+      {
+        zone_drifting: 'yes'
+      }
+    end
+
+    it do
+      is_expected.to contain_augeas('firewalld::zone_drifting').with(
+        changes: ['set AllowZoneDrifting "yes"']
+      )
+    end
+  end
+
   context 'with parameter minimal_mark' do
     let(:params) do
       {

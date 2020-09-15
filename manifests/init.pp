@@ -48,6 +48,7 @@ class firewalld (
   Optional[String]                                              $default_zone              = undef,
   Optional[Enum['off','all','unicast','broadcast','multicast']] $log_denied                = undef,
   Optional[Enum['yes', 'no']]                                   $cleanup_on_exit           = undef,
+  Optional[Enum['yes', 'no']]                                   $zone_drifting             = undef,
   Optional[Integer]                                             $minimal_mark              = undef,
   Optional[Enum['yes', 'no']]                                   $lockdown                  = undef,
   Optional[Enum['yes', 'no']]                                   $ipv6_rpfilter             = undef,
@@ -195,6 +196,15 @@ class firewalld (
       'firewalld::cleanup_on_exit':
         changes => [
           "set CleanupOnExit \"${cleanup_on_exit}\"",
+        ];
+    }
+  }
+
+  if $zone_drifting {
+    augeas {
+      'firewalld::zone_drifting':
+        changes => [
+          "set AllowZoneDrifting \"${zone_drifting}\"",
         ];
     }
   }

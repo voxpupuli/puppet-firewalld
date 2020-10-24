@@ -70,7 +70,7 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
           end
 
           it 'is running firewalld' do
-            svc = YAML.load(on(host, 'puppet resource service firewalld --to_yaml').output)
+            svc = YAML.safe_load(on(host, 'puppet resource service firewalld --to_yaml').output)
             expect(svc['service']['firewalld']['ensure']).to match('running')
           end
 

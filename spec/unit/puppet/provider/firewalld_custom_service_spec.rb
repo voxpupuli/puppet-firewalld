@@ -6,8 +6,6 @@ describe provider_class do
   require 'rexml/document'
   include REXML
 
-  # rubocop:disable RSpec/MultipleExpectations
-
   before do
     # rubocop:disable RSpec/AnyInstance
     provider.class.stubs(:execute_firewall_cmd).returns(Object.any_instance.stubs(exitstatus: 0))

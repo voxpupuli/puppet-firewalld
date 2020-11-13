@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.4.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.4.0) (2020-11-13)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.3.0...v4.4.0)
+
+**Implemented enhancements:**
+
+- Add parameter to set 'AllowZoneDrifting' [\#301](https://github.com/voxpupuli/puppet-firewalld/pull/301) ([jcpunk](https://github.com/jcpunk))
+
+**Fixed bugs:**
+
+- Regression in version 4.3.0 firewalld\_custom\_service.rb with port range in hash [\#292](https://github.com/voxpupuli/puppet-firewalld/issues/292)
+
+**Merged pull requests:**
+
+- Adjust for puppet-lint [\#300](https://github.com/voxpupuli/puppet-firewalld/pull/300) ([jcpunk](https://github.com/jcpunk))
+- modulesync 3.1.0 & puppet-lint updates [\#297](https://github.com/voxpupuli/puppet-firewalld/pull/297) ([bastelfreak](https://github.com/bastelfreak))
+- Update firewalld custom service to translate port ranges with a colon… [\#293](https://github.com/voxpupuli/puppet-firewalld/pull/293) ([csschwe](https://github.com/csschwe))
+- Allow the use of dots in the name of an ipset [\#290](https://github.com/voxpupuli/puppet-firewalld/pull/290) ([wiebe](https://github.com/wiebe))
+
 ## [v4.3.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.3.0) (2020-04-25)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.2.4...v4.3.0)
@@ -15,8 +34,8 @@ The highlight of this release is a new native puppet type [`firewalld_custom_ser
 **Implemented enhancements:**
 
 - Parse arguments to passthrough provider with spaces correctly [\#278](https://github.com/voxpupuli/puppet-firewalld/pull/278) ([cmusik](https://github.com/cmusik))
-- Native firewalld custom service [\#277](https://github.com/voxpupuli/puppet-firewalld/pull/277) ([trevor-vaughan](https://github.com/trevor-vaughan))
 - Add icmp-type support to rich rules [\#271](https://github.com/voxpupuli/puppet-firewalld/pull/271) ([ananace](https://github.com/ananace))
+- Native firewalld custom service [\#277](https://github.com/voxpupuli/puppet-firewalld/pull/277) ([trevor-vaughan](https://github.com/trevor-vaughan))
 
 **Fixed bugs:**
 

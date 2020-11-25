@@ -1,23 +1,6 @@
 ---
-.travis.yml:
-  secure: "S+FbvY0fDhzg5uPJZm/mkJCGTUuA2ps2Yay9pPrkjTuCqYcbhjm/NOhXPRWJDONo/3Zo7vQZey9PKcsdK3hznwlfkvB1Ghb/829655lZ2lwHZCoZfGURV/FB+ztjyVT2B/xOwisjz8OGQ8AECOX7l6SjUHzLZWZxpSUWYKTLOAyD+b08jR9eiQBshxjmhxzXl+shHXXRVnGo9TEjPMLXqKpwirNucKjHYdWcYcD+Z1Yfacu3O6Ry4PqCZ0VfRf+ahIbUcnriEke1IF6NU0VquyyaSw1nYrTAUW3bHeRTyAU3Uruh2O+lXRkt8UuxDhFs17JLbrb+0a8odr0mg6kdVowEuPYJSCMEUciyoi6ztHJiVceXK2rge5Yi0jw120wRK/cWxDImc8hUh9atGgE5VzMIzu3DJOcpslVSc+iffCPg3/EVol/Ekg9WVb4s1Vj7XFwjczXVaG7mJVF5HSg0JrP+xz1rTvVLvNaNVtZDvEYphscBBUt8ujqqmz4oICWSNa7wo1JLEd1qBwPk+tgmGr1EB3wvcU12KjKotswSjkG2uqNwKO7b9ETUMOzaIxo5dLOr5pUrV9LCDIBAzkeD8HqX6pNHJE1qhZJxLUWOVaDrQNBbJp6yY5xmkg5oNwykPAGKJXAuzTYlBjYBs7ss9RO/Wpn73ExnHEI9DX43rfo="
 spec/spec_helper.rb:
   mock_with: ':mocha'
-spec/acceptance/nodesets/ec2/amazonlinux-2016091.yml:
-  delete: true
-spec/acceptance/nodesets/ec2/image_templates.yaml:
-  delete: true
-spec/acceptance/nodesets/ec2/rhel-73-x64.yml:
-  delete: true
-spec/acceptance/nodesets/ec2/sles-12sp2-x64.yml:
-  delete: true
-spec/acceptance/nodesets/ec2/ubuntu-1604-x64.yml:
-  delete: true
-spec/acceptance/nodesets/ec2/windows-2016-base-x64.yml:
-  delete: true
-spec/acceptance/nodesets/archlinux-2-x64.yml:
-  delete: true
-
 Gemfile:
   optional:
     ':test':
@@ -25,8 +8,3 @@ Gemfile:
         version: '~> 1.10.0'
     ':system_tests':
       - gem: 'simp-beaker-helpers'
-
-.rubocop.yml:
-  default_configs:
-    Style/SymbolArray:
-      Enabled: false

@@ -200,6 +200,46 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
           apply_manifest_on(host, cleanup_manifest, catch_changes: true)
         end
       end
+
+      context 'with only protocols' do
+        let(:manifest) do
+          <<-EOM
+            firewalld_custom_service{ 'ospf':
+              protocols => ['ospf'],
+            }
+          EOM
+        end
+
+        it 'runs successfully' do
+          apply_manifest_on(host, manifest, catch_failures: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest_on(host, manifest, catch_changes: true)
+        end
+
+        context 'custom service' do
+          it 'exists' do
+            expect(on(host, 'firewall-cmd --permanent --info-service=ospf').output).not_to be_empty
+          end
+
+          it 'has the proper protocol' do
+            expect(on(host, 'firewall-cmd --permanent --service=ospf --get-protocols').output.strip).to eq('ospf')
+          end
+
+          it 'has no ports' do
+            expect(on(host, 'firewall-cmd --permanent --service=ospf --get-ports').output.strip).to be_empty
+          end
+
+          it 'has no modules' do
+            expect(on(host, 'firewall-cmd --permanent --service=ospf --get-modules').output.strip).to be_empty
+          end
+
+          it 'has no destinations' do
+            expect(on(host, 'firewall-cmd --permanent --service=ospf --get-destinations').output.strip).to be_empty
+          end
+        end
+      end
     end
 
     context 'disable firewalld' do

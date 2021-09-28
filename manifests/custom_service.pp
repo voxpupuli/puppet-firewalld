@@ -38,6 +38,7 @@ define firewalld::custom_service (
       Enum['ipv4', 'ipv6'],
       String
   ]]                       $destination = undef,
+  Optional[Array[String]]  $protocols   = undef,
   String                   $filename    = $short,
   Stdlib::Unixpath         $config_dir  = '/etc/firewalld/services',
   Enum['present','absent'] $ensure      = 'present',
@@ -47,6 +48,7 @@ define firewalld::custom_service (
       'short'            => $short,
       'description'      => $description,
       'ports'            => $port,
+      'protocols'        => $protocols,
       'modules'          => $module,
       'ipv4_destination' => $destination.dig('ipv4'),
       'ipv6_destination' => $destination.dig('ipv6'),

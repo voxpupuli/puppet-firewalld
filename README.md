@@ -526,7 +526,7 @@ The title can also be mapped to the types namevars using a colon delimited
 string, so the above can also be represented as
 
 ```puppet
-firewall_direct_chain { 'ipv4:filter:LOG_DROPS':
+firewalld_direct_chain { 'ipv4:filter:LOG_DROPS':
   ensure => present,
 }
 ```

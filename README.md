@@ -10,16 +10,18 @@
 
 ## Description
 
-This module manages firewalld, the userland interface that replaces iptables and
-ships with RHEL7+.  The module manages firewalld itself as well as providing
-types and providers for managing firewalld zones, ports, and rich rules.
+This module manages firewalld, the userland interface that replaces
+iptables and ships with RHEL7+. The module manages firewalld itself as
+well as providing types and providers for managing firewalld zones,
+ports, and rich rules.
 
 ## Compatibility
 
-Latest versions of this module (3.0+) are only supported on Puppet 4.0+. 2.2.0
-is the latest version to run on Puppet 3.x, important patches (security
-bugs..etc) will be accepted in the 2.x until Puppet 3.x is offically
-end-of-life, but new features will only be accepted in 3.x.
+Latest versions of this module (3.0+) are only supported on Puppet
+4.0+. 2.2.0 is the latest version to run on Puppet 3.x, important
+patches (security bugs..etc) will be accepted in the 2.x until Puppet
+3.x is offically end-of-life, but new features will only be accepted
+in 3.x.
 
 ## Usage
 
@@ -66,11 +68,12 @@ class { 'firewalld': }
 
 ## Resource Types
 
-The firewalld module contains types and providers to manage zones, services,
-ports, and rich rules by interfacing with the `firewall-cmd` command.  The
-following types are currently supported.  Note that all zone, service, port, and
-rule management is done in `--permanent` mode, and a complete reload will be
-triggered anytime something changes.
+The firewalld module contains types and providers to manage zones,
+services, ports, and rich rules by interfacing with the `firewall-cmd`
+command. The following types are currently supported. Note that all
+zone, service, port, and rule management is done in `--permanent`
+mode, and a complete reload will be triggered anytime something
+changes.
 
 This module supports a number of resource types
 
@@ -83,13 +86,14 @@ This module supports a number of resource types
 * [firewalld_direct_rule](#firewalld-direct-rules)
 * [firewalld_direct_passthrough](#firewalld-direct-passthroughs)
 
-Note, it is always recommended to include the `::firewalld` class if you are
-going to  use any of these resources from another Puppet class (eg: a profile)
-as it sets up the relationships between the `firewalld` service resource and the
-exec resource to reload the firewall upon change.  Without the `firewalld` class
-included then the firewall will not be reloaded upon change.  The recommended
-pattern is to put all resources into hiera and let the `firewalld` class set
-them up.  Examples of both forms are presented for the resource types below.
+Note, it is always recommended to include the `::firewalld` class if
+you are going to use any of these resources from another Puppet class
+(eg: a profile) as it sets up the relationships between the
+`firewalld` service resource and the exec resource to reload the
+firewall upon change. Without the `firewalld` class included then the
+firewall will not be reloaded upon change. The recommended pattern is
+to put all resources into hiera and let the `firewalld` class set them
+up. Examples of both forms are presented for the resource types below.
 
 ### Firewalld Zones
 
@@ -125,28 +129,31 @@ firewalld::zones:
 * `interfaces`: An array of interfaces for this zone
 * `sources`: An array of sources for the zone
 * `icmp_blocks`: An array of ICMP blocks for the zone
-* `masquerade`: If set to `true` or `false` specifies whether or not to add
-  masquerading to the zone
-* `purge_rich_rules`: Optional, and defaulted to false.  When true any
-  configured rich rules found in the zone that do not match what is in the
-  Puppet catalog will be purged.
-* `purge_services`: Optional, and defaulted to false.  When true any configured
-  services found in the zone that do not match what is in the Puppet catalog
-  will be purged. *Warning:* This includes the default ssh service, if you need
-  SSH to access the box, make sure you add the service through either a rich
-  firewall rule, port, or service (see below) or you will lock yourself out!
-* `purge_ports`: Optional, and defaulted to false. When true any configured
-  ports found in the zone that do not match what is in the Puppet catalog will
-  be purged. *Warning:* As with services, this includes the default ssh port. If
-  you fail to specify the appropriate port, rich rule, or service, you will lock
-  yourself out.
+* `masquerade`: If set to `true` or `false` specifies whether or not
+  to add masquerading to the zone
+* `purge_rich_rules`: Optional, and defaulted to false. When true any
+  configured rich rules found in the zone that do not match what is in
+  the Puppet catalog will be purged.
+* `purge_services`: Optional, and defaulted to false. When true any
+  configured services found in the zone that do not match what is in
+  the Puppet catalog will be purged. *Warning:* This includes the
+  default ssh service, if you need SSH to access the box, make sure
+  you add the service through either a rich firewall rule, port, or
+  service (see below) or you will lock yourself out!
+* `purge_ports`: Optional, and defaulted to false. When true any
+  configured ports found in the zone that do not match what is in the
+  Puppet catalog will be purged. *Warning:* As with services, this
+  includes the default ssh port. If you fail to specify the
+  appropriate port, rich rule, or service, you will lock yourself out.
 
 ### Firewalld Rich Rules
 
-Firewalld rich rules are managed using the `firewalld_rich_rule` resource type
+Firewalld rich rules are managed using the `firewalld_rich_rule`
+resource type
 
-firewalld_rich_rules will `autorequire` the firewalld_zone specified in the
-`zone` parameter so there is no need to add dependencies for this
+firewalld_rich_rules will `autorequire` the firewalld_zone specified
+in the `zone` parameter so there is no need to add dependencies for
+this
 
 _Example in Class_:
 
@@ -178,8 +185,9 @@ firewalld::rich_rules:
 
 * `family`: Protocol family, defaults to `ipv4`
 
-* `source`: Source address information. This can be a hash containing the keys
-  `address or ipset` and `invert`, or a string containing just the IP address
+* `source`: Source address information. This can be a hash containing
+  the keys `address or ipset` and `invert`, or a string containing
+  just the IP address
 
   ```puppet
      source => '192.168.2.1',
@@ -189,9 +197,9 @@ firewalld::rich_rules:
      source => { 'ipset' => 'blacklist' }
   ```
 
-* `dest`: Destination address information. This can be a hash containing the
-  keys `address or ipset` and `invert`, or a string containing just the IP
-  address
+* `dest`: Destination address information. This can be a hash
+  containing the keys `address or ipset` and `invert`, or a string
+  containing just the IP address
 
   ```puppet
      dest => '192.168.2.1',
@@ -201,8 +209,8 @@ firewalld::rich_rules:
      dest => { 'ipset' => 'blacklist' }
   ```
 
-* `log`: When set to `true` will enable logging, optionally this can be hash
-  with `prefix`, `level` and `limit`
+* `log`: When set to `true` will enable logging, optionally this can
+  be hash with `prefix`, `level` and `limit`
 
   ```puppet
      log => { 'level' => 'debug', 'prefix' => 'foo' },
@@ -210,8 +218,8 @@ firewalld::rich_rules:
      log => true,
   ```
 
-* `audit`: When set to `true` will enable auditing, optionally this can be hash
-  with `limit`
+* `audit`: When set to `true` will enable auditing, optionally this
+  can be hash with `limit`
 
   ```puppet
      audit => { 'limit' => '3/s' },
@@ -219,8 +227,9 @@ firewalld::rich_rules:
      audit => true,
   ```
 
-* `action`: A string containing the action `accept`, `reject` or `drop`.  For
-  `reject` it can be optionally supplied as a hash containing `type`
+* `action`: A string containing the action `accept`, `reject` or
+  `drop`. For `reject` it can be optionally supplied as a hash
+  containing `type`
 
   ```puppet
      action => 'accept'
@@ -228,7 +237,8 @@ firewalld::rich_rules:
      action => { 'action' => 'reject', 'type' => 'bad' }
   ```
 
-The following paramters are the element of the rich rule, only _one_ may be used.
+The following paramters are the element of the rich rule, only _one_
+may be used.
 
 * `service`: Name of the service
 
@@ -247,7 +257,8 @@ The following paramters are the element of the rich rule, only _one_ may be used
 
 * `masquerade`: Set to `true` or `false` to enable masquerading
 
-* `forward_port`: Set forward-port, this should be a hash containing `port`,`protocol`,`to_port`,`to_addr`
+* `forward_port`: Set forward-port, this should be a hash containing
+  `port`,`protocol`,`to_port`,`to_addr`
 
   ```puppet
      forward_port => {
@@ -260,9 +271,9 @@ The following paramters are the element of the rich rule, only _one_ may be used
 
 ### Firewalld Custom Service
 
-The `firewalld::custom_service` defined type creates and manages custom
-services. It makes the service usable by firewalld, but does not add it to any
-zones. To do that, use the firewalld::service type.
+The `firewalld::custom_service` defined type creates and manages
+custom services. It makes the service usable by firewalld, but does
+not add it to any zones. To do that, use the firewalld::service type.
 
 ---
 
@@ -315,7 +326,8 @@ firewalld::custom_services:
       ipv6: '::1'
 ```
 
-This resource will create the following XML service definition in /etc/firewalld/services/XZY.xml
+This resource will create the following XML service definition in
+/etc/firewalld/services/XZY.xml
 
 ```
     <?xml version="1.0" encoding="utf-8"?>
@@ -334,17 +346,18 @@ and you will also see 'puppet' in the service list when you issue
 
 #### Parameters (Firewalld Custom Service)
 
-* `short`: (namevar) The short name of the service (what you see in the
-  firewalld command line output)
+* `short`: (namevar) The short name of the service (what you see in
+  the firewalld command line output)
 
 * `description`: (Optional) A short description of the service
 
-* `port`: (Optional) The protocol / port definitions for this service. Specified
-  as an array of hashes, where each hash defines a protocol and/or port
-  associated with this service. Each hash requires both port and protocol keys,
-  even if the value is an empty string. Specifying a port only works for TCP &
-  UDP, otherwise leave it empty and the entire protocol will be allowed. Valid
-  protocols are tcp, udp, or any protocol defined in /etc/protocols
+* `port`: (Optional) The protocol / port definitions for this service.
+  Specified as an array of hashes, where each hash defines a protocol
+  and/or port associated with this service. Each hash requires both
+  port and protocol keys, even if the value is an empty string.
+  Specifying a port only works for TCP & UDP, otherwise leave it empty
+  and the entire protocol will be allowed. Valid protocols are tcp,
+  udp, or any protocol defined in /etc/protocols
 
   ```puppet
      port => [{'port' => '1234', 'protocol' => 'tcp'}],
@@ -352,8 +365,8 @@ and you will also see 'puppet' in the service list when you issue
      port => [{'port' => '4321', 'protocol' => 'udp'}, {'protocol' => 'rdp'}],
   ```
 
-The `port` parameter can also take a range of ports separated by a colon or a
-dash (colons are replaced by dashes), for example:
+The `port` parameter can also take a range of ports separated by a
+colon or a dash (colons are replaced by dashes), for example:
 
 ```puppet
    port => [ {'port' => '8000:8002', 'protocol' => 'tcp']} ]
@@ -365,21 +378,22 @@ will produce:
     <port protocol="tcp" port="8000-8002" />
 ```
 
-* `protocols`: (Optional) An array of protocols allowed by the service as defined
-  in /etc/protocols.
+* `protocols`: (Optional) An array of protocols allowed by the service
+  as defined in /etc/protocols.
 
   ```puppet
      protocols => ['ospf'],
   ```
 
-* `module`: (Optional) An array of strings specifying netfilter kernel helper
-  modules associated with this service
+* `module`: (Optional) An array of strings specifying netfilter kernel
+  helper modules associated with this service
 
-* `destination`: (Optional) A hash specifying the destination network as a
-  network IP address (optional with /mask), or a plain IP address. Valid hash
-  keys are 'ipv4' and 'ipv6', with values corresponding to the IP / mask
-  associated with each of those protocols. The use of hostnames is possible but
-  not recommended, because these will only be resolved at service activation and
+* `destination`: (Optional) A hash specifying the destination network
+  as a network IP address (optional with /mask), or a plain IP
+  address. Valid hash keys are 'ipv4' and 'ipv6', with values
+  corresponding to the IP / mask associated with each of those
+  protocols. The use of hostnames is possible but not recommended,
+  because these will only be resolved at service activation and
   transmitted to the kernel.
 
   ```puppet
@@ -388,17 +402,18 @@ will produce:
      destination => {'ipv4' => '192.168.0.0/24'},
   ```
 
-* `config_dir`: The location where the service definition XML files will be
-  stored. Defaults to /etc/firewalld/services
+* `config_dir`: The location where the service definition XML files
+  will be stored. Defaults to /etc/firewalld/services
 
 ### Firewalld Service
 
-The `firewalld_service` type is used to add or remove both built in and custom
-services from zones.
+The `firewalld_service` type is used to add or remove both built in
+and custom services from zones.
 
-firewalld_service will `autorequire` the firewalld_zone specified in the `zone`
-parameter and the firewalld::custom_service specified in the `service`
-parameter, so there is no need to add dependencies for this
+firewalld_service will `autorequire` the firewalld_zone specified in
+the `zone` parameter and the firewalld::custom_service specified in
+the `service` parameter, so there is no need to add dependencies for
+this
 
 _Example in Class_:
 
@@ -430,18 +445,20 @@ firewalld::services:
 
 #### Parameters (Firewalld Service)
 
-* `service`: Name of the service to manage, defaults to the resource name.
+* `service`: Name of the service to manage, defaults to the resource
+  name.
 
-* `zone`: Name of the zone in which you want to manage the service, defaults to
-  parameter `default_service_zone` of class `firewalld` if specified.
+* `zone`: Name of the zone in which you want to manage the service,
+  defaults to parameter `default_service_zone` of class `firewalld` if
+  specified.
 
-* `ensure`: Whether to add (`present`) or remove the service (`absent`),
-  defaults to `present`.
+* `ensure`: Whether to add (`present`) or remove the service
+  (`absent`), defaults to `present`.
 
 ### Firewalld IPsets
 
-Firewalld IPsets (on supported versions of firewalld) can be managed using the
-`firewalld_ipset` resource type
+Firewalld IPsets (on supported versions of firewalld) can be managed
+using the `firewalld_ipset` resource type
 
 _Example_:
 
@@ -466,18 +483,20 @@ firewalld::ipsets:
 
 * `entries`: An array of entries for the IPset
 * `type`: Type of ipset (default: `hash:ip`)
-* `options`: A hash of options for the IPset (eg: `{ "family" => "inet6"}`)
+* `options`: A hash of options for the IPset (eg:
+  `{ "family" => "inet6"}`)
 
-Note that `type` and `options` are parameters used when creating the IPset and
-are not managed after creation - to change the type or options of an ipset you
-must delete the existing ipset first.
+Note that `type` and `options` are parameters used when creating the
+IPset and are not managed after creation - to change the type or
+options of an ipset you must delete the existing ipset first.
 
 ### Firewalld Ports
 
-Firewalld ports can be managed with the `firewalld_port` resource type.
+Firewalld ports can be managed with the `firewalld_port` resource
+type.
 
-firewalld_port will `autorequire` the firewalld_zone specified in the `zone`
-parameter so there is no need to add dependencies for this
+firewalld_port will `autorequire` the firewalld_zone specified in the
+`zone` parameter so there is no need to add dependencies for this
 
 _Example_:
 
@@ -508,11 +527,12 @@ firewalld::ports:
 
 * `port`: The port to manage, defaults to the resource name.
 
-* `protocol`: The protocol this port uses, e.g. `tcp` or `udp`, defaults to
-  parameter `default_port_protocol` of class `firewalld` if specified.
+* `protocol`: The protocol this port uses, e.g. `tcp` or `udp`,
+  defaults to parameter `default_port_protocol` of class `firewalld`
+  if specified.
 
-* `ensure`: Whether to add (`present`) or remove the service (`absent`),
-  defaults to `present`.
+* `ensure`: Whether to add (`present`) or remove the service
+  (`absent`), defaults to `present`.
 
 ### Firewalld Direct Chains
 
@@ -529,8 +549,8 @@ table          => 'filter',
 }
 ```
 
-The title can also be mapped to the types namevars using a colon delimited
-string, so the above can also be represented as
+The title can also be mapped to the types namevars using a colon
+delimited string, so the above can also be represented as
 
 ```puppet
 firewalld_direct_chain { 'ipv4:filter:LOG_DROPS':
@@ -594,7 +614,7 @@ firewalld::direct_rules:
 * `table`: Table (eg: filter) which to apply the rule
 * `chain`: Chain (eg: OUTPUT) which to apply the rule
 * `priority`: The priority number of the rule (e.g: 0, 1, 2, ... 99)
-* `args`: Any  iptables, ip6tables and ebtables command line arguments
+* `args`: Any iptables, ip6tables and ebtables command line arguments
 
 ### Firewalld Direct Passthroughs
 
@@ -626,7 +646,8 @@ firewalld::direct_passthroughs:
 * `name`: Resource name in Puppet
 * `ensure`: present or absent
 * `inet_protocol`: ipv4 or ipv6, defaults to ipv4
-* `args`: Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)
+* `args`: Name of the passthroughhrough to add (e.g:
+  -A OUTPUT -j OUTPUT_filter)
 
 ## Testing
 
@@ -641,11 +662,11 @@ Unit tests can be executed by running the following commands:
 
 Acceptance tests are performed using
 [Beaker](https://github.com/puppetlabs/beaker) and require
-[Vagrant](https://vagrantup.com) and [VirtualBox](https://www.virtualbox.org) to
-run successfully.
+[Vagrant](https://vagrantup.com) and
+[VirtualBox](https://www.virtualbox.org) to run successfully.
 
-It is **HIGHLY RECOMMENDED** that you use the upstream Vagrant package and not
-one from your OS provider.
+It is **HIGHLY RECOMMENDED** that you use the upstream Vagrant package
+and not one from your OS provider.
 
 To run the acceptance tests:
 
@@ -662,4 +683,5 @@ To leave the Vagrant hosts running on failure for debugging:
 
 * Written Initially by Craig Dunn <craig@craigdunn.org> @crayfishx
 * This module is now maintained by [VoxPupuli](https://voxpupuli.org)
-* Thanks and acknowlegements to [Baloise Group](http://baloise.github.io)
+* Thanks and acknowlegements to [Baloise
+  Group](http://baloise.github.io)

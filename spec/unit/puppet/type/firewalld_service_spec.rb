@@ -30,7 +30,7 @@ describe Puppet::Type.type(:firewalld_service) do
     end
 
     it 'autorequires the firewalld service' do
-      resource = described_class.new(name: 'test', service: 'test')
+      resource = described_class.new(name: 'test', service: 'test', zone: 'test')
       @catalog.add_resource(resource)
 
       expect(resource.autorequire.map { |rp| rp.source.to_s }).to include('Service[firewalld]')

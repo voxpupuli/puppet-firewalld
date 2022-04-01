@@ -8,12 +8,20 @@ Puppet::Type.type(:firewalld_service).provide(
   desc 'Interact with firewall-cmd'
 
   def exists?
-    execute_firewall_cmd(['--list-services']).split(' ').include?(@resource[:service])
+    if @resource[:zone] == :unset
+      execute_firewall_cmd_policy(['--list-services']).split(' ').include?(@resource[:service])
+    else
+      execute_firewall_cmd(['--list-services']).split(' ').include?(@resource[:service])
+    end
   end
 
   def create
     debug("Adding new service to firewalld: #{@resource[:service]}")
-    execute_firewall_cmd(['--add-service', @resource[:service]])
+    if @resource[:zone] == :unset
+      execute_firewall_cmd_policy(['--add-service', @resource[:service]])
+    else
+      execute_firewall_cmd(['--add-service', @resource[:service]])
+    end
     reload_firewall
   end
 
@@ -26,7 +34,11 @@ Puppet::Type.type(:firewalld_service).provide(
              '--remove-service-from-zone'
            end
 
-    execute_firewall_cmd([flag, @resource[:service]])
+    if @resource[:zone] == :unset
+      execute_firewall_cmd_policy([flag, @resource[:service]])
+    else
+      execute_firewall_cmd([flag, @resource[:service]])
+    end
     reload_firewall
   end
 end

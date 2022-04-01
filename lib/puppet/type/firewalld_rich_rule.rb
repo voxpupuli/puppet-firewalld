@@ -1,7 +1,9 @@
 Puppet::Type.newtype(:firewalld_rich_rule) do
   @doc = "Manages firewalld rich rules.
 
-    firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this
+    firewalld_rich_rules will autorequire the firewalld_zone specified
+    in the zone parameter or the firewalld_policy specified in the
+    policy parameter so there is no need to add dependencies for this
 
     Example:
 
@@ -26,7 +28,15 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   newparam(:zone) do
-    desc 'Name of the zone'
+    desc 'Name of the zone to attach the rich rule to, exactly one of zone and policy must be supplied'
+
+    defaultto(:unset)
+  end
+
+  newparam(:policy) do
+    desc 'Name of the policy to attach the rich rule to, exactly one of zone and policy must be supplied'
+
+    defaultto(:unset)
   end
 
   newparam(:family) do
@@ -114,8 +124,9 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   newparam(:raw_rule) do
-    desc "Manage the entire rule as one string - this is used internally by firwalld_zone to
-          handle pruning of rules"
+    desc "Manage the entire rule as one string - this is used
+          internally by firwalld_zone and firewalld_policy to handle
+          pruning of rules"
   end
 
   def elements
@@ -125,10 +136,22 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   validate do
     errormsg = "Only one element (#{elements.join(',')}) may be specified."
     raise errormsg if elements.select { |e| self[e] }.size > 1
+
+    if self[:zone] != :unset && self[:policy] != :unset
+      raise Puppet::Error, 'only one of the parameters zone and policy may be supplied'
+    end
+
+    if self[:zone] == :unset && self[:policy] == :unset
+      raise Puppet::Error, 'one of the parameters zone and policy must be supplied'
+    end
   end
 
   autorequire(:firewalld_zone) do
-    self[:zone]
+    self[:zone] if self[:zone] != :unset
+  end
+
+  autorequire(:firewalld_policy) do
+    self[:policy] if self[:policy] != :unset
   end
 
   autorequire(:ipset) do

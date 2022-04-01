@@ -2,7 +2,10 @@ require 'puppet'
 
 Puppet::Type.newtype(:firewalld_port) do
   @doc = "Assigns a port to a specific firewalld zone.
-    firewalld_port will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this
+
+    firewalld_port will autorequire the firewalld_zone specified in
+    the zone parameter or the firewalld_policy specified in the policy
+    parameter so there is no need to add dependencies for this
 
     Example:
 
@@ -31,7 +34,15 @@ Puppet::Type.newtype(:firewalld_port) do
   end
 
   newparam(:zone) do
-    desc 'Name of the zone to which you want to add the port'
+    desc 'Name of the zone to which you want to add the port, exactly one of zone and policy must be supplied'
+
+    defaultto(:unset)
+  end
+
+  newparam(:policy) do
+    desc 'Name of the policy to which you want to add the port, exactly one of zone and policy must be supplied'
+
+    defaultto(:unset)
   end
 
   newparam(:port) do
@@ -44,8 +55,22 @@ Puppet::Type.newtype(:firewalld_port) do
     desc 'Specify the element as a protocol'
   end
 
+  validate do
+    if self[:zone] != :unset && self[:policy] != :unset
+      raise Puppet::Error, 'only one of the parameters zone and policy may be supplied'
+    end
+
+    if self[:zone] == :unset && self[:policy] == :unset
+      raise Puppet::Error, 'one of the parameters zone and policy must be supplied'
+    end
+  end
+
   autorequire(:firewalld_zone) do
-    self[:zone]
+    self[:zone] if self[:zone] != :unset
+  end
+
+  autorequire(:firewalld_policy) do
+    self[:policy] if self[:policy] != :unset
   end
 
   autorequire(:service) do

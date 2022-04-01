@@ -13,7 +13,7 @@
 This module manages firewalld, the userland interface that replaces
 iptables and ships with RHEL7+. The module manages firewalld itself as
 well as providing types and providers for managing firewalld zones,
-ports, and rich rules.
+policies, ports, and rich rules.
 
 ## Compatibility
 
@@ -48,6 +48,7 @@ class { 'firewalld': }
 * `log_denied`: Optional, (firewalld-0.4.3.2-8+) Log denied packets, can be one
   of `off`, `all`, `multicast`, `unicast`, `broadcast` (default: undef)
 * `zones`: A hash of [firewalld zones](#firewalld-zones) to configure
+* `policies`: A hash of [firewalld policies](#firewalld-policies) to configure
 * `ports`: A hash of [firewalld ports](#firewalld-ports) to configure
 * `services`: A hash of [firewalld services](#firewalld-service) to configure
 * `rich_rules`: A hash of [firewalld rich rules](#firewalld-rich-rules) to configure
@@ -78,6 +79,7 @@ changes.
 This module supports a number of resource types
 
 * [firewalld_zone](#firewalld-zones)
+* [firewalld_policy](#firewalld-policies)
 * [firewalld_port](#firewalld-ports)
 * [firewalld_service](#firewalld-service)
 * [firewalld_ipset](#firewalld-ipsets)
@@ -146,14 +148,71 @@ firewalld::zones:
   includes the default ssh port. If you fail to specify the
   appropriate port, rich rule, or service, you will lock yourself out.
 
+### Firewalld policies
+
+Firewalld policies can be managed with the `firewalld_policy` resource type.
+
+_Example in Class_:
+
+```puppet
+  firewalld_policy { 'anytorestricted':
+    ensure           => present,
+    target           => '%%REJECT%%',
+    ingress_zones    => ['ANY'],
+    egress_zones     => ['restricted'],
+    purge_rich_rules => true,
+    purge_services   => true,
+    purge_ports      => true,
+  }
+```
+
+_Example in Hiera_:
+
+```yaml
+firewalld::policies:
+  anytorestricted:
+    ensure: present
+    target: '%%REJECT%%'
+    ingress_zones:
+      - 'ANY'
+    egress_zones:
+      - 'restricted'
+    purge_rich_rules: true
+    purge_services: true
+    purge_ports: true
+```
+
+#### Parameters (Firewalld policies)
+
+* `target`: Specify the target of the policy.
+* `ingress_zones`: An array of ingress zones for this policy.
+* `egress_zones`: An array of egress zones for this policy.
+* `priority`: A non zero integer specifying the priority of this
+  policy, policies with negative priorities apply before rules in
+  zones, policies with positive priorities, after. Defaults to -1.
+* `icmp_blocks`: An array of ICMP blocks for the policy
+* `masquerade`: If set to `true` or `false` specifies whether or not
+  to add masquerading to the policy
+* `purge_rich_rules`: Optional, and defaulted to false. When true any
+  configured rich rules found in the policy that do not match what is in
+  the Puppet catalog will be purged.
+* `purge_services`: Optional, and defaulted to false. When true any
+  configured services found in the policy that do not match what is in
+  the Puppet catalog will be purged.
+* `purge_ports`: Optional, and defaulted to false. When true any
+  configured ports found in the policy that do not match what is in the
+  Puppet catalog will be purged.
+
 ### Firewalld Rich Rules
 
 Firewalld rich rules are managed using the `firewalld_rich_rule`
 resource type
 
+Exactly one of the `zone` or `policy` parameters must be given
+
 firewalld_rich_rules will `autorequire` the firewalld_zone specified
-in the `zone` parameter so there is no need to add dependencies for
-this
+in the `zone` parameter or the firewalld_policy specified in the
+`policy` parameter so there is no need to add dependencies for this
 
 _Example in Class_:
 
@@ -181,7 +240,9 @@ firewalld::rich_rules:
 
 #### Parameters (Firewalld Rich Rules)
 
-* `zone`: Name of the zone this rich rule belongs to
+* `zone`: (Optional) Name of the zone this rich rule belongs to
+
+* `policy`: (Optional) Name of the policy this rich rule belongs to
 
 * `family`: Protocol family, defaults to `ipv4`
 
@@ -410,6 +471,8 @@ will produce:
 The `firewalld_service` type is used to add or remove both built in
 and custom services from zones.
 
+Exactly one of the `zone` or `policy` parameters must be given.
+
 firewalld_service will `autorequire` the firewalld_zone specified in
 the `zone` parameter and the firewalld::custom_service specified in
 the `service` parameter, so there is no need to add dependencies for
@@ -451,6 +514,10 @@ firewalld::services:
 * `zone`: Name of the zone in which you want to manage the service,
   defaults to parameter `default_service_zone` of class `firewalld` if
   specified.
+
+* `policy`: Name of the policy in which you want to manage the
+  service. Make sure to set `zone` to `unset` if you use this and have
+  specified `default_service_zone` for class `firewalld`.
 
 * `ensure`: Whether to add (`present`) or remove the service
   (`absent`), defaults to `present`.
@@ -495,6 +562,8 @@ options of an ipset you must delete the existing ipset first.
 Firewalld ports can be managed with the `firewalld_port` resource
 type.
 
+Exactly one of the `zone` or `policy` parameters must be given.
+
 firewalld_port will `autorequire` the firewalld_zone specified in the
 `zone` parameter so there is no need to add dependencies for this
 
@@ -524,6 +593,10 @@ firewalld::ports:
 
 * `zone`: Name of the zone this port belongs to, defaults to parameter
   `default_port_zone` of class `firewalld` if specified.
+
+* `policy`: Name of the policy this port belongs to. Make sure to set
+  `zone` to `unset` if you use this and have specified
+  `default_port_zone` for class `firewalld`.
 
 * `port`: The port to manage, defaults to the resource name.
 

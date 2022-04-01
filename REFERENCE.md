@@ -22,8 +22,9 @@
 * [`firewalld_direct_purge`](#firewalld_direct_purge): Allow to purge direct rules in iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_direct_purge {'chain': 
 * [`firewalld_direct_rule`](#firewalld_direct_rule): Allow to pass rules directly to iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_direct_rule {'Allow ou
 * [`firewalld_ipset`](#firewalld_ipset): Configure IPsets in Firewalld  Example:     firewalld_ipset {'internal net':         ensure   => 'present',         type     => 'hash:net',  
-* [`firewalld_port`](#firewalld_port): Assigns a port to a specific firewalld zone. firewalld_port will autorequire the firewalld_zone specified in the zone parameter so there is n
-* [`firewalld_rich_rule`](#firewalld_rich_rule): Manages firewalld rich rules.  firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need t
+* [`firewalld_policy`](#firewalld_policy): Creates and manages firewalld policies.
+* [`firewalld_port`](#firewalld_port): Assigns a port to a specific firewalld zone.  firewalld_port will autorequire the firewalld_zone specified in the zone parameter or the firew
+* [`firewalld_rich_rule`](#firewalld_rich_rule): Manages firewalld rich rules.  firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter or the firewalld_poli
 * [`firewalld_service`](#firewalld_service): Assigns a service to a specific firewalld zone.
 * [`firewalld_zone`](#firewalld_zone): Creates and manages firewalld zones.
 
@@ -71,6 +72,7 @@ The following parameters are available in the `firewalld` class:
 * [`install_gui`](#install_gui)
 * [`service_enable`](#service_enable)
 * [`zones`](#zones)
+* [`policies`](#policies)
 * [`ports`](#ports)
 * [`services`](#services)
 * [`rich_rules`](#rich_rules)
@@ -144,6 +146,14 @@ Data type: `Boolean`
 Default value: ``true``
 
 ##### <a name="zones"></a>`zones`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="policies"></a>`policies`
 
 Data type: `Hash`
 
@@ -888,10 +898,133 @@ Type of the ipset (default: hash:ip)
 
 Default value: `hash:ip`
 
+### <a name="firewalld_policy"></a>`firewalld_policy`
+
+Creates and manages firewalld policies.
+
+Note that setting `ensure => 'absent'` to the built in firewalld
+policies will not work, and will generate an error. This is a
+limitation of firewalld itself, not the module.
+
+#### Examples
+
+##### Create a policy called `anytorestricted`
+
+```puppet
+firewalld_policy { 'anytorestricted':
+  ensure           => present,
+  target           => '%%REJECT%%',
+  ingress_zones    => ['ANY'],
+  egress_zones     => ['restricted'],
+  purge_rich_rules => true,
+  purge_services   => true,
+  purge_ports      => true,
+  icmp_blocks      => 'router-advertisement'
+}
+```
+
+#### Properties
+
+The following properties are available in the `firewalld_policy` type.
+
+##### `egress_zones`
+
+Specify the egress zones for the policy
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
+
+##### `icmp_blocks`
+
+Specify the icmp-blocks for the policy. Can be a single string specifying one icmp type,
+or an array of strings specifying multiple icmp types. Any blocks not specified here will be removed
+
+##### `ingress_zones`
+
+Specify the ingress zones for the policy
+
+##### `masquerade`
+
+Valid values: ``true``, ``false``
+
+Can be set to true or false, specifies whether to add or remove masquerading from the policy
+
+##### `priority`
+
+The priority of the policy as an integer (default -1)
+
+Default value: `-1`
+
+##### `purge_ports`
+
+Valid values: ``false``, ``true``
+
+When set to true any ports associated with this policy
+that are not managed by Puppet will be removed.
+
+##### `purge_rich_rules`
+
+Valid values: ``false``, ``true``
+
+When set to true any rich_rules associated with this policy
+that are not managed by Puppet will be removed.
+
+##### `purge_services`
+
+Valid values: ``false``, ``true``
+
+When set to true any services associated with this policy
+that are not managed by Puppet will be removed.
+
+##### `target`
+
+Specify the target for the policy
+
+#### Parameters
+
+The following parameters are available in the `firewalld_policy` type.
+
+* [`description`](#description)
+* [`name`](#name)
+* [`policy`](#policy)
+* [`provider`](#provider)
+* [`short`](#short)
+
+##### <a name="description"></a>`description`
+
+Description of the policy to add
+
+##### <a name="name"></a>`name`
+
+namevar
+
+Name of the rule resource in Puppet
+
+##### <a name="policy"></a>`policy`
+
+Name of the policy
+
+##### <a name="provider"></a>`provider`
+
+The specific backend to use for this `firewalld_policy` resource. You will seldom need to specify this --- Puppet will
+usually discover the appropriate provider for your platform.
+
+##### <a name="short"></a>`short`
+
+Short description of the policy to add
+
 ### <a name="firewalld_port"></a>`firewalld_port`
 
 Assigns a port to a specific firewalld zone.
-firewalld_port will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this
+
+firewalld_port will autorequire the firewalld_zone specified in
+the zone parameter or the firewalld_policy specified in the policy
+parameter so there is no need to add dependencies for this
 
 Example:
 
@@ -919,6 +1052,7 @@ Default value: `present`
 The following parameters are available in the `firewalld_port` type.
 
 * [`name`](#name)
+* [`policy`](#policy)
 * [`port`](#port)
 * [`protocol`](#protocol)
 * [`provider`](#provider)
@@ -929,6 +1063,12 @@ The following parameters are available in the `firewalld_port` type.
 namevar
 
 Name of the port resource in Puppet
+
+##### <a name="policy"></a>`policy`
+
+Name of the policy to which you want to add the port, exactly one of zone and policy must be supplied
+
+Default value: `unset`
 
 ##### <a name="port"></a>`port`
 
@@ -945,13 +1085,17 @@ usually discover the appropriate provider for your platform.
 
 ##### <a name="zone"></a>`zone`
 
-Name of the zone to which you want to add the port
+Name of the zone to which you want to add the port, exactly one of zone and policy must be supplied
+
+Default value: `unset`
 
 ### <a name="firewalld_rich_rule"></a>`firewalld_rich_rule`
 
 Manages firewalld rich rules.
 
-firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter so there is no need to add dependencies for this
+firewalld_rich_rules will autorequire the firewalld_zone specified
+in the zone parameter or the firewalld_policy specified in the
+policy parameter so there is no need to add dependencies for this
 
 Example:
 
@@ -989,6 +1133,7 @@ The following parameters are available in the `firewalld_rich_rule` type.
 * [`log`](#log)
 * [`masquerade`](#masquerade)
 * [`name`](#name)
+* [`policy`](#policy)
 * [`port`](#port)
 * [`protocol`](#protocol)
 * [`provider`](#provider)
@@ -1042,6 +1187,12 @@ namevar
 
 Name of the rule resource in Puppet
 
+##### <a name="policy"></a>`policy`
+
+Name of the policy to attach the rich rule to, exactly one of zone and policy must be supplied
+
+Default value: `unset`
+
 ##### <a name="port"></a>`port`
 
 Specify the element as a port
@@ -1057,8 +1208,9 @@ will usually discover the appropriate provider for your platform.
 
 ##### <a name="raw_rule"></a>`raw_rule`
 
-Manage the entire rule as one string - this is used internally by firwalld_zone to
-handle pruning of rules
+Manage the entire rule as one string - this is used
+internally by firwalld_zone and firewalld_policy to handle
+pruning of rules
 
 ##### <a name="service"></a>`service`
 
@@ -1070,15 +1222,19 @@ Specify source address, this can be a string of the IP address or a hash contain
 
 ##### <a name="zone"></a>`zone`
 
-Name of the zone
+Name of the zone to attach the rich rule to, exactly one of zone and policy must be supplied
+
+Default value: `unset`
 
 ### <a name="firewalld_service"></a>`firewalld_service`
 
 Assigns a service to a specific firewalld zone.
 
-`firewalld_service` will autorequire the `firewalld_zone` specified in the
-`zone` parameter and the `firewalld::custom_service` specified in the `service`
-parameter. There is no need to manually add dependencies for this.
+`firewalld_service` will autorequire the `firewalld_zone` specified
+in the `zone` parameter or the `firewalld_policy` specified in the
+`policy` parameter and the `firewalld::custom_service` specified in
+the `service` parameter. There is no need to manually add
+dependencies for this.
 
 #### Examples
 
@@ -1109,6 +1265,7 @@ Default value: `present`
 The following parameters are available in the `firewalld_service` type.
 
 * [`name`](#name)
+* [`policy`](#policy)
 * [`provider`](#provider)
 * [`service`](#service)
 * [`zone`](#zone)
@@ -1118,6 +1275,12 @@ The following parameters are available in the `firewalld_service` type.
 namevar
 
 Name of the service resource in Puppet
+
+##### <a name="policy"></a>`policy`
+
+Name of the policy to which you want to add the service, exactly one of zone and policy must be supplied
+
+Default value: `unset`
 
 ##### <a name="provider"></a>`provider`
 
@@ -1130,7 +1293,9 @@ Name of the service to add
 
 ##### <a name="zone"></a>`zone`
 
-Name of the zone to which you want to add the service
+Name of the zone to which you want to add the service, exactly one of zone and policy must be supplied
+
+Default value: `unset`
 
 ### <a name="firewalld_zone"></a>`firewalld_zone`
 

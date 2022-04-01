@@ -11,7 +11,15 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def exists?
     @rule_args ||= build_rich_rule
-    output = execute_firewall_cmd(['--query-rich-rule', @rule_args], @resource[:zone], true, false)
+    output = if @resource[:zone] == :unset
+               execute_firewall_cmd_policy(['--query-rich-rule', @rule_args],
+                                           @resource[:policy],
+                                           true, false)
+             else
+               execute_firewall_cmd(['--query-rich-rule', @rule_args],
+                                    @resource[:zone],
+                                    true, false)
+             end
     output.exitstatus.zero?
   end
 
@@ -124,10 +132,18 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def create
-    execute_firewall_cmd(['--add-rich-rule', build_rich_rule])
+    if @resource[:zone] == :unset
+      execute_firewall_cmd_policy(['--add-rich-rule', build_rich_rule])
+    else
+      execute_firewall_cmd(['--add-rich-rule', build_rich_rule])
+    end
   end
 
   def destroy
-    execute_firewall_cmd(['--remove-rich-rule', build_rich_rule])
+    if @resource[:zone] == :unset
+      execute_firewall_cmd_policy(['--remove-rich-rule', build_rich_rule])
+    else
+      execute_firewall_cmd(['--remove-rich-rule', build_rich_rule])
+    end
   end
 end

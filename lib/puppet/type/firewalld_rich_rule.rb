@@ -135,6 +135,10 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     self[:source]['ipset'] if self[:source].is_a?(Hash)
   end
 
+  autorequire(:ipset) do
+    self[:dest]['ipset'] if self[:dest].is_a?(Hash)
+  end
+
   autorequire(:service) do
     ['firewalld']
   end

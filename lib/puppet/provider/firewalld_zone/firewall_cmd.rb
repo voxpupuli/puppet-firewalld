@@ -51,13 +51,13 @@ Puppet::Type.type(:firewalld_zone).provide(
   def interfaces=(new_interfaces)
     new_interfaces ||= []
     cur_interfaces = interfaces
-    (new_interfaces - cur_interfaces).each do |i|
-      debug("Adding interface '#{i}' to zone #{@resource[:name]}")
-      execute_firewall_cmd(['--add-interface', i])
+    (new_interfaces - cur_interfaces).each do |missing_interface|
+      debug("Adding interface '#{missing_interface}' to zone #{@resource[:name]}")
+      execute_firewall_cmd(['--add-interface', missing_interface])
     end
-    (cur_interfaces - new_interfaces).each do |i|
-      debug("Removing interface '#{i}' from zone #{@resource[:name]}")
-      execute_firewall_cmd(['--remove-interface', i])
+    (cur_interfaces - new_interfaces).each do |extraneous_interface|
+      debug("Removing interface '#{extraneous_interface}' from zone #{@resource[:name]}")
+      execute_firewall_cmd(['--remove-interface', extraneous_interface])
     end
   end
 
@@ -68,13 +68,13 @@ Puppet::Type.type(:firewalld_zone).provide(
   def sources=(new_sources)
     new_sources ||= []
     cur_sources = sources
-    (new_sources - cur_sources).each do |s|
-      debug("Adding source '#{s}' to zone #{@resource[:name]}")
-      execute_firewall_cmd(['--add-source', s])
+    (new_sources - cur_sources).each do |missing_source|
+      debug("Adding source '#{missing_source}' to zone #{@resource[:name]}")
+      execute_firewall_cmd(['--add-source', missing_source])
     end
-    (cur_sources - new_sources).each do |s|
-      debug("Removing source '#{s}' from zone #{@resource[:name]}")
-      execute_firewall_cmd(['--remove-source', s])
+    (cur_sources - new_sources).each do |extraneous_source|
+      debug("Removing source '#{extraneous_source}' from zone #{@resource[:name]}")
+      execute_firewall_cmd(['--remove-source', extraneous_source])
     end
   end
 
@@ -99,22 +99,22 @@ Puppet::Type.type(:firewalld_zone).provide(
     get_icmp_blocks
   end
 
-  def icmp_blocks=(i)
+  def icmp_blocks=(new_icmp_blocks)
     set_blocks = []
     remove_blocks = []
 
     icmp_types = get_icmp_types
 
-    case i
+    case new_icmp_blocks
     when Array then
       get_icmp_blocks.each do |remove_block|
-        unless i.include?(remove_block)
+        unless new_icmp_blocks.include?(remove_block)
           debug("removing block #{remove_block} from zone #{@resource[:name]}")
           remove_blocks.push(remove_block)
         end
       end
 
-      i.each do |block|
+      new_icmp_blocks.each do |block|
         raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!' unless block.is_a?(String)
         if icmp_types.include?(block)
           debug("adding block #{block} to zone #{@resource[:name]}")
@@ -125,16 +125,16 @@ Puppet::Type.type(:firewalld_zone).provide(
         end
       end
     when String then
-      get_icmp_blocks.reject { |x| x == i }.each do |remove_block|
+      get_icmp_blocks.reject { |x| x == new_icmp_blocks }.each do |remove_block|
         debug("removing block #{remove_block} from zone #{@resource[:name]}")
         remove_blocks.push(remove_block)
       end
-      if icmp_types.include?(i)
-        debug("adding block #{i} to zone #{@resource[:name]}")
-        set_blocks.push(i)
+      if icmp_types.include?(new_icmp_blocks)
+        debug("adding block #{new_icmp_blocks} to zone #{@resource[:name]}")
+        set_blocks.push(new_icmp_blocks)
       else
         valid_types = icmp_types.join(', ')
-        raise Puppet::Error, "#{i} is not a valid icmp type on this system! Valid types are: #{valid_types}"
+        raise Puppet::Error, "#{new_icmp_blocks} is not a valid icmp type on this system! Valid types are: #{valid_types}"
       end
     else
       raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'

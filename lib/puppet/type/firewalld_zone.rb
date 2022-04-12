@@ -191,8 +191,10 @@ Puppet::Type.newtype(:firewalld_zone) do
     return [] unless provider.exists?
     puppet_rules = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_rich_rule) }.each do |fwr|
-      debug("not purging puppet controlled rich rule #{fwr[:name]}")
-      puppet_rules << fwr.provider.build_rich_rule
+      if fwr[:zone] == self[:name]
+        debug("not purging puppet controlled rich rule #{fwr[:name]}")
+        puppet_rules << fwr.provider.build_rich_rule
+      end
     end
     provider.get_rules.reject { |p| puppet_rules.include?(p) }.each do |purge|
       debug("should purge rich rule #{purge}")

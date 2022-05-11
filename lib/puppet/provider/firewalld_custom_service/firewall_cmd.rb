@@ -119,9 +119,11 @@ Puppet::Type.type(:firewalld_custom_service).provide(
       to_remove = @property_hash[:protocols]
     else
       to_remove = @property_hash[:protocols] - should
-      to_add = (
-        should + Array(@resource[:ports]).select { |x| x['port'].nil? }.map { |x| x['protocol'] }
-      ) - @property_hash[:protocols]
+      ports_protos = []
+      unless @resource[:ports].include?(:unset)
+        ports_protos = Array(@resource[:ports]).select { |x| x['port'].nil? }.map { |x| x['protocol'] }
+      end
+      to_add = (should + ports_protos) - @property_hash[:protocols]
     end
 
     errors = []

@@ -365,6 +365,13 @@ will produce:
     <port protocol="tcp" port="8000-8002" />
 ```
 
+* `protocols`: (Optional) An array of protocols allowed by the service as defined
+  in /etc/protocols.
+
+  ```puppet
+     protocols => ['ospf'],
+  ```
+
 * `module`: (Optional) An array of strings specifying netfilter kernel helper
   modules associated with this service
 

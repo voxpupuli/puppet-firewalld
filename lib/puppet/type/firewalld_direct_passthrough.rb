@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_direct_passthrough) do

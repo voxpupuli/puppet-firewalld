@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_service) do
@@ -53,6 +55,6 @@ Puppet::Type.newtype(:firewalld_service) do
   end
 
   autorequire(:firewalld_custom_service) do
-    self[:service].gsub(%r{[^\w-]}, '_') if self[:service]
+    self[:service]&.gsub(%r{[^\w-]}, '_')
   end
 end

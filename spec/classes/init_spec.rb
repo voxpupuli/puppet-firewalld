@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'puppet/provider/firewalld'
 
@@ -154,10 +156,10 @@ describe 'firewalld' do
           'Accept SSH from Gondor' =>
             {
               'ensure' => 'present',
-              'zone'   => 'restricted',
-              'source'  => '192.162.1.0/22',
+              'zone' => 'restricted',
+              'source' => '192.162.1.0/22',
               'service' => 'ssh',
-              'action'  => 'accept'
+              'action' => 'accept'
             }
         }
       }

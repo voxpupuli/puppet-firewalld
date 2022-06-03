@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_direct_passthrough) do
@@ -7,8 +9,8 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
 
   context 'with no params' do
     describe 'when validating attributes' do
-      [:inet_protocol, :args].each do |param|
-        it "should have a #{param} parameter" do
+      %i[inet_protocol args].each do |param|
+        it "has a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end
       end
@@ -46,6 +48,7 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
       provider.expects(:execute_firewall_cmd).with(['--direct', '--add-passthrough', ['ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
       provider.create
     end
+
     it 'destroys' do
       provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-passthrough', ['ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
       provider.destroy

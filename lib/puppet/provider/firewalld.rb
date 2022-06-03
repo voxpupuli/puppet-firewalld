@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require 'puppet/type'
 require 'puppet/provider'
@@ -6,8 +8,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   @runstate = nil
 
   class << self
-    attr_accessor :running
-    attr_accessor :runstate
+    attr_accessor :running, :runstate
   end
 
   def state
@@ -15,9 +16,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def self.state
-    if Puppet::Provider::Firewalld.runstate.nil?
-      Puppet::Provider::Firewalld.runstate = check_running_state
-    end
+    Puppet::Provider::Firewalld.runstate = check_running_state if Puppet::Provider::Firewalld.runstate.nil?
     Puppet::Provider::Firewalld.runstate
   end
 
@@ -39,7 +38,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     # See: https://github.com/crayfishx/puppet-firewalld/issues/96
     #
     debug('Could not determine state of firewalld because the executable is not available')
-    return nil
+    nil
   end
 
   # v3.0.0
@@ -83,7 +82,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   #
   def parse_args(args)
     args = args.flatten.join(' ') if args.is_a?(Array)
-    args.split(%r{(\'[^\']*\'| )}).reject { |r| ['', ' '].include?(r) }
+    args.split(%r{('[^']*'| )}).reject { |r| ['', ' '].include?(r) }
   end
 
   # Occasionally we need to restart firewalld in a transient way between resources

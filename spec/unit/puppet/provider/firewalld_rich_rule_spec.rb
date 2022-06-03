@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 provider_class = Puppet::Type.type(:firewalld_rich_rule).provider(:firewall_cmd)
@@ -43,6 +45,7 @@ describe provider_class do
         expect(provider.build_rich_rule).to eq('rule family="ipv4" source service name="ssh" accept')
       end
     end
+
     context 'with reject type' do
       it 'builds the rich rule' do
         resource.expects(:[]).with(:source).returns(nil).at_least_once

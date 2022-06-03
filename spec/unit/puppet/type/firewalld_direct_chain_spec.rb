@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_direct_chain) do
@@ -7,8 +9,8 @@ describe Puppet::Type.type(:firewalld_direct_chain) do
 
   context 'with no params' do
     describe 'when validating attributes' do
-      [:name, :inet_protocol, :table].each do |param|
-        it "should have a #{param} parameter" do
+      %i[name inet_protocol table].each do |param|
+        it "has a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end
       end
@@ -16,7 +18,7 @@ describe Puppet::Type.type(:firewalld_direct_chain) do
 
     describe 'namevar validation' do
       it 'has :name, :inet_protocol and :table as its namevars' do
-        expect(described_class.key_attributes).to eq([:name, :inet_protocol, :table])
+        expect(described_class.key_attributes).to eq(%i[name inet_protocol table])
       end
 
       it 'uses the title as the name when non-delimited' do
@@ -30,9 +32,11 @@ describe Puppet::Type.type(:firewalld_direct_chain) do
         it 'sets resource `name` correctly' do
           expect(resource.name).to eq('LOG_DROPS')
         end
+
         it 'sets resource `table` parameter correctly' do
           expect(resource[:table]).to eq('filter')
         end
+
         it 'sets resource `inet_protocol` parameter correctly' do
           expect(resource[:inet_protocol]).to eq('ipv4')
         end

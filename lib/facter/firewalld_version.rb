@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Return the version of firewalld that is installed
 Facter.add(:firewalld_version) do
   confine { Process.uid.zero? }

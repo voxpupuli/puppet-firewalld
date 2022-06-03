@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
@@ -8,7 +10,7 @@ Puppet::Type.type(:firewalld_service).provide(
   desc 'Interact with firewall-cmd'
 
   def exists?
-    execute_firewall_cmd(['--list-services']).split(' ').include?(@resource[:service])
+    execute_firewall_cmd(['--list-services']).split.include?(@resource[:service])
   end
 
   def create

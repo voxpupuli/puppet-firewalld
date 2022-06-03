@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.newtype(:firewalld_rich_rule) do
   @doc = "Manages firewalld rich rules.
 
@@ -44,6 +46,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
       else
         errormsg = 'Only one source type address or ipset may be specified.'
         raise errormsg if value.key?('address') && value.key?('ipset')
+
         value
       end
     end
@@ -56,6 +59,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
       else
         errormsg = 'Only one source type address or ipset may be specified.'
         raise errormsg if value.key?('address') && value.key?('ipset')
+
         value
       end
     end
@@ -102,12 +106,12 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
       raise Puppet::Error, "Authorized action values are `accept`, `reject`, `drop` or `mark`, got #{value}" unless %w[accept drop reject mark].include? value
     end
     validate do |value|
-      if value.is_a?(Hash)
-        if value.keys.sort != [:action, :type]
-          raise Puppet::Error, "Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`. Got #{value}"
-        end
+      case value
+      when Hash
+        raise Puppet::Error, "Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`. Got #{value}" if value.keys.sort != %i[action type]
+
         _validate_action(value[:action])
-      elsif value.is_a?(String)
+      when String
         _validate_action(value)
       end
     end
@@ -119,7 +123,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   def elements
-    [:service, :port, :protocol, :icmp_block, :icmp_type, :masquerade, :forward_port]
+    %i[service port protocol icmp_block icmp_type masquerade forward_port]
   end
 
   validate do

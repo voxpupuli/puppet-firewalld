@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require 'puppet/parameter/boolean'
 
@@ -75,17 +77,14 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
     puppet_rules = []
 
     catalog.resources.select { |r| r.is_a?(klass) }.each do |res|
-      unless res.provider.respond_to?(:generate_raw)
-        raise Puppet::Error, "Provider for #{resource_type} doesn't support generate_raw method"
-      end
+      raise Puppet::Error, "Provider for #{resource_type} doesn't support generate_raw method" unless res.provider.respond_to?(:generate_raw)
+
       puppet_rules << res.provider.generate_raw.join(' ')
     end
 
     provider.get_instances_of(resource_type).reject { |i| puppet_rules.include?(i) }.each do |inst|
       @purge_resources << inst
-      unless Puppet.settings[:noop] || self[:noop]
-        provider.purge_resources(resource_type, inst.split(%r{ }))
-      end
+      provider.purge_resources(resource_type, inst.split(%r{ })) unless Puppet.settings[:noop] || self[:noop]
     end
   end
 end

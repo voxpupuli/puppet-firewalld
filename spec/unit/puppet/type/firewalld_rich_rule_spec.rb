@@ -1,28 +1,31 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_rich_rule) do
   before do
     Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
   end
+
   context 'with no params' do
     describe 'when validating attributes' do
-      [
-        :family,
-        :zone,
-        :source,
-        :service,
-        :action,
-        :protocol,
-        :icmp_block,
-        :icmp_type,
-        :masquerade,
-        :forward_port,
-        :log,
-        :audit,
-        :action,
-        :raw_rule
+      %i[
+        family
+        zone
+        source
+        service
+        action
+        protocol
+        icmp_block
+        icmp_type
+        masquerade
+        forward_port
+        log
+        audit
+        action
+        raw_rule
       ].each do |param|
-        it "should have a #{param} parameter" do
+        it "has a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end
       end
@@ -38,6 +41,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         )
       end.to raise_error(%r{Authorized action values are `accept`, `reject`, `drop` or `mark`})
     end
+
     it 'raises an error if wrong action hash keys' do
       expect do
         described_class.new(
@@ -46,6 +50,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         )
       end.to raise_error(%r{Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`})
     end
+
     it 'raises an error if wrong action hash values' do
       expect do
         described_class.new(

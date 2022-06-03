@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_zone) do
@@ -11,13 +13,13 @@ describe Puppet::Type.type(:firewalld_zone) do
         [
           :name
         ].each do |param|
-          it "should have a #{param} parameter" do
+          it "has a #{param} parameter" do
             expect(described_class.attrtype(param)).to eq(:param)
           end
         end
 
-        [:target, :icmp_blocks, :sources, :purge_rich_rules, :purge_services, :purge_ports].each do |param|
-          it "should have a #{param} parameter" do
+        %i[target icmp_blocks sources purge_rich_rules purge_services purge_ports].each do |param|
+          it "has a #{param} parameter" do
             expect(described_class.attrtype(param)).to eq(:property)
           end
         end
@@ -34,7 +36,7 @@ describe Puppet::Type.type(:firewalld_zone) do
           name: 'restricted',
           target: '%%REJECT%%',
           interfaces: ['eth0'],
-          icmp_blocks: ['redirect', 'router-advertisment'],
+          icmp_blocks: %w[redirect router-advertisment],
           sources: ['192.168.2.2', '10.72.1.100']
         )
       end
@@ -66,7 +68,7 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.expects(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
         provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
 
-        provider.expects(:icmp_blocks=).with(['redirect', 'router-advertisment'])
+        provider.expects(:icmp_blocks=).with(%w[redirect router-advertisment])
 
         provider.expects(:sources).returns([])
         provider.expects(:execute_firewall_cmd).with(['--add-source', '192.168.2.2'])
@@ -123,7 +125,7 @@ describe Puppet::Type.type(:firewalld_zone) do
 
       it 'lists icmp types' do
         provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns('echo-reply echo-request')
-        expect(provider.get_icmp_types).to eq(['echo-reply', 'echo-request'])
+        expect(provider.get_icmp_types).to eq(%w[echo-reply echo-request])
       end
     end
 
@@ -153,6 +155,7 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).returns("no\n")
         expect(provider.masquerade).to eq(:false)
       end
+
       it 'gets masquerading state as true when set' do
         provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).returns("yes\n")
         expect(provider.masquerade).to eq(:true)

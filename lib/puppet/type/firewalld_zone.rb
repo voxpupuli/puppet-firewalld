@@ -109,6 +109,26 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
   end
 
+  newproperty(:protocols, array_matching: :all) do
+    desc 'Specify the protocols for the zone'
+
+    def insync?(is)
+      case should
+      when String then should.lines.sort == is.sort
+      when Array then should.sort == is.sort
+      else raise Puppet::Error, 'parameter protocols must be a string or array of strings!'
+      end
+    end
+
+    def is_to_s(value = []) # rubocop:disable Style/PredicateName
+      '[' + value.join(', ') + ']'
+    end
+
+    def should_to_s(value = [])
+      '[' + value.join(', ') + ']'
+    end
+  end
+
   newproperty(:icmp_blocks, array_matching: :all) do
     desc "Specify the icmp-blocks for the zone. Can be a single string specifying one icmp type,
           or an array of strings specifying multiple icmp types. Any blocks not specified here will be removed

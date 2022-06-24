@@ -184,7 +184,31 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         icmp_type: 'echo',
         log: { 'level' => 'debug' },
         action: 'accept'
-      } => 'rule family="ipv4" destination address="10.0.1.2/24" icmp-type name="echo" log level="debug" accept'
+      } => 'rule family="ipv4" destination address="10.0.1.2/24" icmp-type name="echo" log level="debug" accept',
+
+      ## test reject
+      {
+        name: 'reject ssh',
+        ensure: 'present',
+        family: 'ipv4',
+        zone: 'restricted',
+        source: { 'address' => '10.0.1.2/24' },
+        service: 'ssh',
+        log: { 'level' => 'debug' },
+        action: 'reject'
+      } => 'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" reject',
+
+      ## test reject + type (#193)
+      {
+        name: 'reject ssh tcp reset',
+        ensure: 'present',
+        family: 'ipv4',
+        zone: 'restricted',
+        source: { 'address' => '10.0.1.2/24' },
+        service: 'ssh',
+        log: { 'level' => 'debug' },
+        action: { 'action' => 'reject', 'type' => 'tcp-reset' }
+      } => 'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" reject type="tcp-reset"',
 
     }
 

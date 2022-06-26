@@ -100,8 +100,8 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     return [] unless (action = @resource[:action])
     args = []
     if action.is_a?(Hash)
-      args << action[:action]
-      args << quote_keyval('type', action[:type])
+      args << action['action']
+      args << quote_keyval('type', action['type'])
     else
       args << action
     end

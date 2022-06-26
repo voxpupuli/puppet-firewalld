@@ -42,7 +42,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       expect do
         described_class.new(
           title: 'SSH from barny',
-          action: { type: 'accepted', foo: 'bar' }
+          action: { 'type' => 'accepted', 'foo' => 'bar' }
         )
       end.to raise_error(%r{Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`})
     end
@@ -50,7 +50,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       expect do
         described_class.new(
           title: 'SSH from barny',
-          action: { type: 'icmp-admin-prohibited', action: 'accepted' }
+          action: { 'type' => 'icmp-admin-prohibited', 'action' => 'accepted' }
         )
       end.to raise_error(%r{Authorized action values are `accept`, `reject`, `drop` or `mark`})
     end
@@ -219,9 +219,6 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         end
         let(:fakeclass) { Class.new }
         let(:provider) { resource.provider }
-        let(:rawrule) do
-          'rule family="ipv4" source address="10.0.1.2/24" service name="ssh" log level="debug" accept'
-        end
 
         it 'queries the status' do
           fakeclass.stubs(:exitstatus).returns(0)

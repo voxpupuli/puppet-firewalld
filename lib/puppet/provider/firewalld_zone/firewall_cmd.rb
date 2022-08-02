@@ -149,6 +149,23 @@ Puppet::Type.type(:firewalld_zone).provide(
     end
   end
 
+  def icmp_block_inversion
+    if execute_firewall_cmd(['--query-icmp-block-inversion'], @resource[:name], true, false).chomp == 'no'
+      return :false
+    else
+      return :true
+    end
+  end
+
+  def icmp_block_inversion=(bool)
+    case bool
+    when :true
+      execute_firewall_cmd(['--add-icmp-block-inversion'])
+    when :false
+      execute_firewall_cmd(['--remove-icmp-block-inversion'])
+    end
+  end
+
   # rubocop:disable Style/AccessorMethodName
   def get_rules
     perm = execute_firewall_cmd(['--list-rich-rules']).split(%r{\n})

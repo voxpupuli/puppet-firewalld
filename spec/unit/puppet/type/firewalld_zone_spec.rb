@@ -16,7 +16,7 @@ describe Puppet::Type.type(:firewalld_zone) do
           end
         end
 
-        [:target, :icmp_blocks, :sources, :purge_rich_rules, :purge_services, :purge_ports].each do |param|
+        [:target, :icmp_blocks, :icmp_block_inversion, :sources, :purge_rich_rules, :purge_services, :purge_ports].each do |param|
           it "should have a #{param} parameter" do
             expect(described_class.attrtype(param)).to eq(:property)
           end
@@ -35,6 +35,7 @@ describe Puppet::Type.type(:firewalld_zone) do
           target: '%%REJECT%%',
           interfaces: ['eth0'],
           icmp_blocks: ['redirect', 'router-advertisment'],
+          icmp_block_inversion: true,
           sources: ['192.168.2.2', '10.72.1.100']
         )
       end
@@ -67,6 +68,7 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
 
         provider.expects(:icmp_blocks=).with(['redirect', 'router-advertisment'])
+        provider.expects(:icmp_block_inversion=).with(true)
 
         provider.expects(:sources).returns([])
         provider.expects(:execute_firewall_cmd).with(['--add-source', '192.168.2.2'])
@@ -119,6 +121,16 @@ describe Puppet::Type.type(:firewalld_zone) do
       it 'gets icmp_blocks' do
         provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks']).returns('val')
         expect(provider.icmp_blocks).to eq(['val'])
+      end
+
+      it 'gets icmp_block_inversion false' do
+        provider.expects(:execute_firewall_cmd).with(['--query-icmp-block-inversion']).returns('no')
+        expect(provider.icmp_blocks).to eq(false)
+      end
+
+      it 'gets icmp_block_inversion true' do
+        provider.expects(:execute_firewall_cmd).with(['--query-icmp-block-inversion']).returns('yes')
+        expect(provider.icmp_blocks).to eq(true)
       end
 
       it 'lists icmp types' do

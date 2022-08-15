@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.5.1](https://github.com/voxpupuli/puppet-firewalld/tree/v4.5.1) (2022-08-15)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.5.0...v4.5.1)
+
+**Fixed bugs:**
+
+- Simple version bump to fix internal release issues
+
 ## [v4.5.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.5.0) (2022-08-15)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.4.0...v4.5.0)

@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.5.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.5.0) (2022-08-15)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.4.0...v4.5.0)
+
+**Implemented enhancements:**
+
+- firewalld modules reloads firewalld excessively [\#61](https://github.com/voxpupuli/puppet-firewalld/issues/61)
+
+**Fixed bugs:**
+
+- Trying to add custom service with protocols and not ports, results in an error on first run [\#306](https://github.com/voxpupuli/puppet-firewalld/issues/306)
+- Fixes firewalld\_custom\_service where only protocols are defined [\#307](https://github.com/voxpupuli/puppet-firewalld/pull/307) ([nmaludy](https://github.com/nmaludy))
+
+**Closed issues:**
+
+- Support for Rocky Linux / Alma Linux ? [\#312](https://github.com/voxpupuli/puppet-firewalld/issues/312)
+- Possible parse errors in hiera data input [\#305](https://github.com/voxpupuli/puppet-firewalld/issues/305)
+- \[4.3.0\] Mising option to disable AllowZoneDrifting [\#294](https://github.com/voxpupuli/puppet-firewalld/issues/294)
+
+**Merged pull requests:**
+
+- Fix firewalld\_direct\_chain typo in README [\#313](https://github.com/voxpupuli/puppet-firewalld/pull/313) ([Vincevrp](https://github.com/Vincevrp))
+- Allow stdlib 8.0.0 [\#310](https://github.com/voxpupuli/puppet-firewalld/pull/310) ([smortex](https://github.com/smortex))
+
 ## [v4.4.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.4.0) (2020-11-13)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.3.0...v4.4.0)
@@ -34,8 +58,8 @@ The highlight of this release is a new native puppet type [`firewalld_custom_ser
 **Implemented enhancements:**
 
 - Parse arguments to passthrough provider with spaces correctly [\#278](https://github.com/voxpupuli/puppet-firewalld/pull/278) ([cmusik](https://github.com/cmusik))
-- Add icmp-type support to rich rules [\#271](https://github.com/voxpupuli/puppet-firewalld/pull/271) ([ananace](https://github.com/ananace))
 - Native firewalld custom service [\#277](https://github.com/voxpupuli/puppet-firewalld/pull/277) ([trevor-vaughan](https://github.com/trevor-vaughan))
+- Add icmp-type support to rich rules [\#271](https://github.com/voxpupuli/puppet-firewalld/pull/271) ([ananace](https://github.com/ananace))
 
 **Fixed bugs:**
 

@@ -23,6 +23,11 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     quote_keyval(opt, @resource[resource_param.to_s])
   end
 
+  def eval_priority
+    return [] unless (priority = @resource[:priority])
+    quote_keyval('priority', priority)
+  end
+
   def eval_source
     args = []
     return [] unless (addr = @resource[:source])
@@ -112,6 +117,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
     rule = ['rule']
     rule << [
       key_val_opt('family'),
+      eval_priority,
       eval_source,
       eval_dest,
       eval_element,

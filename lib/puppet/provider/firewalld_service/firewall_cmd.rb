@@ -7,6 +7,26 @@ Puppet::Type.type(:firewalld_service).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  def self.instances
+    services = execute_firewall_cmd(['--get-services'], nil).split(' ')
+    services.map do |service|
+      new(
+        {
+          ensure: :present,
+          name: service,
+        }
+      )
+    end
+  end
+
+  def self.prefetch(resources)
+    instances.each do |prov|
+      if (resource = resources[prov.name])
+        resource.provider = prov
+      end
+    end
+  end
+
   def exists?
     execute_firewall_cmd(['--list-services']).split(' ').include?(@resource[:service])
   end

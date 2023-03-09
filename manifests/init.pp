@@ -28,6 +28,7 @@
 class firewalld (
   Enum['present','absent','latest','installed']                 $package_ensure            = 'installed',
   String                                                        $package                   = 'firewalld',
+  Boolean                                                       $manage_package            = true,
   Stdlib::Ensure::Service                                       $service_ensure            = 'running',
   String                                                        $config_package            = 'firewall-config',
   Boolean                                                       $install_gui               = false,
@@ -60,9 +61,11 @@ class firewalld (
   include firewalld::reload
   include firewalld::reload::complete
 
-  package { $package:
-    ensure => $package_ensure,
-    notify => Service['firewalld'],
+  if $manage_package {
+    package { $package:
+      ensure => $package_ensure,
+      notify => Service['firewalld'],
+    }
   }
 
   if $install_gui {

@@ -141,7 +141,6 @@ describe 'firewalld' do
       is_expected.to contain_firewalld_service('mysql').
         with_ensure('present').
         with_zone('public').
-        that_notifies('Class[firewalld::reload]').
         that_requires('Service[firewalld]')
     end
   end

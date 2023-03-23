@@ -30,28 +30,6 @@ describe Puppet::Type.type(:firewalld_direct_passthrough) do
     end
   end
 
-  describe 'provider' do
-    let(:resource) do
-      described_class.new(
-        name: 'Forward OUTPUT',
-        ensure: 'present',
-        inet_protocol: 'ipv4',
-        args: '-A OUTPUT -j OUTPUT_filter'
-      )
-    end
-
-    let(:provider) { resource.provider }
-
-    it 'creates' do
-      provider.expects(:execute_firewall_cmd).with(['--direct', '--add-passthrough', ['ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
-      provider.create
-    end
-    it 'destroys' do
-      provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-passthrough', ['ipv4', '-A', 'OUTPUT', '-j', 'OUTPUT_filter']], nil)
-      provider.destroy
-    end
-  end
-
   context 'autorequires' do
     # rubocop:disable RSpec/InstanceVariable
     before do

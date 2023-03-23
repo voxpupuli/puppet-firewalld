@@ -7,12 +7,25 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  attr_accessor :in_perm, :in_run
+
   mk_resource_methods
+
+  def initialize(value = {})
+    super(value)
+    @in_perm = false
+    @in_run = false
+  end
 
   def exists?
     @rule_args ||= build_rich_rule
-    output = execute_firewall_cmd(['--query-rich-rule', @rule_args], @resource[:zone], true, false)
-    output.exitstatus.zero?
+    @in_perm = execute_firewall_cmd(['--query-rich-rule', @rule_args], @resource[:zone], true, false).exitstatus.zero?
+    @in_run = execute_firewall_cmd(['--query-rich-rule', @rule_args], @resource[:zone], false, false).exitstatus.zero?
+    if @resource[:ensure] == :present
+      @in_perm && @in_run
+    else
+      @in_perm || @in_run
+    end
   end
 
   def quote_keyval(key, val)
@@ -130,10 +143,10 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def create
-    execute_firewall_cmd(['--add-rich-rule', build_rich_rule])
+    execute_firewall_cmd(['--add-rich-rule', build_rich_rule]) unless @in_perm
   end
 
   def destroy
-    execute_firewall_cmd(['--remove-rich-rule', build_rich_rule])
+    execute_firewall_cmd(['--remove-rich-rule', build_rich_rule]) if @in_perm
   end
 end

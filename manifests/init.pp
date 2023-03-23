@@ -256,7 +256,6 @@ class firewalld (
   Firewalld_ipset <||> ~> Class['firewalld::reload']
   Firewalld_port <||> ~> Class['firewalld::reload']
   Firewalld_rich_rule <||> ~> Class['firewalld::reload']
-  Firewalld_service <||> ~> Class['firewalld::reload']
 
   if $purge_unknown_ipsets {
     Firewalld_ipset <||>

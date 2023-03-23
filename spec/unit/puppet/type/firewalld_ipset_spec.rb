@@ -107,6 +107,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
     end
 
     it 'creates' do
+      provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('')
       provider.expects(:execute_firewall_cmd).with(['--new-ipset=whitelist', '--type=hash:ip'], nil)
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
       provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=10.72.1.100'], nil)
@@ -114,6 +115,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
     end
 
     it 'removes' do
+      provider.expects(:execute_firewall_cmd).with(['--get-ipsets'], nil).returns('whitelist')
       provider.expects(:execute_firewall_cmd).with(['--delete-ipset=whitelist'], nil)
       provider.destroy
     end

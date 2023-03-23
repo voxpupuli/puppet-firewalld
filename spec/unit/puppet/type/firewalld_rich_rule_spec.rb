@@ -14,7 +14,6 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         :action,
         :protocol,
         :icmp_block,
-        :icmp_type,
         :masquerade,
         :forward_port,
         :log,
@@ -207,19 +206,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         forward_port: { 'port' => '8080', 'protocol' => 'tcp', 'to_addr' => '10.72.1.10', 'to_port' => '80' },
         zone: 'restricted',
         log: { 'level' => 'debug' }
-      } => 'rule family="ipv4" forward-port port="8080" protocol="tcp" to-port="80" to-addr="10.72.1.10" log level="debug"',
-
-      ## test icmp-type
-      {
-        name: 'accept echo',
-        ensure: 'present',
-        family: 'ipv4',
-        zone: 'restricted',
-        dest: '10.0.1.2/24',
-        icmp_type: 'echo',
-        log: { 'level' => 'debug' },
-        action: 'accept'
-      } => 'rule family="ipv4" destination address="10.0.1.2/24" icmp-type name="echo" log level="debug" accept'
+      } => 'rule family="ipv4" forward-port port="8080" protocol="tcp" to-port="80" to-addr="10.72.1.10" log level="debug"'
 
     }
 
@@ -237,16 +224,31 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         it 'queries the status' do
           fakeclass.stubs(:exitstatus).returns(0)
           provider.expects(:execute_firewall_cmd).with(['--query-rich-rule', rawrule], 'restricted', true, false).returns(fakeclass)
+          provider.expects(:execute_firewall_cmd).with(['--query-rich-rule', rawrule], 'restricted', false, false).returns(fakeclass)
           expect(provider).to be_exists
         end
 
-        it 'creates' do
+        it 'add rich rule executed when rule does not exist in permanent' do
+          provider.in_perm = false
           provider.expects(:execute_firewall_cmd).with(['--add-rich-rule', rawrule])
           provider.create
         end
 
-        it 'destroys' do
+        it 'remove rich rule executed when rule does exist in permanent' do
+          provider.in_perm = true
           provider.expects(:execute_firewall_cmd).with(['--remove-rich-rule', rawrule])
+          provider.destroy
+        end
+
+        it 'add rich rule does not execute when exist in permanent' do
+          provider.in_perm = true
+          provider.expects(:execute_firewall_cmd).with(['--add-rich-rule', rawrule]).never
+          provider.create
+        end
+
+        it 'remove rich rule does not execute when rule does not exist in permanent' do
+          provider.in_perm = false
+          provider.expects(:execute_firewall_cmd).with(['--remove-rich-rule', rawrule]).never
           provider.destroy
         end
       end

@@ -318,6 +318,20 @@ describe 'firewalld' do
     end
   end
 
+  context 'with parameter individual_calls' do
+    let(:params) do
+      {
+        individual_calls: 'yes'
+      }
+    end
+
+    it do
+      is_expected.to contain_augeas('firewalld::individual_calls').with(
+        changes: ['set IndividualCalls "yes"']
+      )
+    end
+  end
+
   context 'with parameter firewall_backend' do
     context 'with firewalld version' do
       let(:params) do

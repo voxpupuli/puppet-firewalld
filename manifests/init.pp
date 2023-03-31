@@ -51,6 +51,7 @@ class firewalld (
   Optional[Enum['yes', 'no']]                                   $zone_drifting             = undef,
   Optional[Integer]                                             $minimal_mark              = undef,
   Optional[Enum['yes', 'no']]                                   $lockdown                  = undef,
+  Optional[Enum['yes', 'no']]                                   $individual_calls          = undef,
   Optional[Enum['yes', 'no']]                                   $ipv6_rpfilter             = undef,
   Optional[Enum['iptables', 'nftables']]                        $firewall_backend          = undef,
   Optional[String]                                              $default_service_zone      = undef,
@@ -223,6 +224,15 @@ class firewalld (
       'firewalld::lockdown':
         changes => [
           "set Lockdown \"${lockdown}\"",
+        ];
+    }
+  }
+
+  if $individual_calls {
+    augeas {
+      'firewalld::lockdown':
+        changes => [
+          "set IndividualCalls \"${individual_calls}\"",
         ];
     }
   }

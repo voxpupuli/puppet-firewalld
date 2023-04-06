@@ -7,9 +7,11 @@ Puppet::Type.newtype(:firewalld_service) do
 
   Assigns a service to a specific firewalld zone.
 
-  `firewalld_service` will autorequire the `firewalld_zone` specified in the
-  `zone` parameter and the `firewalld::custom_service` specified in the `service`
-  parameter. There is no need to manually add dependencies for this.
+  `firewalld_service` will autorequire the `firewalld_zone` specified
+  in the `zone` parameter or the `firewalld_policy` specified in the
+  `policy` parameter and the `firewalld::custom_service` specified in
+  the `service` parameter. There is no need to manually add
+  dependencies for this.
 
   @example Allowing SSH
     firewalld_service {'Allow SSH in the public Zone':
@@ -41,11 +43,33 @@ Puppet::Type.newtype(:firewalld_service) do
   end
 
   newparam(:zone) do
-    desc 'Name of the zone to which you want to add the service'
+    desc 'Name of the zone to which you want to add the service, exactly one of zone and policy must be supplied'
+
+    defaultto(:unset)
+  end
+
+  newparam(:policy) do
+    desc 'Name of the policy to which you want to add the service, exactly one of zone and policy must be supplied'
+
+    defaultto(:unset)
+  end
+
+  validate do
+    if self[:zone] != :unset && self[:policy] != :unset
+      raise Puppet::Error, 'only one of the parameters zone and policy may be supplied'
+    end
+
+    if self[:zone] == :unset && self[:policy] == :unset
+      raise Puppet::Error, 'one of the parameters zone and policy must be supplied'
+    end
   end
 
   autorequire(:firewalld_zone) do
-    self[:zone]
+    self[:zone] if self[:zone] != :unset
+  end
+
+  autorequire(:firewalld_policy) do
+    self[:policy] if self[:policy] != :unset
   end
 
   autorequire(:service) do

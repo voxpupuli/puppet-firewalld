@@ -27,7 +27,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
 
   def self.check_running_state
     debug("Executing --state command - current value #{@state}")
-    ret = execute_firewall_cmd(['--state'], nil, false, false, false)
+    ret = execute_firewall_cmd(['--state'], nil, nil, false, false, false)
     ret.exitstatus.zero?
   rescue Puppet::MissingCommand
     # This exception is caught in case the module is being run before
@@ -43,7 +43,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   # v3.0.0
-  def self.execute_firewall_cmd(args, zone = nil, perm = true, failonfail = true, check_online = true)
+  def self.execute_firewall_cmd(args, zone = nil, policy = nil, perm = true, failonfail = true, check_online = true)
     if check_online && !online?
       shell_cmd = 'firewall-offline-cmd'
       perm = false
@@ -53,6 +53,7 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     cmd_args = []
     cmd_args << '--permanent' if perm
     cmd_args << ['--zone', zone] unless zone.nil?
+    cmd_args << ['--policy', policy] unless policy.nil?
 
     # Add the arguments to our command string, removing any quotes, the command
     # provider will sort the quotes out.
@@ -74,7 +75,11 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   def execute_firewall_cmd(args, zone = @resource[:zone], perm = true, failonfail = true)
-    self.class.execute_firewall_cmd(args, zone, perm, failonfail)
+    self.class.execute_firewall_cmd(args, zone, nil, perm, failonfail)
+  end
+
+  def execute_firewall_cmd_policy(args, policy = @resource[:policy], perm = true, failonfail = true)
+    self.class.execute_firewall_cmd(args, nil, policy, perm, failonfail)
   end
 
   # Arguments should be parsed as separate array entities, but quoted arg

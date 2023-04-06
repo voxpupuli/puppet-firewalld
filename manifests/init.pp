@@ -33,6 +33,7 @@ class firewalld (
   Boolean                                                       $install_gui               = false,
   Boolean                                                       $service_enable            = true,
   Hash                                                          $zones                     = {},
+  Hash                                                          $policies                  = {},
   Hash                                                          $ports                     = {},
   Hash                                                          $services                  = {},
   Hash                                                          $rich_rules                = {},
@@ -95,6 +96,13 @@ class firewalld (
   #...zones
   $zones.each | String $key, Hash $attrs| {
     firewalld_zone { $key:
+      *       => $attrs,
+    }
+  }
+
+  #...policies
+  $policies.each | String $key, Hash $attrs| {
+    firewalld_policy { $key:
       *       => $attrs,
     }
   }

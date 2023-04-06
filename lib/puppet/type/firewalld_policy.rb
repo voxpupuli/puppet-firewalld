@@ -1,7 +1,7 @@
 require 'puppet'
 require 'puppet/parameter/boolean'
 
-Puppet::Type.newtype(:firewalld_zone) do
+Puppet::Type.newtype(:firewalld_policy) do
   # Reference the types here so we know they are loaded
   #
   Puppet::Type.type(:firewalld_rich_rule)
@@ -10,19 +10,20 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   desc <<-DOC
     @summary
-      Creates and manages firewalld zones.
+      Creates and manages firewalld policies.
 
-    Creates and manages firewalld zones.
+    Creates and manages firewalld policies.
 
-    Note that setting `ensure => 'absent'` to the built in firewalld zones will
-    not work, and will generate an error. This is a limitation of firewalld itself, not the module.
+    Note that setting `ensure => 'absent'` to the built in firewalld
+    policies will not work, and will generate an error. This is a
+    limitation of firewalld itself, not the module.
 
-    @example Create a zone called `restricted`
-      firewalld_zone { 'restricted':
+    @example Create a policy called `anytorestricted`
+      firewalld_policy { 'anytorestricted':
         ensure           => present,
         target           => '%%REJECT%%',
-        interfaces       => [],
-        sources          => [],
+        ingress_zones    => ['ANY'],
+        egress_zones     => ['restricted'],
         purge_rich_rules => true,
         purge_services   => true,
         purge_ports      => true,
@@ -35,8 +36,8 @@ Puppet::Type.newtype(:firewalld_zone) do
     defaultto :present
   end
 
-  # When set to 1 these variables cause the purge_* options to indicate to Puppet
-  # that we are in a changed state
+  # When set to 1 these variables cause the purge_* options to
+  # indicate to Puppet that we are in a changed state
   #
   attr_reader :rich_rules_purgable
   attr_reader :services_purgable
@@ -55,62 +56,87 @@ Puppet::Type.newtype(:firewalld_zone) do
     isnamevar
   end
 
-  newparam(:zone) do
-    desc 'Name of the zone'
+  newparam(:policy) do
+    desc 'Name of the policy'
   end
 
   newparam(:description) do
-    desc 'Description of the zone to add'
+    desc 'Description of the policy to add'
   end
 
   newparam(:short) do
-    desc 'Short description of the zone to add'
+    desc 'Short description of the policy to add'
   end
 
   newproperty(:target) do
-    desc 'Specify the target for the zone'
+    desc 'Specify the target for the policy'
   end
 
-  newproperty(:interfaces, array_matching: :all) do
-    desc 'Specify the interfaces for the zone'
+  newproperty(:ingress_zones, array_matching: :all) do
+    desc 'Specify the ingress zones for the policy as an array of strings'
+
+    # Validation is done in the types validate below as the propertys
+    # validate will never see all of values, only one element of it at
+    # a time.
 
     def insync?(is)
       case should
-      when String then should.lines.sort == is.sort
       when Array then should.sort == is.sort
-      else raise Puppet::Error, 'parameter interfaces must be a string or array of strings!'
+      when :unset then [] == is.sort
+      else raise Puppet::Error, "parameter #{self.class.name} must be an array of strings!"
+      end
+    end
+  end
+
+  newproperty(:egress_zones, array_matching: :all) do
+    desc 'Specify the egress zones for the policy as an array of strings'
+
+    # Validation is done in the types validate below as the propertys
+    # validate will never see all of values, only one element of it at
+    # a time.
+
+    def insync?(is)
+      case should
+      when Array then should.sort == is.sort
+      when :unset then [] == is.sort
+      else raise Puppet::Error, "parameter #{self.class.name} must be an array of strings!"
+      end
+    end
+  end
+
+  newproperty(:priority) do
+    desc 'The priority of the policy as an integer (default -1)'
+
+    defaultto('-1')
+
+    munge do |value|
+      case value
+      when Numeric then value.to_s
+      else value
+      end
+    end
+
+    validate do |value|
+      begin
+        Integer(value)
+      rescue
+        raise Puppet::Error, 'parameter priority must be a non zero integer'
+      end
+
+      if Integer(value).zero?
+        raise Puppet::Error, 'parameter priority must be non zero'
       end
     end
   end
 
   newproperty(:masquerade) do
-    desc 'Can be set to true or false, specifies whether to add or remove masquerading from the zone'
+    desc 'Can be set to true or false, specifies whether to add or remove masquerading from the policy'
     newvalue(:true)
     newvalue(:false)
   end
 
-  newproperty(:sources, array_matching: :all) do
-    desc 'Specify the sources for the zone'
-
-    def insync?(is)
-      case should
-      when String then should.lines.sort == is.sort
-      when Array then should.sort == is.sort
-      else raise Puppet::Error, 'parameter sources must be a string or array of strings!'
-      end
-    end
-
-    def is_to_s(value = []) # rubocop:disable Style/PredicateName
-      '[' + value.join(', ') + ']'
-    end
-
-    def should_to_s(value = [])
-      '[' + value.join(', ') + ']'
-    end
-  end
-
   newproperty(:icmp_blocks, array_matching: :all) do
-    desc "Specify the icmp-blocks for the zone. Can be a single string specifying one icmp type,
+    desc "Specify the icmp-blocks for the policy. Can be a single string specifying one icmp type,
           or an array of strings specifying multiple icmp types. Any blocks not specified here will be removed
          "
     def insync?(is)
@@ -123,7 +149,7 @@ Puppet::Type.newtype(:firewalld_zone) do
   end
 
   newproperty(:purge_rich_rules) do
-    desc "When set to true any rich_rules associated with this zone
+    desc "When set to true any rich_rules associated with this policy
           that are not managed by Puppet will be removed.
          "
     newvalue(:false)
@@ -138,7 +164,7 @@ Puppet::Type.newtype(:firewalld_zone) do
   end
 
   newproperty(:purge_services) do
-    desc "When set to true any services associated with this zone
+    desc "When set to true any services associated with this policy
           that are not managed by Puppet will be removed.
          "
     newvalue(:false)
@@ -153,7 +179,7 @@ Puppet::Type.newtype(:firewalld_zone) do
   end
 
   newproperty(:purge_ports) do
-    desc "When set to true any ports associated with this zone
+    desc "When set to true any ports associated with this policy
           that are not managed by Puppet will be removed."
     newvalue :false
     newvalue(:true) do
@@ -166,16 +192,50 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
   end
 
-  validate do
-    [:zone, :name].each do |attr|
-      if self[attr] && (self[attr]).to_s.length > 17
-        raise(Puppet::Error, "Zone identifier '#{attr}' must be less than 18 characters long")
+  def validate_zone_list(attr)
+    if self[:ensure] == :absent and NilClass === self[attr]
+      self[attr] = []
+      return
+    end
+
+    if not Array === self[attr]
+      raise Puppet::Error, "parameter #{attr} must be an array of strings!"
+    end
+
+    if self[attr].length.zero?
+      raise Puppet::Error, "parameter #{attr} must contain at least one zone!"
+    end
+
+    self[attr].each do |element|
+      case element
+      when String then nil
+      else raise Puppet::Error, "parameter #{attr} must be an array of strings!"
       end
     end
+
+    return if self[attr].length == 1
+
+    if self[attr].include?('HOST') || self[attr].include?('ANY')
+      raise Puppet::Error, "parameter #{attr} must contain a single symbolic zone or one or more regular zones"
+    end
+  end
+
+  validate do
+    [:policy, :name].each do |attr|
+      if self[attr] && (self[attr]).to_s.length > 17
+        raise(Puppet::Error, "Policy identifier '#{attr}' must be less than 18 characters long")
+      end
+    end
+    validate_zone_list(:ingress_zones)
+    validate_zone_list(:egress_zones)
   end
 
   autorequire(:service) do
     ['firewalld']
+  end
+
+  autorequire(:firewalld_zone) do
+    (self[:ingress_zones] != :unset ? self[:ingress_zones] : []) + (self[:egress_zones] != :unset ? self[:egress_zones] : [])
   end
 
   def purge_resource(res_type)
@@ -191,7 +251,7 @@ Puppet::Type.newtype(:firewalld_zone) do
     return [] unless provider.exists?
     puppet_rules = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_rich_rule) }.each do |fwr|
-      if fwr[:zone] == self[:name]
+      if fwr[:policy] == self[:name]
         debug("not purging puppet controlled rich rule #{fwr[:name]}")
         puppet_rules << fwr.provider.build_rich_rule
       end
@@ -202,7 +262,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         name: purge,
         raw_rule: purge,
         ensure: :absent,
-        zone: self[:name]
+        policy: self[:name]
       )
 
       # If the rule exists in --permanent then we should purge it
@@ -221,7 +281,7 @@ Puppet::Type.newtype(:firewalld_zone) do
     return [] unless provider.exists?
     puppet_services = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_service) }.each do |fws|
-      if fws[:zone] == self[:name]
+      if fws[:policy] == self[:name]
         debug("not purging puppet controlled service #{fws[:service]}")
         puppet_services << (fws[:service]).to_s
       end
@@ -232,7 +292,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         name: "#{self[:name]}-#{purge}",
         ensure: :absent,
         service: purge,
-        zone: self[:name]
+        policy: self[:name]
       )
 
       purge_resource(res_type)
@@ -244,7 +304,7 @@ Puppet::Type.newtype(:firewalld_zone) do
     return [] unless provider.exists?
     puppet_ports = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_port) }.each do |fwp|
-      if fwp[:zone] == self[:name]
+      if fwp[:policy] == self[:name]
         debug("Not purging puppet controlled port #{fwp[:port]}")
         puppet_ports << { 'port' => fwp[:port], 'protocol' => fwp[:protocol] }
       end
@@ -256,7 +316,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         port: purge['port'],
         ensure: :absent,
         protocol: purge['protocol'],
-        zone: self[:name]
+        policy: self[:name]
       )
       purge_resource(res_type)
       @ports_purgable = true

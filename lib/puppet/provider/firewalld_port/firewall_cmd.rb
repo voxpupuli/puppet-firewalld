@@ -11,7 +11,16 @@ Puppet::Type.type(:firewalld_port).provide(
 
   def exists?
     @rule_args ||= build_port_rule
-    output = execute_firewall_cmd(['--query-port', @rule_args], @resource[:zone], true, false)
+
+    output = if @resource[:zone] == :unset
+               execute_firewall_cmd_policy(['--query-port', @rule_args],
+                                           @resource[:policy],
+                                           true, false)
+             else
+               execute_firewall_cmd(['--query-port', @rule_args],
+                                    @resource[:zone],
+                                    true, false)
+             end
     output.exitstatus.zero?
   end
 
@@ -32,10 +41,18 @@ Puppet::Type.type(:firewalld_port).provide(
   end
 
   def create
-    execute_firewall_cmd(['--add-port', build_port_rule])
+    if @resource[:zone] == :unset
+      execute_firewall_cmd_policy(['--add-port', build_port_rule])
+    else
+      execute_firewall_cmd(['--add-port', build_port_rule])
+    end
   end
 
   def destroy
-    execute_firewall_cmd(['--remove-port', build_port_rule])
+    if @resource[:zone] == :unset
+      execute_firewall_cmd_policy(['--remove-port', build_port_rule])
+    else
+      execute_firewall_cmd(['--remove-port', build_port_rule])
+    end
   end
 end

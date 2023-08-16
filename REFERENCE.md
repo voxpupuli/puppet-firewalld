@@ -91,6 +91,7 @@ The following parameters are available in the `firewalld` class:
 * [`zone_drifting`](#zone_drifting)
 * [`minimal_mark`](#minimal_mark)
 * [`lockdown`](#lockdown)
+* [`individual_calls`](#individual_calls)
 * [`ipv6_rpfilter`](#ipv6_rpfilter)
 * [`firewall_backend`](#firewall_backend)
 * [`default_service_zone`](#default_service_zone)
@@ -298,6 +299,14 @@ Data type: `Optional[Integer]`
 Default value: ``undef``
 
 ##### <a name="lockdown"></a>`lockdown`
+
+Data type: `Optional[Enum['yes', 'no']]`
+
+
+
+Default value: ``undef``
+
+##### <a name="individual_calls"></a>`individual_calls`
 
 Data type: `Optional[Enum['yes', 'no']]`
 

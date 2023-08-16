@@ -17,16 +17,17 @@ Puppet::Type.newtype(:firewalld_zone) do
     Note that setting `ensure => 'absent'` to the built in firewalld zones will
     not work, and will generate an error. This is a limitation of firewalld itself, not the module.
 
-    @example Create a zone called `restricted`
+    @example Create a zone called `restricted` allowing only `echo-request` icmp types
       firewalld_zone { 'restricted':
-        ensure           => present,
-        target           => '%%REJECT%%',
-        interfaces       => [],
-        sources          => [],
-        purge_rich_rules => true,
-        purge_services   => true,
-        purge_ports      => true,
-        icmp_blocks      => 'router-advertisement'
+        ensure               => present,
+        target               => '%%REJECT%%',
+        interfaces           => [],
+        sources              => [],
+        purge_rich_rules     => true,
+        purge_services       => true,
+        purge_ports          => true,
+        icmp_blocks          => 'echo-request'
+        icmp_block_inversion => true,
       }
   DOC
 
@@ -120,6 +121,12 @@ Puppet::Type.newtype(:firewalld_zone) do
       else raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'
       end
     end
+  end
+
+  newproperty(:icmp_block_inversion) do
+    desc 'Can be set to true or false, specifies whether to set icmp_block_inversion from the zone'
+    newvalue(:true)
+    newvalue(:false)
   end
 
   newproperty(:purge_rich_rules) do

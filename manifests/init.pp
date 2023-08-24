@@ -128,7 +128,7 @@ class firewalld (
 
   #...custom services
   $custom_services.each | String $key, Hash $attrs| {
-    firewalld::custom_service { $key:
+    firewalld_custom_service { $key:
       *       => $attrs,
     }
   }

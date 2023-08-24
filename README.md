@@ -332,25 +332,14 @@ may be used.
 
 ### Firewalld Custom Service
 
-The `firewalld::custom_service` defined type creates and manages
+The `firewalld_custom_service` defined type creates and manages
 custom services. It makes the service usable by firewalld, but does
 not add it to any zones. To do that, use the firewalld::service type.
-
----
-
-> The `firewalld::custom_service` is **DEPRECATED** and will be removed in a
-> future release. Please use the `firewalld_custom_service` native type.
->
-> Please note that there are slight differences in the parameters that will
-> require modifications to the `firewalld::custom_services` Hash if utilized from
-> Hiera.
-
----
 
 _Example in Class_:
 
 ```puppet
-    firewalld::custom_service{'puppet':
+    firewalld_custom_service{'puppet':
       short       => 'puppet',
       description => 'Puppet Client access Puppet Server',
       port        => [
@@ -364,10 +353,8 @@ _Example in Class_:
         },
       ],
       module      => ['nf_conntrack_netbios_ns'],
-      destination => {
-        'ipv4' => '127.0.0.1',
-        'ipv6' => '::1'
-      }
+     'ipv4_destination' => '127.0.0.1',
+     'ipv6_destination' => '::1'
     }
 ```
 
@@ -382,9 +369,8 @@ firewalld::custom_services:
       - port: 8140
         protocol: 'tcp'
     module: 'nf_conntrack_netbios_ns'
-    destination:
-      ipv4: '127.0.0.1'
-      ipv6: '::1'
+    ipv4_destination: '127.0.0.1'
+    ipv6_destination: '::1'
 ```
 
 This resource will create the following XML service definition in
@@ -449,18 +435,26 @@ will produce:
 * `module`: (Optional) An array of strings specifying netfilter kernel
   helper modules associated with this service
 
-* `destination`: (Optional) A hash specifying the destination network
-  as a network IP address (optional with /mask), or a plain IP
-  address. Valid hash keys are 'ipv4' and 'ipv6', with values
-  corresponding to the IP / mask associated with each of those
-  protocols. The use of hostnames is possible but not recommended,
+* `ipv4_destination`: (Optional) A string specifying the destination
+  network as a network IP address (optional with /mask), or a plain IP
+  address. 
+  The use of hostnames is possible but not recommended,
   because these will only be resolved at service activation and
   transmitted to the kernel.
 
   ```puppet
-     destination => {'ipv4' => '127.0.0.1', 'ipv6' => '::1'},
+     ipv4_destination => '192.0.2.0/24',
+  ```
 
-     destination => {'ipv4' => '192.168.0.0/24'},
+* `ipv6_destination`: (Optional) A string specifying the destination
+  network as a network IP address (optional with /mask), or a plain IP
+  address. 
+  The use of hostnames is possible but not recommended,
+  because these will only be resolved at service activation and
+  transmitted to the kernel.
+
+  ```puppet
+     ipv4_destination => '2001:db8::/32',
   ```
 
 * `config_dir`: The location where the service definition XML files
@@ -474,7 +468,7 @@ and custom services from zones.
 Exactly one of the `zone` or `policy` parameters must be given.
 
 firewalld_service will `autorequire` the firewalld_zone specified in
-the `zone` parameter and the firewalld::custom_service specified in
+the `zone` parameter and the firewalld_custom_service specified in
 the `service` parameter, so there is no need to add dependencies for
 this
 

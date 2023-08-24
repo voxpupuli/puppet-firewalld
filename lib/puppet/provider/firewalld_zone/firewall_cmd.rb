@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require 'puppet/type'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
@@ -10,7 +12,7 @@ Puppet::Type.type(:firewalld_zone).provide(
 
   def exists?
     @resource[:zone] = @resource[:name]
-    execute_firewall_cmd(['--get-zones'], nil).split(' ').include?(@resource[:name])
+    execute_firewall_cmd(['--get-zones'], nil).split.include?(@resource[:name])
   end
 
   def create
@@ -36,6 +38,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     # %% depending on the version. See:
     # https://github.com/crayfishx/puppet-firewalld/issues/111
     return @resource[:target] if @resource[:target].delete('%') == zone_target
+
     zone_target
   end
 
@@ -45,7 +48,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def interfaces
-    execute_firewall_cmd(['--list-interfaces']).chomp.split(' ') || []
+    execute_firewall_cmd(['--list-interfaces']).chomp.split || []
   end
 
   def interfaces=(new_interfaces)
@@ -62,7 +65,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def sources
-    execute_firewall_cmd(['--list-sources']).chomp.split(' ').sort || []
+    execute_firewall_cmd(['--list-sources']).chomp.split.sort || []
   end
 
   def sources=(new_sources)
@@ -106,7 +109,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     icmp_types = get_icmp_types
 
     case new_icmp_blocks
-    when Array then
+    when Array
       get_icmp_blocks.each do |remove_block|
         unless new_icmp_blocks.include?(remove_block)
           debug("removing block #{remove_block} from zone #{@resource[:name]}")
@@ -116,6 +119,7 @@ Puppet::Type.type(:firewalld_zone).provide(
 
       new_icmp_blocks.each do |block|
         raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!' unless block.is_a?(String)
+
         if icmp_types.include?(block)
           debug("adding block #{block} to zone #{@resource[:name]}")
           set_blocks.push(block)
@@ -124,7 +128,7 @@ Puppet::Type.type(:firewalld_zone).provide(
           raise Puppet::Error, "#{block} is not a valid icmp type on this system! Valid types are: #{valid_types}"
         end
       end
-    when String then
+    when String
       get_icmp_blocks.reject { |x| x == new_icmp_blocks }.each do |remove_block|
         debug("removing block #{remove_block} from zone #{@resource[:name]}")
         remove_blocks.push(remove_block)
@@ -153,9 +157,9 @@ Puppet::Type.type(:firewalld_zone).provide(
 
   def icmp_block_inversion
     if execute_firewall_cmd(['--query-icmp-block-inversion'], @resource[:name], true, false).chomp == 'no'
-      return :false
+      :false
     else
-      return :true
+      :true
     end
   end
 
@@ -176,14 +180,14 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def get_services
-    perm = execute_firewall_cmd(['--list-services']).split(' ')
-    curr = execute_firewall_cmd(['--list-services'], @resource[:name], false).split(' ')
+    perm = execute_firewall_cmd(['--list-services']).split
+    curr = execute_firewall_cmd(['--list-services'], @resource[:name], false).split
     [perm, curr].flatten.uniq
   end
 
   def get_ports
-    perm = execute_firewall_cmd(['--list-ports']).split(' ')
-    curr = execute_firewall_cmd(['--list-ports'], @resource[:name], false).split(' ')
+    perm = execute_firewall_cmd(['--list-ports']).split
+    curr = execute_firewall_cmd(['--list-ports'], @resource[:name], false).split
 
     [perm, curr].flatten.uniq.map do |entry|
       port, protocol = entry.split(%r{/})
@@ -193,11 +197,11 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def get_icmp_blocks
-    execute_firewall_cmd(['--list-icmp-blocks']).split(' ').sort
+    execute_firewall_cmd(['--list-icmp-blocks']).split.sort
   end
 
   def get_icmp_types
-    execute_firewall_cmd(['--get-icmptypes'], nil).split(' ')
+    execute_firewall_cmd(['--get-icmptypes'], nil).split
   end
   # rubocop:enable Style/AccessorMethodName
 

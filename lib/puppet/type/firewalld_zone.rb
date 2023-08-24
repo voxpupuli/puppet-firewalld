@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require 'puppet/parameter/boolean'
 
@@ -45,6 +47,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   def generate
     return [] unless Puppet::Provider::Firewalld.available?
+
     purge_rich_rules if self[:purge_rich_rules] == :true
     purge_services if self[:purge_services] == :true
     purge_ports if self[:purge_ports] == :true
@@ -101,12 +104,12 @@ Puppet::Type.newtype(:firewalld_zone) do
       end
     end
 
-    def is_to_s(value = []) # rubocop:disable Style/PredicateName
-      '[' + value.join(', ') + ']'
+    def is_to_s(value = [])
+      "[#{value.join(', ')}]"
     end
 
     def should_to_s(value = [])
-      '[' + value.join(', ') + ']'
+      "[#{value.join(', ')}]"
     end
   end
 
@@ -140,6 +143,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
     def retrieve
       return :false if @resource[:purge_rich_rules] == :false
+
       provider.resource.rich_rules_purgable ? :purgable : :true
     end
   end
@@ -155,6 +159,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
     def retrieve
       return :false if @resource[:purge_services] == :false
+
       provider.resource.services_purgable ? :purgable : :true
     end
   end
@@ -169,15 +174,14 @@ Puppet::Type.newtype(:firewalld_zone) do
 
     def retrieve
       return :false if @resource[:purge_ports] == :false
+
       provider.resource.ports_purgable ? :purgable : :true
     end
   end
 
   validate do
-    [:zone, :name].each do |attr|
-      if self[attr] && (self[attr]).to_s.length > 17
-        raise(Puppet::Error, "Zone identifier '#{attr}' must be less than 18 characters long")
-      end
+    %i[zone name].each do |attr|
+      raise(Puppet::Error, "Zone identifier '#{attr}' must be less than 18 characters long") if self[attr] && (self[attr]).to_s.length > 17
     end
   end
 
@@ -196,6 +200,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   def purge_rich_rules
     return [] unless provider.exists?
+
     puppet_rules = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_rich_rule) }.each do |fwr|
       if fwr[:zone] == self[:name]
@@ -226,6 +231,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   def purge_services
     return [] unless provider.exists?
+
     puppet_services = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_service) }.each do |fws|
       if fws[:zone] == self[:name]
@@ -249,6 +255,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   def purge_ports
     return [] unless provider.exists?
+
     puppet_ports = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_port) }.each do |fwp|
       if fwp[:zone] == self[:name]

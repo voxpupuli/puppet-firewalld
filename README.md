@@ -437,7 +437,7 @@ will produce:
 
 * `ipv4_destination`: (Optional) A string specifying the destination
   network as a network IP address (optional with /mask), or a plain IP
-  address. 
+  address.
   The use of hostnames is possible but not recommended,
   because these will only be resolved at service activation and
   transmitted to the kernel.
@@ -448,7 +448,7 @@ will produce:
 
 * `ipv6_destination`: (Optional) A string specifying the destination
   network as a network IP address (optional with /mask), or a plain IP
-  address. 
+  address.
   The use of hostnames is possible but not recommended,
   because these will only be resolved at service activation and
   transmitted to the kernel.

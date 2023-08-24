@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 

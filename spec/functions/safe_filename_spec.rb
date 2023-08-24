@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'firewalld::safe_filename' do
@@ -12,7 +14,7 @@ describe 'firewalld::safe_filename' do
   let(:invalid_filenames) do
     {
       'This Should Work' => 'This_Should_Work',
-      'this should work'   => 'this_should_work',
+      'this should work' => 'this_should_work',
       'th1s$Sh0uld w0rk!!' => 'th1s_Sh0uld_w0rk__'
     }
   end
@@ -20,7 +22,7 @@ describe 'firewalld::safe_filename' do
   let(:filenames_with_options) do
     {
       'ThisShouldWork.test' => 'ThisShouldWork.test',
-      'this_should_!work.xml'   => 'this_should_--work--xml',
+      'this_should_!work.xml' => 'this_should_--work--xml',
       'th1s$Sh0uld w0rk!!.test' => 'th1s--Sh0uld--w0rk----.test'
     }
   end

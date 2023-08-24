@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'beaker-rspec'
 require 'tmpdir'
 require 'yaml'
@@ -26,9 +28,7 @@ RSpec.configure do |c|
 
   # Configure all nodes in nodeset
   c.before :suite do
-    begin
-      # Install modules and dependencies from spec/fixtures/modules
-      copy_fixture_modules_to(hosts)
-    end
+    # Install modules and dependencies from spec/fixtures/modules
+    copy_fixture_modules_to(hosts)
   end
 end

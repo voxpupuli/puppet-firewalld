@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_service) do
@@ -55,13 +57,9 @@ Puppet::Type.newtype(:firewalld_service) do
   end
 
   validate do
-    if self[:zone] != :unset && self[:policy] != :unset
-      raise Puppet::Error, 'only one of the parameters zone and policy may be supplied'
-    end
+    raise Puppet::Error, 'only one of the parameters zone and policy may be supplied' if self[:zone] != :unset && self[:policy] != :unset
 
-    if self[:zone] == :unset && self[:policy] == :unset
-      raise Puppet::Error, 'one of the parameters zone and policy must be supplied'
-    end
+    raise Puppet::Error, 'one of the parameters zone and policy must be supplied' if self[:zone] == :unset && self[:policy] == :unset
   end
 
   autorequire(:firewalld_zone) do
@@ -77,6 +75,6 @@ Puppet::Type.newtype(:firewalld_service) do
   end
 
   autorequire(:firewalld_custom_service) do
-    self[:service].gsub(%r{[^\w-]}, '_') if self[:service]
+    self[:service]&.gsub(%r{[^\w-]}, '_')
   end
 end

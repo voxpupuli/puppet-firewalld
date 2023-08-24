@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 provider_class = Puppet::Type.type(:firewalld_policy).provider(:firewall_cmd)
@@ -25,7 +27,7 @@ describe provider_class do
 
   describe 'when creating policy' do
     context 'with name public2restricted' do
-      it 'should execute firewall_cmd with new-policy' do
+      it 'executes firewall_cmd with new-policy' do
         resource.expects(:[]).with(:name).returns('public2restricted').at_least_once
         resource.expects(:[]).with(:target).returns(nil).at_least_once
         resource.expects(:[]).with(:ingress_zones).returns(['public']).at_least_once
@@ -49,7 +51,7 @@ describe provider_class do
 
   describe 'when modifying description' do
     context 'type' do
-      it 'should store updated description' do
+      it 'stores updated description' do
         resource.expects(:[]).with(:name).returns('public2restricted').at_least_once
         resource.expects(:[]).with(:target).returns(nil).at_least_once
         resource.expects(:[]).with(:ingress_zones).returns(['public']).at_least_once
@@ -67,7 +69,7 @@ describe provider_class do
 
         provider.create
 
-        provider.expects(:execute_firewall_cmd_policy).with(['--set-description', :"Modified description"], 'public2restricted', true, false)
+        provider.expects(:execute_firewall_cmd_policy).with(['--set-description', :'Modified description'], 'public2restricted', true, false)
 
         # Modify description
         provider.description = :'Modified description'

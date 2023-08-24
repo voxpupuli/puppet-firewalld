@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require 'puppet/parameter/boolean'
 
@@ -45,6 +47,7 @@ Puppet::Type.newtype(:firewalld_policy) do
 
   def generate
     return [] unless Puppet::Provider::Firewalld.available?
+
     purge_rich_rules if self[:purge_rich_rules] == :true
     purge_services if self[:purge_services] == :true
     purge_ports if self[:purge_ports] == :true
@@ -82,7 +85,7 @@ Puppet::Type.newtype(:firewalld_policy) do
     def insync?(is)
       case should
       when Array then should.sort == is.sort
-      when :unset then [] == is.sort
+      when :unset then is.sort == []
       else raise Puppet::Error, "parameter #{self.class.name} must be an array of strings!"
       end
     end
@@ -98,7 +101,7 @@ Puppet::Type.newtype(:firewalld_policy) do
     def insync?(is)
       case should
       when Array then should.sort == is.sort
-      when :unset then [] == is.sort
+      when :unset then is.sort == []
       else raise Puppet::Error, "parameter #{self.class.name} must be an array of strings!"
       end
     end
@@ -119,13 +122,11 @@ Puppet::Type.newtype(:firewalld_policy) do
     validate do |value|
       begin
         Integer(value)
-      rescue
+      rescue StandardError
         raise Puppet::Error, 'parameter priority must be a non zero integer'
       end
 
-      if Integer(value).zero?
-        raise Puppet::Error, 'parameter priority must be non zero'
-      end
+      raise Puppet::Error, 'parameter priority must be non zero' if Integer(value).zero?
     end
   end
 
@@ -159,6 +160,7 @@ Puppet::Type.newtype(:firewalld_policy) do
 
     def retrieve
       return :false if @resource[:purge_rich_rules] == :false
+
       provider.resource.rich_rules_purgable ? :purgable : :true
     end
   end
@@ -174,6 +176,7 @@ Puppet::Type.newtype(:firewalld_policy) do
 
     def retrieve
       return :false if @resource[:purge_services] == :false
+
       provider.resource.services_purgable ? :purgable : :true
     end
   end
@@ -188,23 +191,20 @@ Puppet::Type.newtype(:firewalld_policy) do
 
     def retrieve
       return :false if @resource[:purge_ports] == :false
+
       provider.resource.ports_purgable ? :purgable : :true
     end
   end
 
   def validate_zone_list(attr)
-    if self[:ensure] == :absent and NilClass === self[attr]
+    if (self[:ensure] == :absent) && self[attr].is_a?(NilClass)
       self[attr] = []
       return
     end
 
-    if not Array === self[attr]
-      raise Puppet::Error, "parameter #{attr} must be an array of strings!"
-    end
+    raise Puppet::Error, "parameter #{attr} must be an array of strings!" unless self[attr].is_a?(Array)
 
-    if self[attr].length.zero?
-      raise Puppet::Error, "parameter #{attr} must contain at least one zone!"
-    end
+    raise Puppet::Error, "parameter #{attr} must contain at least one zone!" if self[attr].length.zero?
 
     self[attr].each do |element|
       case element
@@ -215,16 +215,12 @@ Puppet::Type.newtype(:firewalld_policy) do
 
     return if self[attr].length == 1
 
-    if self[attr].include?('HOST') || self[attr].include?('ANY')
-      raise Puppet::Error, "parameter #{attr} must contain a single symbolic zone or one or more regular zones"
-    end
+    raise Puppet::Error, "parameter #{attr} must contain a single symbolic zone or one or more regular zones" if self[attr].include?('HOST') || self[attr].include?('ANY')
   end
 
   validate do
-    [:policy, :name].each do |attr|
-      if self[attr] && (self[attr]).to_s.length > 17
-        raise(Puppet::Error, "Policy identifier '#{attr}' must be less than 18 characters long")
-      end
+    %i[policy name].each do |attr|
+      raise(Puppet::Error, "Policy identifier '#{attr}' must be less than 18 characters long") if self[attr] && (self[attr]).to_s.length > 17
     end
     validate_zone_list(:ingress_zones)
     validate_zone_list(:egress_zones)
@@ -235,7 +231,7 @@ Puppet::Type.newtype(:firewalld_policy) do
   end
 
   autorequire(:firewalld_zone) do
-    (self[:ingress_zones] != :unset ? self[:ingress_zones] : []) + (self[:egress_zones] != :unset ? self[:egress_zones] : [])
+    (self[:ingress_zones] == :unset ? [] : self[:ingress_zones]) + (self[:egress_zones] == :unset ? [] : self[:egress_zones])
   end
 
   def purge_resource(res_type)
@@ -249,6 +245,7 @@ Puppet::Type.newtype(:firewalld_policy) do
 
   def purge_rich_rules
     return [] unless provider.exists?
+
     puppet_rules = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_rich_rule) }.each do |fwr|
       if fwr[:policy] == self[:name]
@@ -279,6 +276,7 @@ Puppet::Type.newtype(:firewalld_policy) do
 
   def purge_services
     return [] unless provider.exists?
+
     puppet_services = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_service) }.each do |fws|
       if fws[:policy] == self[:name]
@@ -302,6 +300,7 @@ Puppet::Type.newtype(:firewalld_policy) do
 
   def purge_ports
     return [] unless provider.exists?
+
     puppet_ports = []
     catalog.resources.select { |r| r.is_a?(Puppet::Type::Firewalld_port) }.each do |fwp|
       if fwp[:policy] == self[:name]

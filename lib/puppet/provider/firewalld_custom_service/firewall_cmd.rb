@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
@@ -12,11 +14,9 @@ Puppet::Type.type(:firewalld_custom_service).provide(
   def exists?
     builtin = true
 
-    found_resource = execute_firewall_cmd(['--get-services'], nil).strip.split(' ').include?(@resource[:name])
+    found_resource = execute_firewall_cmd(['--get-services'], nil).strip.split.include?(@resource[:name])
 
-    if found_resource && execute_firewall_cmd(['--path-service', @resource[:name]], nil).start_with?('/etc')
-      builtin = false
-    end
+    builtin = false if found_resource && execute_firewall_cmd(['--path-service', @resource[:name]], nil).start_with?('/etc')
 
     return false if builtin && (@resource[:ensure] == :absent)
 
@@ -92,14 +92,12 @@ Puppet::Type.type(:firewalld_custom_service).provide(
       end
     end
 
-    to_remove .each do |entry|
-      begin
-        port_str = "#{entry['port']}/#{entry['protocol']}"
+    to_remove.each do |entry|
+      port_str = "#{entry['port']}/#{entry['protocol']}"
 
-        execute_firewall_cmd(['--service', @resource[:name], '--remove-port', port_str], nil)
-      rescue Puppet::ExecutionFailure => e
-        errors << "Could not remove port '#{port_str} from #{@resource[:name]}' => #{e}"
-      end
+      execute_firewall_cmd(['--service', @resource[:name], '--remove-port', port_str], nil)
+    rescue Puppet::ExecutionFailure => e
+      errors << "Could not remove port '#{port_str} from #{@resource[:name]}' => #{e}"
     end
 
     raise Puppet::ResourceError, errors.join("\n") unless errors.empty?
@@ -120,27 +118,21 @@ Puppet::Type.type(:firewalld_custom_service).provide(
     else
       to_remove = @property_hash[:protocols] - should
       ports_protos = []
-      unless @resource[:ports].include?(:unset)
-        ports_protos = Array(@resource[:ports]).select { |x| x['port'].nil? }.map { |x| x['protocol'] }
-      end
+      ports_protos = Array(@resource[:ports]).select { |x| x['port'].nil? }.map { |x| x['protocol'] } unless @resource[:ports].include?(:unset)
       to_add = (should + ports_protos) - @property_hash[:protocols]
     end
 
     errors = []
     to_add.each do |entry|
-      begin
-        execute_firewall_cmd(['--service', @resource[:name], '--add-protocol', entry], nil)
-      rescue Puppet::ExecutionFailure => e
-        errors << "Could not add protocol '#{entry} to #{@resource[:name]}' => #{e}"
-      end
+      execute_firewall_cmd(['--service', @resource[:name], '--add-protocol', entry], nil)
+    rescue Puppet::ExecutionFailure => e
+      errors << "Could not add protocol '#{entry} to #{@resource[:name]}' => #{e}"
     end
 
     to_remove.each do |entry|
-      begin
-        execute_firewall_cmd(['--service', @resource[:name], '--remove-protocol', entry], nil)
-      rescue Puppet::ExecutionFailure => e
-        errors << "Could not remove protocol'#{entry} from #{@resource[:name]}' => #{e}"
-      end
+      execute_firewall_cmd(['--service', @resource[:name], '--remove-protocol', entry], nil)
+    rescue Puppet::ExecutionFailure => e
+      errors << "Could not remove protocol'#{entry} from #{@resource[:name]}' => #{e}"
     end
 
     raise Puppet::ResourceError, errors.join("\n") unless errors.empty?
@@ -165,19 +157,15 @@ Puppet::Type.type(:firewalld_custom_service).provide(
 
     errors = []
     to_add.each do |entry|
-      begin
-        execute_firewall_cmd(['--service', @resource[:name], '--add-module', entry], nil)
-      rescue Puppet::ExecutionFailure => e
-        errors << "Could not add module '#{entry} to #{@resource[:name]}' => #{e}"
-      end
+      execute_firewall_cmd(['--service', @resource[:name], '--add-module', entry], nil)
+    rescue Puppet::ExecutionFailure => e
+      errors << "Could not add module '#{entry} to #{@resource[:name]}' => #{e}"
     end
 
     to_remove.each do |entry|
-      begin
-        execute_firewall_cmd(['--service', @resource[:name], '--remove-module', entry], nil)
-      rescue Puppet::ExecutionFailure => e
-        errors << "Could not remove module '#{entry} from #{@resource[:name]}' => #{e}"
-      end
+      execute_firewall_cmd(['--service', @resource[:name], '--remove-module', entry], nil)
+    rescue Puppet::ExecutionFailure => e
+      errors << "Could not remove module '#{entry} from #{@resource[:name]}' => #{e}"
     end
 
     raise Puppet::ResourceError, errors.join("\n") unless errors.empty?
@@ -230,7 +218,7 @@ Puppet::Type.type(:firewalld_custom_service).provide(
     return @destinations if @destinations
 
     @destinations = execute_firewall_cmd(['--service', @resource[:name], '--get-destinations'], nil).strip.split(%r{\s+})
-    @destinations = Hash[@destinations.map { |x| x.split(':', 2) }]
+    @destinations = @destinations.map { |x| x.split(':', 2) }.to_h
 
     @destinations
   end

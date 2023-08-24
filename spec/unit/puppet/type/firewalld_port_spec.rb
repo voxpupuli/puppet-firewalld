@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_port) do
@@ -7,8 +9,8 @@ describe Puppet::Type.type(:firewalld_port) do
 
   context 'with no params' do
     describe 'when validating attributes' do
-      [:name, :zone, :port, :protocol].each do |param|
-        it "should have a #{param} parameter" do
+      %i[name zone port protocol].each do |param|
+        it "has a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end
       end

@@ -238,7 +238,7 @@ class firewalld (
 
   if $individual_calls {
     augeas {
-      'firewalld::lockdown':
+      'firewalld::individual_calls':
         changes => [
           "set IndividualCalls \"${individual_calls}\"",
         ];

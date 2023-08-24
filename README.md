@@ -342,7 +342,7 @@ _Example in Class_:
     firewalld_custom_service{'puppet':
       short       => 'puppet',
       description => 'Puppet Client access Puppet Server',
-      port        => [
+      ports       => [
         {
             'port'     => '8140',
             'protocol' => 'tcp',
@@ -365,7 +365,7 @@ firewalld::custom_services:
   puppet:
     short: 'puppet'
     description: 'Puppet Client access Puppet Server'
-    port:
+    ports:
       - port: 8140
         protocol: 'tcp'
     module: 'nf_conntrack_netbios_ns'
@@ -398,7 +398,7 @@ and you will also see 'puppet' in the service list when you issue
 
 * `description`: (Optional) A short description of the service
 
-* `port`: (Optional) The protocol / port definitions for this service.
+* `ports`: (Optional) The protocol / port definitions for this service.
   Specified as an array of hashes, where each hash defines a protocol
   and/or port associated with this service. Each hash requires both
   port and protocol keys, even if the value is an empty string.
@@ -407,16 +407,16 @@ and you will also see 'puppet' in the service list when you issue
   udp, or any protocol defined in /etc/protocols
 
   ```puppet
-     port => [{'port' => '1234', 'protocol' => 'tcp'}],
+     ports => [{'port' => '1234', 'protocol' => 'tcp'}],
 
-     port => [{'port' => '4321', 'protocol' => 'udp'}, {'protocol' => 'rdp'}],
+     ports => [{'port' => '4321', 'protocol' => 'udp'}, {'protocol' => 'rdp'}],
   ```
 
-The `port` parameter can also take a range of ports separated by a
+The `ports` parameter can also take a range of ports separated by a
 colon or a dash (colons are replaced by dashes), for example:
 
 ```puppet
-   port => [ {'port' => '8000:8002', 'protocol' => 'tcp']} ]
+   ports => [ {'port' => '8000:8002', 'protocol' => 'tcp']} ]
 ```
 
 will produce:

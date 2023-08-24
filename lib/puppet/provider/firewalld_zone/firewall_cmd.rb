@@ -162,9 +162,9 @@ Puppet::Type.type(:firewalld_zone).provide(
   def icmp_block_inversion=(bool)
     case bool
     when :true
-      execute_firewall_cmd(['--add-icmp-block-inversion'])
+      execute_firewall_cmd(['--add-icmp-block-inversion'], @resource[:name], true, false)
     when :false
-      execute_firewall_cmd(['--remove-icmp-block-inversion'])
+      execute_firewall_cmd(['--remove-icmp-block-inversion'], @resource[:name], true, false)
     end
   end
 

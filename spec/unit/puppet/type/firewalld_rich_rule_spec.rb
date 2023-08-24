@@ -96,6 +96,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       expect do
         described_class.new(
           title: 'SSH from barny',
+          zone: 'restricted',
           priority: 'none'
         )
       end.to raise_error(%r{Priority must be between -32768 and 32767})
@@ -104,6 +105,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       expect do
         described_class.new(
           title: 'SSH from barny',
+          zone: 'restricted',
           priority: -32769
         )
       end.to raise_error(%r{Priority must be between -32768 and 32767})
@@ -112,6 +114,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       expect do
         described_class.new(
           title: 'SSH from barny',
+          zone: 'restricted',
           priority: 32768
         )
       end.to raise_error(%r{Priority must be between -32768 and 32767})
@@ -120,6 +123,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
       expect do
         described_class.new(
           title: 'SSH from barny',
+          zone: 'restricted',
           priority: 10
         )
       end.not_to raise_error()

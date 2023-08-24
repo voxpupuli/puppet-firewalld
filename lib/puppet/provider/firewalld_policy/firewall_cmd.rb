@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require 'puppet/type'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
@@ -10,7 +12,7 @@ Puppet::Type.type(:firewalld_policy).provide(
 
   def exists?
     @resource[:policy] = @resource[:name]
-    execute_firewall_cmd_policy(['--get-policies'], nil).split(' ').include?(@resource[:name])
+    execute_firewall_cmd_policy(['--get-policies'], nil).split.include?(@resource[:name])
   end
 
   def create
@@ -37,6 +39,7 @@ Puppet::Type.type(:firewalld_policy).provide(
     # %% depending on the version. See:
     # https://github.com/crayfishx/puppet-firewalld/issues/111
     return @resource[:target] if @resource[:target].delete('%') == policy_target
+
     policy_target
   end
 
@@ -46,7 +49,7 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def ingress_zones
-    execute_firewall_cmd_policy(['--list-ingress-zones']).chomp.split(' ') || []
+    execute_firewall_cmd_policy(['--list-ingress-zones']).chomp.split || []
   end
 
   def ingress_zones=(new_ingress_zones)
@@ -66,7 +69,7 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def egress_zones
-    execute_firewall_cmd_policy(['--list-egress-zones']).chomp.split(' ') || []
+    execute_firewall_cmd_policy(['--list-egress-zones']).chomp.split || []
   end
 
   def egress_zones=(new_egress_zones)
@@ -121,7 +124,7 @@ Puppet::Type.type(:firewalld_policy).provide(
     icmp_types = get_icmp_types
 
     case new_icmp_blocks
-    when Array then
+    when Array
       get_icmp_blocks.each do |remove_block|
         unless new_icmp_blocks.include?(remove_block)
           debug("removing block #{remove_block} from policy #{@resource[:name]}")
@@ -131,6 +134,7 @@ Puppet::Type.type(:firewalld_policy).provide(
 
       new_icmp_blocks.each do |block|
         raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!' unless block.is_a?(String)
+
         if icmp_types.include?(block)
           debug("adding block #{block} to policy #{@resource[:name]}")
           set_blocks.push(block)
@@ -139,7 +143,7 @@ Puppet::Type.type(:firewalld_policy).provide(
           raise Puppet::Error, "#{block} is not a valid icmp type on this system! Valid types are: #{valid_types}"
         end
       end
-    when String then
+    when String
       get_icmp_blocks.reject { |x| x == new_icmp_blocks }.each do |remove_block|
         debug("removing block #{remove_block} from policy #{@resource[:name]}")
         remove_blocks.push(remove_block)
@@ -174,14 +178,14 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def get_services
-    perm = execute_firewall_cmd_policy(['--list-services']).split(' ')
-    curr = execute_firewall_cmd_policy(['--list-services'], @resource[:name], false).split(' ')
+    perm = execute_firewall_cmd_policy(['--list-services']).split
+    curr = execute_firewall_cmd_policy(['--list-services'], @resource[:name], false).split
     [perm, curr].flatten.uniq
   end
 
   def get_ports
-    perm = execute_firewall_cmd_policy(['--list-ports']).split(' ')
-    curr = execute_firewall_cmd_policy(['--list-ports'], @resource[:name], false).split(' ')
+    perm = execute_firewall_cmd_policy(['--list-ports']).split
+    curr = execute_firewall_cmd_policy(['--list-ports'], @resource[:name], false).split
 
     [perm, curr].flatten.uniq.map do |entry|
       port, protocol = entry.split(%r{/})
@@ -191,11 +195,11 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def get_icmp_blocks
-    execute_firewall_cmd_policy(['--list-icmp-blocks']).split(' ').sort
+    execute_firewall_cmd_policy(['--list-icmp-blocks']).split.sort
   end
 
   def get_icmp_types
-    execute_firewall_cmd_policy(['--get-icmptypes'], nil).split(' ')
+    execute_firewall_cmd_policy(['--get-icmptypes'], nil).split
   end
   # rubocop:enable Style/AccessorMethodName
 

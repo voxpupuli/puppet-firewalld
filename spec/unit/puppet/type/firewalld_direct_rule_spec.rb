@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_direct_rule) do
@@ -7,8 +9,8 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
 
   context 'with no params' do
     describe 'when validating attributes' do
-      [:inet_protocol, :args, :table, :chain, :priority].each do |param|
-        it "should have a #{param} parameter" do
+      %i[inet_protocol args table chain priority].each do |param|
+        it "has a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end
       end

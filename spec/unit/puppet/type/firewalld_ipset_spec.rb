@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_ipset) do
@@ -7,66 +9,70 @@ describe Puppet::Type.type(:firewalld_ipset) do
 
   describe 'type' do
     describe 'when validating attributes' do
-      [:name, :type, :options, :manage_entries].each do |param|
-        it "should have a #{param} parameter" do
+      %i[name type options manage_entries].each do |param|
+        it "has a #{param} parameter" do
           expect(described_class.attrtype(param)).to eq(:param)
         end
       end
 
-      [:entries, :family, :hashsize, :maxelem, :timeout].each do |prop|
-        it "should have a #{prop} property" do
+      %i[entries family hashsize maxelem timeout].each do |prop|
+        it "has a #{prop} property" do
           expect(described_class.attrtype(prop)).to eq(:property)
         end
       end
     end
+
     describe 'when validating attribute values' do
       describe 'hashsize' do
         [128, 256, 512, 1024, '1024'].each do |value|
-          it "should support #{value} as a value to hashsize" do
+          it "supports #{value} as a value to hashsize" do
             expect { described_class.new(name: 'test', hashsize: value) }.not_to raise_error
           end
         end
         ['foo', '3.5'].each do |value|
-          it "should not support #{value} as a value to hashsize" do
+          it "does not support #{value} as a value to hashsize" do
             expect { described_class.new(name: 'test', hashsize: value) }.to raise_error(Puppet::Error, %r{hashsize must be an integer})
           end
         end
         [0, '0', -1, '-1'].each do |value|
-          it "should not support #{value} as a value to hashsize" do
+          it "does not support #{value} as a value to hashsize" do
             expect { described_class.new(name: 'test', hashsize: value) }.to raise_error(Puppet::Error, %r{hashsize must be a positive integer})
           end
         end
         [5, 41, '99'].each do |value|
-          it "should not support #{value} as a value to hashsize" do
+          it "does not support #{value} as a value to hashsize" do
             expect { described_class.new(name: 'test', hashsize: value) }.to raise_error(Puppet::Error, %r{hashsize must be a power of 2})
           end
         end
       end
+
       describe 'maxelem' do
         [2048, '3000', 65_536].each do |value|
-          it "should support #{value} as a value to maxelem" do
+          it "supports #{value} as a value to maxelem" do
             expect { described_class.new(name: 'test', maxelem: value) }.not_to raise_error
           end
         end
         [0, 'foo', '3.5', -1, 0.6, '-1000.3'].each do |value|
-          it "should not support #{value} as a value to maxelem" do
+          it "does not support #{value} as a value to maxelem" do
             expect { described_class.new(name: 'test', maxelem: value) }.to raise_error(Puppet::Error, %r{Invalid value})
           end
         end
       end
+
       describe 'timeout' do
         [0, '0', 60, 3600, '2147483'].each do |value|
-          it "should support #{value} as a value to timeout" do
+          it "supports #{value} as a value to timeout" do
             expect { described_class.new(name: 'test', timeout: value) }.not_to raise_error
           end
         end
         ['foo', '3.5', -1, 0.6, '-1000.3'].each do |value|
-          it "should not support #{value} as a value to timeout" do
+          it "does not support #{value} as a value to timeout" do
             expect { described_class.new(name: 'test', timeout: value) }.to raise_error(Puppet::Error, %r{Invalid value})
           end
         end
       end
     end
+
     it 'raises an error if wrong name' do
       expect do
         described_class.new(
@@ -75,6 +81,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
         )
       end.to raise_error(%r{IPset name must be a word with no spaces})
     end
+
     it 'accept - in name' do
       expect do
         described_class.new(
@@ -83,6 +90,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
         )
       end.not_to raise_error
     end
+
     it 'accept . in name' do
       expect do
         described_class.new(
@@ -133,6 +141,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
       provider.entries = ['192.168.2.2', '10.72.1.100']
     end
   end
+
   context 'change in ipset members' do
     let(:resource) do
       Puppet::Type.type(:firewalld_ipset).new(
@@ -147,7 +156,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
     end
   end
 
-  context 'validation when not managing ipset entries ' do
+  context 'validation when not managing ipset entries' do
     it 'raises an error if wrong type' do
       expect do
         Puppet::Type.type(:firewalld_ipset).new(

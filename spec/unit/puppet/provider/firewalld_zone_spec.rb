@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 provider_class = Puppet::Type.type(:firewalld_zone).provider(:firewall_cmd)
@@ -54,7 +56,7 @@ describe provider_class do
         provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
         provider.expects(:execute_firewall_cmd).with(['--new-zone', 'white'], nil)
         provider.expects(:execute_firewall_cmd).with(['--set-short', 'little description'], 'white', true, false)
-        provider.expects(:execute_firewall_cmd).with(['--set-description', :"Better description"], 'white', true, false)
+        provider.expects(:execute_firewall_cmd).with(['--set-description', :'Better description'], 'white', true, false)
         provider.create
 
         provider.description = :'Better description'

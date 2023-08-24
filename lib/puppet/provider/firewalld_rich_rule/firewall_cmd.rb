@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
@@ -33,12 +35,14 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def eval_priority
     return [] unless (priority = @resource[:priority])
+
     quote_keyval('priority', priority)
   end
 
   def eval_source
     args = []
     return [] unless (addr = @resource[:source])
+
     invert = addr['invert'] ? ' NOT' : ''
     args << "source#{invert}"
     args << quote_keyval('address', addr['address'])
@@ -49,6 +53,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   def eval_dest
     args = []
     return [] unless (addr = @resource[:dest])
+
     invert = addr['invert'] ? ' NOT' : ''
     args << "destination#{invert}"
     args << quote_keyval('address', addr['address'])
@@ -57,7 +62,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def elements
-    [:service, :port, :protocol, :icmp_block, :icmp_type, :masquerade, :forward_port]
+    %i[service port protocol icmp_block icmp_type masquerade forward_port]
   end
 
   def eval_element
@@ -89,6 +94,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def eval_log
     return [] unless @resource[:log]
+
     args = []
     args << 'log'
     if @resource[:log].is_a?(Hash)
@@ -101,16 +107,16 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def eval_audit
     return [] unless @resource[:audit]
+
     args = []
     args << 'audit'
-    if @resource[:audit].is_a?(Hash)
-      args << quote_keyval('limit value', @resource[:log]['limit'])
-    end
+    args << quote_keyval('limit value', @resource[:log]['limit']) if @resource[:audit].is_a?(Hash)
     args
   end
 
   def eval_action
     return [] unless (action = @resource[:action])
+
     args = []
     if action.is_a?(Hash)
       args << action['action']
@@ -122,6 +128,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   def build_rich_rule
     return @resource[:raw_rule] if @resource[:raw_rule]
+
     rule = ['rule']
     rule << [
       key_val_opt('family'),

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 require File.join(File.dirname(__FILE__), '..', 'firewalld.rb')
 
@@ -10,13 +12,13 @@ Puppet::Type.type(:firewalld_ipset).provide(
   mk_resource_methods
 
   def self.instances
-    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split(' ')
+    ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split
     ipset_ids.map do |ipset_id|
       ipset_raw = execute_firewall_cmd(["--info-ipset=#{ipset_id}"], nil)
       raw_options = ipset_raw.match(%r{options: (.*)})
       options = {}
       if raw_options
-        raw_options[1].split(' ').each do |v|
+        raw_options[1].split.each do |v|
           k, v = v.split('=')
           options[k.to_sym] = v
         end
@@ -61,7 +63,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
     @resource[:entries].each { |e| add_entry(e) } if @resource[:manage_entries]
   end
 
-  [:type, :maxelem, :family, :hashsize, :timeout].each do |method|
+  %i[type maxelem family hashsize timeout].each do |method|
     define_method("#{method}=") do |should|
       info("Destroying and creating ipset #{@resource[:name]}")
       destroy

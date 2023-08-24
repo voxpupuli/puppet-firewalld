@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.newtype(:firewalld_ipset) do
   @doc = "
     Configure IPsets in Firewalld
@@ -25,7 +27,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
   newparam(:name, namevar: true) do
     desc 'Name of the IPset'
     validate do |val|
-      raise Puppet::Error, 'IPset name must be a word with no spaces' unless val =~ %r{^[\w\.-]+$}
+      raise Puppet::Error, 'IPset name must be a word with no spaces' unless val =~ %r{^[\w.-]+$}
     end
   end
 
@@ -71,7 +73,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
     desc 'Initial hash size of the IPSet'
     validate do |value|
       raise ArgumentError, 'hashsize must be an integer' unless Puppet::Pops::Types::TypeParser.singleton.parse('Init[Integer]').instance?(value)
-      raise ArgumentError, 'hashsize must be a positive integer' unless value.to_i > 0
+      raise ArgumentError, 'hashsize must be a positive integer' unless value.to_i.positive?
       raise ArgumentError, 'hashsize must be a power of 2' unless @resource.po2?(value.to_i)
     end
   end
@@ -92,9 +94,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
   end
 
   validate do
-    if !(self[:manage_entries]) && self[:entries]
-      raise(Puppet::Error, "Ipset should not declare entries if it doesn't manage entries")
-    end
+    raise(Puppet::Error, "Ipset should not declare entries if it doesn't manage entries") if !(self[:manage_entries]) && self[:entries]
   end
 
   autorequire(:service) do

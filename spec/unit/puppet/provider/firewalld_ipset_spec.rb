@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 provider_class = Puppet::Type.type(:firewalld_ipset).provider(:firewall_cmd)
@@ -34,14 +36,17 @@ describe provider_class do
         ipsets_names = provider.class.instances.map(&:name)
         expect(ipsets_names).to include('black', 'white')
       end
+
       it 'with correct families' do
         ipsets_families = provider.class.instances.map(&:family)
         expect(ipsets_families).to include('inet', 'inet6')
       end
+
       it 'with correct hashsizes' do
         ipsets_hashsize = provider.class.instances.map(&:hashsize)
         expect(ipsets_hashsize).to include('2048')
       end
+
       it 'with correct maxelems' do
         ipsets_maxelem = provider.class.instances.map(&:maxelem)
         expect(ipsets_maxelem).to include('200', '400')
@@ -91,6 +96,7 @@ describe provider_class do
         provider.hashsize = 2048
       end
     end
+
     context 'entries' do
       it 'removes and add entries' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
@@ -111,6 +117,7 @@ describe provider_class do
         provider.create
         provider.entries = ['192.168.14.0/24', '10.0.0.0/8']
       end
+
       it 'ignores entries when manage_entries is false' do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:type).returns('hash:net').at_least_once

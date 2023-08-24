@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Puppet::Type.newtype(:firewalld_rich_rule) do
   @doc = "Manages firewalld rich rules.
 
@@ -51,7 +53,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     munge(&:to_s)
 
     validate do |value|
-      raise Puppet::Error, 'Priority must be between -32768 and 32767' unless value.to_i.to_s == value.to_s && (-32768..32767).include?(value.to_i)
+      raise Puppet::Error, 'Priority must be between -32768 and 32767' unless value.to_i.to_s == value.to_s && (-32_768..32_767).include?(value.to_i)
     end
   end
 
@@ -63,6 +65,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
       else
         errormsg = 'Only one source type address or ipset may be specified.'
         raise errormsg if value.key?('address') && value.key?('ipset')
+
         value
       end
     end
@@ -75,6 +78,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
       else
         errormsg = 'Only one source type address or ipset may be specified.'
         raise errormsg if value.key?('address') && value.key?('ipset')
+
         value
       end
     end
@@ -121,12 +125,12 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
       raise Puppet::Error, "Authorized action values are `accept`, `reject`, `drop` or `mark`, got #{value}" unless %w[accept drop reject mark].include? value
     end
     validate do |value|
-      if value.is_a?(Hash)
-        if value.keys.sort != ['action', 'type']
-          raise Puppet::Error, "Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`. Got #{value}"
-        end
+      case value
+      when Hash
+        raise Puppet::Error, "Rule action hash should contain `action` and `type` keys. Use a string if you only want to declare the action to be `accept` or `reject`. Got #{value}" if value.keys.sort != %w[action type]
+
         _validate_action(value['action'])
-      elsif value.is_a?(String)
+      when String
         _validate_action(value)
       end
     end
@@ -139,20 +143,16 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   def elements
-    [:service, :port, :protocol, :icmp_block, :icmp_type, :masquerade, :forward_port]
+    %i[service port protocol icmp_block icmp_type masquerade forward_port]
   end
 
   validate do
     errormsg = "Only one element (#{elements.join(',')}) may be specified."
     raise errormsg if elements.select { |e| self[e] }.size > 1
 
-    if self[:zone] != :unset && self[:policy] != :unset
-      raise Puppet::Error, 'only one of the parameters zone and policy may be supplied'
-    end
+    raise Puppet::Error, 'only one of the parameters zone and policy may be supplied' if self[:zone] != :unset && self[:policy] != :unset
 
-    if self[:zone] == :unset && self[:policy] == :unset
-      raise Puppet::Error, 'one of the parameters zone and policy must be supplied'
-    end
+    raise Puppet::Error, 'one of the parameters zone and policy must be supplied' if self[:zone] == :unset && self[:policy] == :unset
   end
 
   autorequire(:firewalld_zone) do

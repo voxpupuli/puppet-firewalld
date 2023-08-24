@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet'
 
 Puppet::Type.newtype(:firewalld_custom_service) do
@@ -52,7 +54,7 @@ Puppet::Type.newtype(:firewalld_custom_service) do
 
       if value.is_a?(Hash)
         # Handle the legacy format from the module translate : to -
-        value = Hash[value.map { |k, v| [k, v.to_s.tr(':', '-')] }]
+        value = value.transform_values { |v| v.to_s.tr(':', '-') }
       else
         port, protocol = value.split('/')
 
@@ -91,9 +93,7 @@ Puppet::Type.newtype(:firewalld_custom_service) do
         end
 
         allowed_protocols = %w[tcp udp sctp dccp]
-        unless allowed_protocols.include?(value['protocol'])
-          raise Puppet::ParseError, "The protocol must be one of '#{allowed_protocols.join(', ')}'. Got '#{value['protocol']}'"
-        end
+        raise Puppet::ParseError, "The protocol must be one of '#{allowed_protocols.join(', ')}'. Got '#{value['protocol']}'" unless allowed_protocols.include?(value['protocol'])
       end
     end
 
@@ -165,13 +165,14 @@ Puppet::Type.newtype(:firewalld_custom_service) do
         addr = IPAddr.new(value)
 
         raise Puppet::ParseError, "#{value} is not an IPv4 address" unless addr.ipv4?
-      rescue => e
+      rescue StandardError => e
         raise Puppet::ParseError, e.to_s
       end
     end
 
     def insync?(is)
       return true if should == :unset && is.empty?
+
       is == should
     end
   end
@@ -190,13 +191,14 @@ Puppet::Type.newtype(:firewalld_custom_service) do
         addr = IPAddr.new(value)
 
         raise Puppet::ParseError, "#{value} is not an IPv6 address" unless addr.ipv6?
-      rescue => e
+      rescue StandardError => e
         raise Puppet::ParseError, e.to_s
       end
     end
 
     def insync?(is)
       return true if should == :unset && is.empty?
+
       is == should
     end
   end

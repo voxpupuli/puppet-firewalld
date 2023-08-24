@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_custom_service) do
@@ -40,7 +42,7 @@ describe Puppet::Type.type(:firewalld_custom_service) do
           name: 'test',
           short: short
         )
-      end. to raise_error(%r{Valid values match})
+      end.to raise_error(%r{Valid values match})
     end
   end
 
@@ -64,7 +66,7 @@ describe Puppet::Type.type(:firewalld_custom_service) do
           name: 'test',
           description: description
         )
-      end. to raise_error(%r{Valid values match})
+      end.to raise_error(%r{Valid values match})
     end
   end
 
@@ -188,7 +190,7 @@ describe Puppet::Type.type(:firewalld_custom_service) do
               name: 'test',
               protocols: protocol
             )
-          end. to raise_error(%r{Valid values match})
+          end.to raise_error(%r{Valid values match})
         end
       end
     end
@@ -196,8 +198,8 @@ describe Puppet::Type.type(:firewalld_custom_service) do
 
   context ':modules validation' do
     it 'accepts valid modules' do
-      modules = ['nf_conntrack_ftp', 'thing', 'other_thing', 'new-thing']
-      expected_modules = ['ftp', 'thing', 'other_thing', 'new-thing']
+      modules = %w[nf_conntrack_ftp thing other_thing new-thing]
+      expected_modules = %w[ftp thing other_thing new-thing]
 
       resource = described_class.new(
         name: 'test',
@@ -221,7 +223,7 @@ describe Puppet::Type.type(:firewalld_custom_service) do
               name: 'test',
               modules: mod
             )
-          end. to raise_error(%r{Valid values match})
+          end.to raise_error(%r{Valid values match})
         end
       end
     end
@@ -262,7 +264,7 @@ describe Puppet::Type.type(:firewalld_custom_service) do
               name: 'test',
               ipv4_destination: destination
             )
-          end. to raise_error(%r{(invalid address|not an IPv4)})
+          end.to raise_error(%r{(invalid address|not an IPv4)})
         end
       end
     end
@@ -304,7 +306,7 @@ describe Puppet::Type.type(:firewalld_custom_service) do
               name: 'test',
               ipv6_destination: destination
             )
-          end. to raise_error(%r{(invalid address|not an IPv6)})
+          end.to raise_error(%r{(invalid address|not an IPv6)})
         end
       end
     end

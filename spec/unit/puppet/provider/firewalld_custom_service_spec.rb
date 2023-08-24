@@ -55,13 +55,13 @@ describe provider_class do
       provider.expects(:execute_firewall_cmd).with(['--get-services'], nil).returns("#{resource[:name]} foo bar baz")
       provider.expects(:execute_firewall_cmd).with(['--path-service', resource[:name]], nil).returns('/etc/foo_bar_baz.xml')
 
-      expect(provider.exists?).to eq true
+      expect(provider.exists?).to be true
     end
 
     it 'does not exist when not returned by the system' do
       provider.expects(:execute_firewall_cmd).with(['--get-services'], nil).returns('foo bar baz')
 
-      expect(provider.exists?).to eq false
+      expect(provider.exists?).to be false
     end
   end
 

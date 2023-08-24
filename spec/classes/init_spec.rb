@@ -260,7 +260,7 @@ describe 'firewalld' do
       it do
         is_expected.to contain_exec('firewalld::set_log_denied').with(
           command: "firewall-cmd --set-log-denied #{cond} || firewall-offline-cmd --set-log-denied #{cond}",
-          unless: "[ \$\(firewall-cmd --get-log-denied || firewall-offline-cmd --get-log-denied) = #{cond} ]"
+          unless: "[ $(firewall-cmd --get-log-denied || firewall-offline-cmd --get-log-denied) = #{cond} ]"
         ).that_requires('Service[firewalld]')
       end
     end

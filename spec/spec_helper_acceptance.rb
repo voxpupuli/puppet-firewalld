@@ -4,7 +4,9 @@ require 'beaker-rspec'
 require 'tmpdir'
 require 'yaml'
 require 'simp/beaker_helpers'
+# rubocop:disable Style/MixinUsage
 include Simp::BeakerHelpers
+# rubocop:enable Style/MixinUsage
 
 UNSUPPORTED_PLATFORMS = %w[windows Darwin].freeze
 

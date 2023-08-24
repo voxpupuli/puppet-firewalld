@@ -78,8 +78,8 @@ describe Puppet::Type.type(:firewalld_policy) do
             described_class.new(name: 'bad ingress_zones',
                                 ingress_zones: [symbolic_zone, 'public'],
                                 egress_zones: ['restricted'])
-          end.to raise_error(%r{parameter ingress_zones must contain a single symbolic zone or one or more regular zones})
-        end
+          end
+        end.to raise_error(%r{parameter ingress_zones must contain a single symbolic zone or one or more regular zones})
       end
 
       it 'rejects bad egress_zones combinations' do
@@ -88,8 +88,8 @@ describe Puppet::Type.type(:firewalld_policy) do
             described_class.new(name: 'bad egress_zones',
                                 ingress_zones: ['public'],
                                 egress_zones: [symbolic_zone, 'restricted'])
-          end.to raise_error(%r{parameter egress_zones must contain a single symbolic zone or one or more regular zones})
-        end
+          end
+        end.to raise_error(%r{parameter egress_zones must contain a single symbolic zone or one or more regular zones})
       end
 
       it 'accepts lone symbolic ingress_zones' do

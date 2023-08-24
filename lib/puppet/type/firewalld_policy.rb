@@ -204,7 +204,7 @@ Puppet::Type.newtype(:firewalld_policy) do
 
     raise Puppet::Error, "parameter #{attr} must be an array of strings!" unless self[attr].is_a?(Array)
 
-    raise Puppet::Error, "parameter #{attr} must contain at least one zone!" if self[attr].length.zero?
+    raise Puppet::Error, "parameter #{attr} must contain at least one zone!" if self[attr].empty?
 
     self[attr].each do |element|
       case element

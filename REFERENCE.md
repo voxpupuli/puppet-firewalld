@@ -7,12 +7,8 @@
 ### Classes
 
 * [`firewalld`](#firewalld): Manage the firewalld service
-* [`firewalld::reload`](#firewalldreload): A common point for triggering an intermediary firewalld reload using firewall-cmd
-* [`firewalld::reload::complete`](#firewalldreloadcomplete): A common point for triggering an intermediary firewalld full reload using firewall-cmd
-
-### Defined types
-
-* [`firewalld::custom_service`](#firewalldcustom_service): Creates a new service definition for use in firewalld
+* [`firewalld::reload`](#firewalld--reload): A common point for triggering an intermediary firewalld reload using firewall-cmd
+* [`firewalld::reload::complete`](#firewalld--reload--complete): A common point for triggering an intermediary firewalld full reload using firewall-cmd
 
 ### Resource types
 
@@ -30,7 +26,7 @@
 
 ### Functions
 
-* [`firewalld::safe_filename`](#firewalldsafe_filename): Returns a string that is safe for firewalld filenames
+* [`firewalld::safe_filename`](#firewalld--safe_filename): Returns a string that is safe for firewalld filenames
 
 ## Classes
 
@@ -65,40 +61,40 @@ Copyright 2015 Craig Dunn
 
 The following parameters are available in the `firewalld` class:
 
-* [`package_ensure`](#package_ensure)
-* [`package`](#package)
-* [`service_ensure`](#service_ensure)
-* [`config_package`](#config_package)
-* [`install_gui`](#install_gui)
-* [`service_enable`](#service_enable)
-* [`zones`](#zones)
-* [`policies`](#policies)
-* [`ports`](#ports)
-* [`services`](#services)
-* [`rich_rules`](#rich_rules)
-* [`custom_services`](#custom_services)
-* [`ipsets`](#ipsets)
-* [`direct_rules`](#direct_rules)
-* [`direct_chains`](#direct_chains)
-* [`direct_passthroughs`](#direct_passthroughs)
-* [`purge_direct_rules`](#purge_direct_rules)
-* [`purge_direct_chains`](#purge_direct_chains)
-* [`purge_direct_passthroughs`](#purge_direct_passthroughs)
-* [`purge_unknown_ipsets`](#purge_unknown_ipsets)
-* [`default_zone`](#default_zone)
-* [`log_denied`](#log_denied)
-* [`cleanup_on_exit`](#cleanup_on_exit)
-* [`zone_drifting`](#zone_drifting)
-* [`minimal_mark`](#minimal_mark)
-* [`lockdown`](#lockdown)
-* [`individual_calls`](#individual_calls)
-* [`ipv6_rpfilter`](#ipv6_rpfilter)
-* [`firewall_backend`](#firewall_backend)
-* [`default_service_zone`](#default_service_zone)
-* [`default_port_zone`](#default_port_zone)
-* [`default_port_protocol`](#default_port_protocol)
+* [`package_ensure`](#-firewalld--package_ensure)
+* [`package`](#-firewalld--package)
+* [`service_ensure`](#-firewalld--service_ensure)
+* [`config_package`](#-firewalld--config_package)
+* [`install_gui`](#-firewalld--install_gui)
+* [`service_enable`](#-firewalld--service_enable)
+* [`zones`](#-firewalld--zones)
+* [`policies`](#-firewalld--policies)
+* [`ports`](#-firewalld--ports)
+* [`services`](#-firewalld--services)
+* [`rich_rules`](#-firewalld--rich_rules)
+* [`custom_services`](#-firewalld--custom_services)
+* [`ipsets`](#-firewalld--ipsets)
+* [`direct_rules`](#-firewalld--direct_rules)
+* [`direct_chains`](#-firewalld--direct_chains)
+* [`direct_passthroughs`](#-firewalld--direct_passthroughs)
+* [`purge_direct_rules`](#-firewalld--purge_direct_rules)
+* [`purge_direct_chains`](#-firewalld--purge_direct_chains)
+* [`purge_direct_passthroughs`](#-firewalld--purge_direct_passthroughs)
+* [`purge_unknown_ipsets`](#-firewalld--purge_unknown_ipsets)
+* [`default_zone`](#-firewalld--default_zone)
+* [`log_denied`](#-firewalld--log_denied)
+* [`cleanup_on_exit`](#-firewalld--cleanup_on_exit)
+* [`zone_drifting`](#-firewalld--zone_drifting)
+* [`minimal_mark`](#-firewalld--minimal_mark)
+* [`lockdown`](#-firewalld--lockdown)
+* [`individual_calls`](#-firewalld--individual_calls)
+* [`ipv6_rpfilter`](#-firewalld--ipv6_rpfilter)
+* [`firewall_backend`](#-firewalld--firewall_backend)
+* [`default_service_zone`](#-firewalld--default_service_zone)
+* [`default_port_zone`](#-firewalld--default_port_zone)
+* [`default_port_protocol`](#-firewalld--default_port_protocol)
 
-##### <a name="package_ensure"></a>`package_ensure`
+##### <a name="-firewalld--package_ensure"></a>`package_ensure`
 
 Data type: `Enum['present','absent','latest','installed']`
 
@@ -106,7 +102,7 @@ Data type: `Enum['present','absent','latest','installed']`
 
 Default value: `'installed'`
 
-##### <a name="package"></a>`package`
+##### <a name="-firewalld--package"></a>`package`
 
 Data type: `String`
 
@@ -114,7 +110,7 @@ Data type: `String`
 
 Default value: `'firewalld'`
 
-##### <a name="service_ensure"></a>`service_ensure`
+##### <a name="-firewalld--service_ensure"></a>`service_ensure`
 
 Data type: `Stdlib::Ensure::Service`
 
@@ -122,7 +118,7 @@ Data type: `Stdlib::Ensure::Service`
 
 Default value: `'running'`
 
-##### <a name="config_package"></a>`config_package`
+##### <a name="-firewalld--config_package"></a>`config_package`
 
 Data type: `String`
 
@@ -130,355 +126,237 @@ Data type: `String`
 
 Default value: `'firewall-config'`
 
-##### <a name="install_gui"></a>`install_gui`
+##### <a name="-firewalld--install_gui"></a>`install_gui`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="service_enable"></a>`service_enable`
-
-Data type: `Boolean`
-
-
-
-Default value: ``true``
-
-##### <a name="zones"></a>`zones`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="policies"></a>`policies`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="ports"></a>`ports`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="services"></a>`services`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="rich_rules"></a>`rich_rules`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="custom_services"></a>`custom_services`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="ipsets"></a>`ipsets`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="direct_rules"></a>`direct_rules`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="direct_chains"></a>`direct_chains`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="direct_passthroughs"></a>`direct_passthroughs`
-
-Data type: `Hash`
-
-
-
-Default value: `{}`
-
-##### <a name="purge_direct_rules"></a>`purge_direct_rules`
+##### <a name="-firewalld--service_enable"></a>`service_enable`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `true`
 
-##### <a name="purge_direct_chains"></a>`purge_direct_chains`
+##### <a name="-firewalld--zones"></a>`zones`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--policies"></a>`policies`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--ports"></a>`ports`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--services"></a>`services`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--rich_rules"></a>`rich_rules`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--custom_services"></a>`custom_services`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--ipsets"></a>`ipsets`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--direct_rules"></a>`direct_rules`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--direct_chains"></a>`direct_chains`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--direct_passthroughs"></a>`direct_passthroughs`
+
+Data type: `Hash`
+
+
+
+Default value: `{}`
+
+##### <a name="-firewalld--purge_direct_rules"></a>`purge_direct_rules`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="purge_direct_passthroughs"></a>`purge_direct_passthroughs`
-
-Data type: `Boolean`
-
-
-
-Default value: ``false``
-
-##### <a name="purge_unknown_ipsets"></a>`purge_unknown_ipsets`
+##### <a name="-firewalld--purge_direct_chains"></a>`purge_direct_chains`
 
 Data type: `Boolean`
 
 
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="default_zone"></a>`default_zone`
+##### <a name="-firewalld--purge_direct_passthroughs"></a>`purge_direct_passthroughs`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="-firewalld--purge_unknown_ipsets"></a>`purge_unknown_ipsets`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### <a name="-firewalld--default_zone"></a>`default_zone`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="log_denied"></a>`log_denied`
+##### <a name="-firewalld--log_denied"></a>`log_denied`
 
 Data type: `Optional[Enum['off','all','unicast','broadcast','multicast']]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cleanup_on_exit"></a>`cleanup_on_exit`
-
-Data type: `Optional[Enum['yes', 'no']]`
-
-
-
-Default value: ``undef``
-
-##### <a name="zone_drifting"></a>`zone_drifting`
+##### <a name="-firewalld--cleanup_on_exit"></a>`cleanup_on_exit`
 
 Data type: `Optional[Enum['yes', 'no']]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="minimal_mark"></a>`minimal_mark`
+##### <a name="-firewalld--zone_drifting"></a>`zone_drifting`
+
+Data type: `Optional[Enum['yes', 'no']]`
+
+
+
+Default value: `undef`
+
+##### <a name="-firewalld--minimal_mark"></a>`minimal_mark`
 
 Data type: `Optional[Integer]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="lockdown"></a>`lockdown`
-
-Data type: `Optional[Enum['yes', 'no']]`
-
-
-
-Default value: ``undef``
-
-##### <a name="individual_calls"></a>`individual_calls`
+##### <a name="-firewalld--lockdown"></a>`lockdown`
 
 Data type: `Optional[Enum['yes', 'no']]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="ipv6_rpfilter"></a>`ipv6_rpfilter`
+##### <a name="-firewalld--individual_calls"></a>`individual_calls`
 
 Data type: `Optional[Enum['yes', 'no']]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="firewall_backend"></a>`firewall_backend`
+##### <a name="-firewalld--ipv6_rpfilter"></a>`ipv6_rpfilter`
+
+Data type: `Optional[Enum['yes', 'no']]`
+
+
+
+Default value: `undef`
+
+##### <a name="-firewalld--firewall_backend"></a>`firewall_backend`
 
 Data type: `Optional[Enum['iptables', 'nftables']]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="default_service_zone"></a>`default_service_zone`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="default_port_zone"></a>`default_port_zone`
+##### <a name="-firewalld--default_service_zone"></a>`default_service_zone`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="default_port_protocol"></a>`default_port_protocol`
+##### <a name="-firewalld--default_port_zone"></a>`default_port_zone`
 
 Data type: `Optional[String]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-### <a name="firewalldreload"></a>`firewalld::reload`
+##### <a name="-firewalld--default_port_protocol"></a>`default_port_protocol`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+### <a name="firewalld--reload"></a>`firewalld::reload`
 
 A common point for triggering an intermediary firewalld reload using firewall-cmd
 
-### <a name="firewalldreloadcomplete"></a>`firewalld::reload::complete`
+### <a name="firewalld--reload--complete"></a>`firewalld::reload::complete`
 
 A common point for triggering an intermediary firewalld full reload using firewall-cmd
-
-## Defined types
-
-### <a name="firewalldcustom_service"></a>`firewalld::custom_service`
-
-**DEPRECATED**: Please use the `firewalld_custom_service` native type moving forward
-
-This defined type will be removed in a future release
-
-Andrew Patik <andrewpatik@gmail.com>
-Trevor Vaughan <tvaughan@onyxpoint.com>
-
-#### Examples
-
-##### 
-
-```puppet
-
-firewalld::custom_service{'My Custom Service':
-  short       => 'MyService',
-  description => 'My Custom Service is a daemon that does whatever',
-  port        => [
-    {
-        'port'     => '1234'
-        'protocol' => 'tcp'
-    },
-    {
-        'port'     => '1234'
-        'protocol' => 'udp'
-    },
-  ],
-  module      => ['nf_conntrack_netbios_ns'],
-  destination => {
-    'ipv4' => '127.0.0.1',
-    'ipv6' => '::1'
-  }
-}
-```
-
-#### Parameters
-
-The following parameters are available in the `firewalld::custom_service` defined type:
-
-* [`short`](#short)
-* [`description`](#description)
-* [`port`](#port)
-* [`module`](#module)
-* [`destination`](#destination)
-* [`filename`](#filename)
-* [`config_dir`](#config_dir)
-* [`ensure`](#ensure)
-
-##### <a name="short"></a>`short`
-
-Data type: `String`
-
-
-
-Default value: `$name`
-
-##### <a name="description"></a>`description`
-
-Data type: `Optional[String]`
-
-
-
-Default value: ``undef``
-
-##### <a name="port"></a>`port`
-
-Data type: `Optional[Array[Hash]]`
-
-
-
-Default value: ``undef``
-
-##### <a name="module"></a>`module`
-
-Data type: `Optional[Array[String]]`
-
-
-
-Default value: ``undef``
-
-##### <a name="destination"></a>`destination`
-
-Data type: `Optional[Hash[
-      Enum['ipv4', 'ipv6'],
-      String
-  ]]`
-
-
-
-Default value: ``undef``
-
-##### <a name="filename"></a>`filename`
-
-Data type: `String`
-
-
-
-Default value: `$short`
-
-##### <a name="config_dir"></a>`config_dir`
-
-Data type: `Stdlib::Unixpath`
-
-
-
-Default value: `'/etc/firewalld/services'`
-
-##### <a name="ensure"></a>`ensure`
-
-Data type: `Enum['present','absent']`
-
-
-
-Default value: `'present'`
 
 ## Resource types
 
@@ -560,10 +438,10 @@ The short description of the service
 
 The following parameters are available in the `firewalld_custom_service` type.
 
-* [`name`](#name)
-* [`provider`](#provider)
+* [`name`](#-firewalld_custom_service--name)
+* [`provider`](#-firewalld_custom_service--provider)
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_custom_service--name"></a>`name`
 
 Valid values: `%r{.+}`
 
@@ -571,7 +449,7 @@ namevar
 
 The target filename of the resource (without the .xml suffix)
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_custom_service--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_custom_service` resource. You will seldom need to specify this ---
 Puppet will usually discover the appropriate provider for your platform.
@@ -605,12 +483,12 @@ Default value: `present`
 
 The following parameters are available in the `firewalld_direct_chain` type.
 
-* [`inet_protocol`](#inet_protocol)
-* [`name`](#name)
-* [`provider`](#provider)
-* [`table`](#table)
+* [`inet_protocol`](#-firewalld_direct_chain--inet_protocol)
+* [`name`](#-firewalld_direct_chain--name)
+* [`provider`](#-firewalld_direct_chain--provider)
+* [`table`](#-firewalld_direct_chain--table)
 
-##### <a name="inet_protocol"></a>`inet_protocol`
+##### <a name="-firewalld_direct_chain--inet_protocol"></a>`inet_protocol`
 
 Valid values: `ipv4`, `ipv6`
 
@@ -620,16 +498,16 @@ Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)
 
 Default value: `ipv4`
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_direct_chain--name"></a>`name`
 
 Name of the chain eg: LOG_DROPS
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_direct_chain--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_direct_chain` resource. You will seldom need to specify this --- Puppet
 will usually discover the appropriate provider for your platform.
 
-##### <a name="table"></a>`table`
+##### <a name="-firewalld_direct_chain--table"></a>`table`
 
 namevar
 
@@ -669,17 +547,17 @@ Default value: `present`
 
 The following parameters are available in the `firewalld_direct_passthrough` type.
 
-* [`args`](#args)
-* [`inet_protocol`](#inet_protocol)
-* [`provider`](#provider)
+* [`args`](#-firewalld_direct_passthrough--args)
+* [`inet_protocol`](#-firewalld_direct_passthrough--inet_protocol)
+* [`provider`](#-firewalld_direct_passthrough--provider)
 
-##### <a name="args"></a>`args`
+##### <a name="-firewalld_direct_passthrough--args"></a>`args`
 
 namevar
 
 Name of the passthroughhrough to add (e.g: -A OUTPUT -j OUTPUT_filter)
 
-##### <a name="inet_protocol"></a>`inet_protocol`
+##### <a name="-firewalld_direct_passthrough--inet_protocol"></a>`inet_protocol`
 
 Valid values: `ipv4`, `ipv6`
 
@@ -687,7 +565,7 @@ Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)
 
 Default value: `ipv4`
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_direct_passthrough--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_direct_passthrough` resource. You will seldom need to specify this ---
 Puppet will usually discover the appropriate provider for your platform.
@@ -718,11 +596,11 @@ Default value: `purged`
 
 The following parameters are available in the `firewalld_direct_purge` type.
 
-* [`name`](#name)
-* [`provider`](#provider)
-* [`purge`](#purge)
+* [`name`](#-firewalld_direct_purge--name)
+* [`provider`](#-firewalld_direct_purge--provider)
+* [`purge`](#-firewalld_direct_purge--purge)
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_direct_purge--name"></a>`name`
 
 Valid values: `chain`, `passthrough`, `rule`
 
@@ -730,17 +608,17 @@ namevar
 
 Type of resource to purge, valid values are 'chain', 'passthrough' and 'rule'
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_direct_purge--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_direct_purge` resource. You will seldom need to specify this --- Puppet
 will usually discover the appropriate provider for your platform.
 
-##### <a name="purge"></a>`purge`
+##### <a name="-firewalld_direct_purge--purge"></a>`purge`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 
-Default value: ``true``
+Default value: `true`
 
 ### <a name="firewalld_direct_rule"></a>`firewalld_direct_rule`
 
@@ -773,23 +651,23 @@ Default value: `present`
 
 The following parameters are available in the `firewalld_direct_rule` type.
 
-* [`args`](#args)
-* [`chain`](#chain)
-* [`inet_protocol`](#inet_protocol)
-* [`name`](#name)
-* [`priority`](#priority)
-* [`provider`](#provider)
-* [`table`](#table)
+* [`args`](#-firewalld_direct_rule--args)
+* [`chain`](#-firewalld_direct_rule--chain)
+* [`inet_protocol`](#-firewalld_direct_rule--inet_protocol)
+* [`name`](#-firewalld_direct_rule--name)
+* [`priority`](#-firewalld_direct_rule--priority)
+* [`provider`](#-firewalld_direct_rule--provider)
+* [`table`](#-firewalld_direct_rule--table)
 
-##### <a name="args"></a>`args`
+##### <a name="-firewalld_direct_rule--args"></a>`args`
 
 <args> can be all iptables, ip6tables and ebtables command line arguments
 
-##### <a name="chain"></a>`chain`
+##### <a name="-firewalld_direct_rule--chain"></a>`chain`
 
 Name of the chain type to add (e.g: INPUT, OUTPUT, FORWARD)
 
-##### <a name="inet_protocol"></a>`inet_protocol`
+##### <a name="-firewalld_direct_rule--inet_protocol"></a>`inet_protocol`
 
 Valid values: `ipv4`, `ipv6`
 
@@ -797,22 +675,22 @@ Name of the TCP/IP protocol to use (e.g: ipv4, ipv6)
 
 Default value: `ipv4`
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_direct_rule--name"></a>`name`
 
 namevar
 
 Name of the rule resource in Puppet
 
-##### <a name="priority"></a>`priority`
+##### <a name="-firewalld_direct_rule--priority"></a>`priority`
 
 The priority number of the rule (e.g: 0, 1, 2, ... 99)
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_direct_rule--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_direct_rule` resource. You will seldom need to specify this --- Puppet
 will usually discover the appropriate provider for your platform.
 
-##### <a name="table"></a>`table`
+##### <a name="-firewalld_direct_rule--table"></a>`table`
 
 Name of the table type to add (e.g: filter, nat, mangle, raw)
 
@@ -870,36 +748,36 @@ Timeout in seconds before entries expiry. 0 means entry is permanent
 
 The following parameters are available in the `firewalld_ipset` type.
 
-* [`manage_entries`](#manage_entries)
-* [`name`](#name)
-* [`options`](#options)
-* [`provider`](#provider)
-* [`type`](#type)
+* [`manage_entries`](#-firewalld_ipset--manage_entries)
+* [`name`](#-firewalld_ipset--name)
+* [`options`](#-firewalld_ipset--options)
+* [`provider`](#-firewalld_ipset--provider)
+* [`type`](#-firewalld_ipset--type)
 
-##### <a name="manage_entries"></a>`manage_entries`
+##### <a name="-firewalld_ipset--manage_entries"></a>`manage_entries`
 
-Valid values: ``true``, ``false``, `yes`, `no`
+Valid values: `true`, `false`, `yes`, `no`
 
 Should we manage entries in this ipset or leave another process manage those entries
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_ipset--name"></a>`name`
 
 namevar
 
 Name of the IPset
 
-##### <a name="options"></a>`options`
+##### <a name="-firewalld_ipset--options"></a>`options`
 
 Hash of options for the IPset, eg { 'family' => 'inet6' }
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_ipset--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_ipset` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
 
-##### <a name="type"></a>`type`
+##### <a name="-firewalld_ipset--type"></a>`type`
 
 Valid values: `bitmap:ip`, `bitmap:ip,mac`, `bitmap:port`, `hash:ip`, `hash:ip,mark`, `hash:ip,port`, `hash:ip,port,ip`, `hash:ip,port,net`, `hash:mac`, `hash:net`, `hash:net,iface`, `hash:net,net`, `hash:net,port`, `hash:net,port,net`, `list:set`
 
@@ -938,7 +816,7 @@ The following properties are available in the `firewalld_policy` type.
 
 ##### `egress_zones`
 
-Specify the egress zones for the policy
+Specify the egress zones for the policy as an array of strings
 
 ##### `ensure`
 
@@ -955,11 +833,11 @@ or an array of strings specifying multiple icmp types. Any blocks not specified 
 
 ##### `ingress_zones`
 
-Specify the ingress zones for the policy
+Specify the ingress zones for the policy as an array of strings
 
 ##### `masquerade`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Can be set to true or false, specifies whether to add or remove masquerading from the policy
 
@@ -971,21 +849,21 @@ Default value: `-1`
 
 ##### `purge_ports`
 
-Valid values: ``false``, ``true``
+Valid values: `false`, `true`
 
 When set to true any ports associated with this policy
 that are not managed by Puppet will be removed.
 
 ##### `purge_rich_rules`
 
-Valid values: ``false``, ``true``
+Valid values: `false`, `true`
 
 When set to true any rich_rules associated with this policy
 that are not managed by Puppet will be removed.
 
 ##### `purge_services`
 
-Valid values: ``false``, ``true``
+Valid values: `false`, `true`
 
 When set to true any services associated with this policy
 that are not managed by Puppet will be removed.
@@ -998,32 +876,32 @@ Specify the target for the policy
 
 The following parameters are available in the `firewalld_policy` type.
 
-* [`description`](#description)
-* [`name`](#name)
-* [`policy`](#policy)
-* [`provider`](#provider)
-* [`short`](#short)
+* [`description`](#-firewalld_policy--description)
+* [`name`](#-firewalld_policy--name)
+* [`policy`](#-firewalld_policy--policy)
+* [`provider`](#-firewalld_policy--provider)
+* [`short`](#-firewalld_policy--short)
 
-##### <a name="description"></a>`description`
+##### <a name="-firewalld_policy--description"></a>`description`
 
 Description of the policy to add
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_policy--name"></a>`name`
 
 namevar
 
 Name of the rule resource in Puppet
 
-##### <a name="policy"></a>`policy`
+##### <a name="-firewalld_policy--policy"></a>`policy`
 
 Name of the policy
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_policy--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_policy` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
 
-##### <a name="short"></a>`short`
+##### <a name="-firewalld_policy--short"></a>`short`
 
 Short description of the policy to add
 
@@ -1060,39 +938,39 @@ Default value: `present`
 
 The following parameters are available in the `firewalld_port` type.
 
-* [`name`](#name)
-* [`policy`](#policy)
-* [`port`](#port)
-* [`protocol`](#protocol)
-* [`provider`](#provider)
-* [`zone`](#zone)
+* [`name`](#-firewalld_port--name)
+* [`policy`](#-firewalld_port--policy)
+* [`port`](#-firewalld_port--port)
+* [`protocol`](#-firewalld_port--protocol)
+* [`provider`](#-firewalld_port--provider)
+* [`zone`](#-firewalld_port--zone)
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_port--name"></a>`name`
 
 namevar
 
 Name of the port resource in Puppet
 
-##### <a name="policy"></a>`policy`
+##### <a name="-firewalld_port--policy"></a>`policy`
 
 Name of the policy to which you want to add the port, exactly one of zone and policy must be supplied
 
 Default value: `unset`
 
-##### <a name="port"></a>`port`
+##### <a name="-firewalld_port--port"></a>`port`
 
 Specify the element as a port
 
-##### <a name="protocol"></a>`protocol`
+##### <a name="-firewalld_port--protocol"></a>`protocol`
 
 Specify the element as a protocol
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_port--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_port` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
 
-##### <a name="zone"></a>`zone`
+##### <a name="-firewalld_port--zone"></a>`zone`
 
 Name of the zone to which you want to add the port, exactly one of zone and policy must be supplied
 
@@ -1132,37 +1010,38 @@ Default value: `present`
 
 The following parameters are available in the `firewalld_rich_rule` type.
 
-* [`action`](#action)
-* [`audit`](#audit)
-* [`dest`](#dest)
-* [`family`](#family)
-* [`forward_port`](#forward_port)
-* [`icmp_block`](#icmp_block)
-* [`icmp_type`](#icmp_type)
-* [`log`](#log)
-* [`masquerade`](#masquerade)
-* [`name`](#name)
-* [`policy`](#policy)
-* [`port`](#port)
-* [`protocol`](#protocol)
-* [`provider`](#provider)
-* [`raw_rule`](#raw_rule)
-* [`service`](#service)
-* [`source`](#source)
-* [`zone`](#zone)
+* [`action`](#-firewalld_rich_rule--action)
+* [`audit`](#-firewalld_rich_rule--audit)
+* [`dest`](#-firewalld_rich_rule--dest)
+* [`family`](#-firewalld_rich_rule--family)
+* [`forward_port`](#-firewalld_rich_rule--forward_port)
+* [`icmp_block`](#-firewalld_rich_rule--icmp_block)
+* [`icmp_type`](#-firewalld_rich_rule--icmp_type)
+* [`log`](#-firewalld_rich_rule--log)
+* [`masquerade`](#-firewalld_rich_rule--masquerade)
+* [`name`](#-firewalld_rich_rule--name)
+* [`policy`](#-firewalld_rich_rule--policy)
+* [`port`](#-firewalld_rich_rule--port)
+* [`priority`](#-firewalld_rich_rule--priority)
+* [`protocol`](#-firewalld_rich_rule--protocol)
+* [`provider`](#-firewalld_rich_rule--provider)
+* [`raw_rule`](#-firewalld_rich_rule--raw_rule)
+* [`service`](#-firewalld_rich_rule--service)
+* [`source`](#-firewalld_rich_rule--source)
+* [`zone`](#-firewalld_rich_rule--zone)
 
-##### <a name="action"></a>`action`
+##### <a name="-firewalld_rich_rule--action"></a>`action`
 
 
-##### <a name="audit"></a>`audit`
+##### <a name="-firewalld_rich_rule--audit"></a>`audit`
 
 doc
 
-##### <a name="dest"></a>`dest`
+##### <a name="-firewalld_rich_rule--dest"></a>`dest`
 
 Specify destination address, this can be a string of the IP address or a hash containing other options
 
-##### <a name="family"></a>`family`
+##### <a name="-firewalld_rich_rule--family"></a>`family`
 
 Valid values: `ipv4`, `ipv6`
 
@@ -1170,66 +1049,70 @@ IP family, one of ipv4 or ipv6, defauts to ipv4
 
 Default value: `ipv4`
 
-##### <a name="forward_port"></a>`forward_port`
+##### <a name="-firewalld_rich_rule--forward_port"></a>`forward_port`
 
 Specify the element as forward-port
 
-##### <a name="icmp_block"></a>`icmp_block`
+##### <a name="-firewalld_rich_rule--icmp_block"></a>`icmp_block`
 
 Specify the element as an icmp-block
 
-##### <a name="icmp_type"></a>`icmp_type`
+##### <a name="-firewalld_rich_rule--icmp_type"></a>`icmp_type`
 
 Specify the element as an icmp-type
 
-##### <a name="log"></a>`log`
+##### <a name="-firewalld_rich_rule--log"></a>`log`
 
 doc
 
-##### <a name="masquerade"></a>`masquerade`
+##### <a name="-firewalld_rich_rule--masquerade"></a>`masquerade`
 
 Specify the element as masquerade
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_rich_rule--name"></a>`name`
 
 namevar
 
 Name of the rule resource in Puppet
 
-##### <a name="policy"></a>`policy`
+##### <a name="-firewalld_rich_rule--policy"></a>`policy`
 
 Name of the policy to attach the rich rule to, exactly one of zone and policy must be supplied
 
 Default value: `unset`
 
-##### <a name="port"></a>`port`
+##### <a name="-firewalld_rich_rule--port"></a>`port`
 
 Specify the element as a port
 
-##### <a name="protocol"></a>`protocol`
+##### <a name="-firewalld_rich_rule--priority"></a>`priority`
+
+Rule priority, it can be in the range of -32768 to 32767
+
+##### <a name="-firewalld_rich_rule--protocol"></a>`protocol`
 
 Specify the element as a protocol
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_rich_rule--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_rich_rule` resource. You will seldom need to specify this --- Puppet
 will usually discover the appropriate provider for your platform.
 
-##### <a name="raw_rule"></a>`raw_rule`
+##### <a name="-firewalld_rich_rule--raw_rule"></a>`raw_rule`
 
 Manage the entire rule as one string - this is used
 internally by firwalld_zone and firewalld_policy to handle
 pruning of rules
 
-##### <a name="service"></a>`service`
+##### <a name="-firewalld_rich_rule--service"></a>`service`
 
 Specify the element as a service
 
-##### <a name="source"></a>`source`
+##### <a name="-firewalld_rich_rule--source"></a>`source`
 
 Specify source address, this can be a string of the IP address or a hash containing other options
 
-##### <a name="zone"></a>`zone`
+##### <a name="-firewalld_rich_rule--zone"></a>`zone`
 
 Name of the zone to attach the rich rule to, exactly one of zone and policy must be supplied
 
@@ -1273,34 +1156,34 @@ Default value: `present`
 
 The following parameters are available in the `firewalld_service` type.
 
-* [`name`](#name)
-* [`policy`](#policy)
-* [`provider`](#provider)
-* [`service`](#service)
-* [`zone`](#zone)
+* [`name`](#-firewalld_service--name)
+* [`policy`](#-firewalld_service--policy)
+* [`provider`](#-firewalld_service--provider)
+* [`service`](#-firewalld_service--service)
+* [`zone`](#-firewalld_service--zone)
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_service--name"></a>`name`
 
 namevar
 
 Name of the service resource in Puppet
 
-##### <a name="policy"></a>`policy`
+##### <a name="-firewalld_service--policy"></a>`policy`
 
 Name of the policy to which you want to add the service, exactly one of zone and policy must be supplied
 
 Default value: `unset`
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_service--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_service` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
 
-##### <a name="service"></a>`service`
+##### <a name="-firewalld_service--service"></a>`service`
 
 Name of the service to add
 
-##### <a name="zone"></a>`zone`
+##### <a name="-firewalld_service--zone"></a>`zone`
 
 Name of the zone to which you want to add the service, exactly one of zone and policy must be supplied
 
@@ -1315,18 +1198,19 @@ not work, and will generate an error. This is a limitation of firewalld itself, 
 
 #### Examples
 
-##### Create a zone called `restricted`
+##### Create a zone called `restricted` allowing only `echo-request` icmp types
 
 ```puppet
 firewalld_zone { 'restricted':
-  ensure           => present,
-  target           => '%%REJECT%%',
-  interfaces       => [],
-  sources          => [],
-  purge_rich_rules => true,
-  purge_services   => true,
-  purge_ports      => true,
-  icmp_blocks      => 'router-advertisement'
+  ensure               => present,
+  target               => '%%REJECT%%',
+  interfaces           => [],
+  sources              => [],
+  purge_rich_rules     => true,
+  purge_services       => true,
+  purge_ports          => true,
+  icmp_blocks          => 'echo-request'
+  icmp_block_inversion => true,
 }
 ```
 
@@ -1342,6 +1226,12 @@ The basic property that the resource should be in.
 
 Default value: `present`
 
+##### `icmp_block_inversion`
+
+Valid values: `true`, `false`
+
+Can be set to true or false, specifies whether to set icmp_block_inversion from the zone
+
 ##### `icmp_blocks`
 
 Specify the icmp-blocks for the zone. Can be a single string specifying one icmp type,
@@ -1353,27 +1243,27 @@ Specify the interfaces for the zone
 
 ##### `masquerade`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Can be set to true or false, specifies whether to add or remove masquerading from the zone
 
 ##### `purge_ports`
 
-Valid values: ``false``, ``true``
+Valid values: `false`, `true`
 
 When set to true any ports associated with this zone
 that are not managed by Puppet will be removed.
 
 ##### `purge_rich_rules`
 
-Valid values: ``false``, ``true``
+Valid values: `false`, `true`
 
 When set to true any rich_rules associated with this zone
 that are not managed by Puppet will be removed.
 
 ##### `purge_services`
 
-Valid values: ``false``, ``true``
+Valid values: `false`, `true`
 
 When set to true any services associated with this zone
 that are not managed by Puppet will be removed.
@@ -1390,38 +1280,38 @@ Specify the target for the zone
 
 The following parameters are available in the `firewalld_zone` type.
 
-* [`description`](#description)
-* [`name`](#name)
-* [`provider`](#provider)
-* [`short`](#short)
-* [`zone`](#zone)
+* [`description`](#-firewalld_zone--description)
+* [`name`](#-firewalld_zone--name)
+* [`provider`](#-firewalld_zone--provider)
+* [`short`](#-firewalld_zone--short)
+* [`zone`](#-firewalld_zone--zone)
 
-##### <a name="description"></a>`description`
+##### <a name="-firewalld_zone--description"></a>`description`
 
 Description of the zone to add
 
-##### <a name="name"></a>`name`
+##### <a name="-firewalld_zone--name"></a>`name`
 
 namevar
 
 Name of the rule resource in Puppet
 
-##### <a name="provider"></a>`provider`
+##### <a name="-firewalld_zone--provider"></a>`provider`
 
 The specific backend to use for this `firewalld_zone` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
 
-##### <a name="short"></a>`short`
+##### <a name="-firewalld_zone--short"></a>`short`
 
 Short description of the zone to add
 
-##### <a name="zone"></a>`zone`
+##### <a name="-firewalld_zone--zone"></a>`zone`
 
 Name of the zone
 
 ## Functions
 
-### <a name="firewalldsafe_filename"></a>`firewalld::safe_filename`
+### <a name="firewalld--safe_filename"></a>`firewalld::safe_filename`
 
 Type: Puppet Language
 
@@ -1498,12 +1388,16 @@ The String to process
 
 ##### `options`
 
-Data type: `Struct[
+Data type:
+
+```puppet
+Struct[
     {
       'replacement_string' => Pattern[/^[\w-]+$/],
       'file_extension'     => Optional[String[1]]
     }
-  ]`
+  ]
+```
 
 Various processing options
 

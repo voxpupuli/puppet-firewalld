@@ -17,21 +17,29 @@ describe 'firewalld' do
   # it { pp catalogue.resources }
 
   context 'with defaults for all parameters' do
-    it { is_expected.to contain_class('firewalld') }
+    context 'supported operating systems' do
+      on_supported_os.each do |os, facts|
+        context "on #{os}" do
+          let(:facts) { facts.merge({ firewalld_version: '0.5.0' }) }
 
-    it {
-      is_expected.to contain_package('firewalld').
-        with_ensure('installed').
-        that_notifies('Service[firewalld]')
-    }
+          it { is_expected.to contain_class('firewalld') }
 
-    it {
-      is_expected.to contain_service('firewalld').
-        with_ensure('running').
-        with_enable(true)
-    }
+          it {
+            is_expected.to contain_package('firewalld').
+              with_ensure('installed').
+              that_notifies('Service[firewalld]')
+          }
 
-    it { is_expected.not_to contain_augeas('firewalld::firewallbackend') }
+          it {
+            is_expected.to contain_service('firewalld').
+              with_ensure('running').
+              with_enable(true)
+          }
+
+          it { is_expected.not_to contain_augeas('firewalld::firewallbackend') }
+        end
+      end
+    end
   end
 
   context 'when defining a default zone' do

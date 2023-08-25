@@ -22,8 +22,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
 
   ensurable do
     defaultto(:purged)
-    newvalue(:purgable) do
-    end
+    newvalue(:purgable)
     newvalue(:purged) do
       true
     end

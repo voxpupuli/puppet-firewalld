@@ -9,7 +9,7 @@ describe 'firewalld_version' do
     Process.stubs(:uid).returns(0)
     Facter::Core::Execution.stubs(:exec).with('uname -s').returns('Linux')
     Facter::Util::Resolution.stubs(:which).with('firewall-offline-cmd').returns('/usr/bin/firewall-offline-cmd')
-    Facter::Core::Execution.stubs(:execute).with('/usr/bin/firewall-offline-cmd --version', on_fail: :failed).returns(firewalld_version)
+    Facter::Core::Execution.stubs(:execute).with('/usr/bin/firewall-offline-cmd --version', on_fail: :failed).returns(firewalld_version.dup)
   end
 
   let(:python_args) do

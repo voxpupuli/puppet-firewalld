@@ -2,6 +2,8 @@
 
 require 'spec_helper_acceptance'
 
+UNSUPPORTED_PLATFORMS = %w[windows Darwin].freeze
+
 describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) do
   # This is a VERY MINIMAL test
   #
@@ -20,10 +22,9 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
             class ssh_test {
               firewalld_service{ 'test_sshd': zone => 'test' }
 
-  # TODO: Switch this when the defined type gets deprecated
-              firewalld::custom_service{ 'test_sshd':
+              firewalld_custom_service{ 'test_sshd':
                 description => 'Test SSH Access',
-                port        => [{ 'port' => '22', 'protocol' => 'tcp' }]
+                ports       => [{ 'port' => '22', 'protocol' => 'tcp' }]
               }
             }
 
@@ -54,7 +55,7 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
             <<-EOM
               firewalld_custom_service{ 'test_thing':
                 description      => 'Random service test',
-                ports            => ['1234/tcp', { 'port' => '1234', 'protocol' => 'udp' }],
+                ports            => [{ 'port' => '1234', 'protocol' => 'udp' }],
                 protocols        => ['ip', 'smp'],
                 modules          => ['nf_conntrack_tftp', 'nf_conntrack_snmp'],
                 ipv4_destination => '1.2.3.4/23',
@@ -122,7 +123,7 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
             <<-EOM
               firewalld_custom_service{ 'test_thing':
                 short => 'Short test',
-                ports => ['1235/tcp', { 'port' => '1236', 'protocol' => 'tcp' }],
+                ports => [{ 'port' => '1236', 'protocol' => 'tcp' }],
               }
             EOM
           end
@@ -173,7 +174,7 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
             firewalld_custom_service{ 'dhcp':
               short            => 'DHCP Override',
               description      => 'The DHCP Defaults are Silly',
-              ports            => ['1234/tcp', { 'port' => '1234', 'protocol' => 'udp' }],
+              ports            => [{ 'port' => '1234', 'protocol' => 'udp' }],
               protocols        => ['ip', 'smp'],
               modules          => ['nf_conntrack_tftp', 'nf_conntrack_snmp'],
               ipv4_destination => '1.2.3.4/23',
@@ -247,7 +248,7 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
     context 'disable firewalld' do
       it 'returns a fact when firewalld is not running' do
         on(host, 'puppet resource service firewalld ensure=stopped')
-        expect(pfact_on(host, 'firewalld_version')).to match(%r{^\d})
+        expect(fact_on(host, 'firewalld_version')).to match(%r{^\d})
       end
     end
   end

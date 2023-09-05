@@ -55,7 +55,7 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
             <<-EOM
               firewalld_custom_service{ 'test_thing':
                 description      => 'Random service test',
-                ports            => [{ 'port' => '1234', 'protocol' => 'udp' }],
+                ports            => [{ 'port' => '1234', 'protocol' => 'tcp' }, { 'port' => '1234', 'protocol' => 'udp' }],
                 protocols        => ['ip', 'smp'],
                 modules          => ['nf_conntrack_tftp', 'nf_conntrack_snmp'],
                 ipv4_destination => '1.2.3.4/23',
@@ -150,7 +150,7 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
             end
 
             it 'has the proper ports' do
-              expect(on(host, 'firewall-cmd --permanent --service=test_thing --get-ports').output.strip).to eq('1235/tcp 1236/tcp')
+              expect(on(host, 'firewall-cmd --permanent --service=test_thing --get-ports').output.strip).to eq('1236/tcp')
             end
 
             it 'has no protocols' do

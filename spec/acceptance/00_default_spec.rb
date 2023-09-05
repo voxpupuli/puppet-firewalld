@@ -29,11 +29,12 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
             }
 
             firewalld_zone{ 'test':
-              ensure           => 'present',
-              purge_rich_rules => true,
-              purge_services   => true,
-              purge_ports      => true,
-              target           => 'DROP'
+              ensure               => 'present',
+              purge_rich_rules     => true,
+              purge_services       => true,
+              purge_ports          => true,
+              target               => 'DROP',
+              icmp_block_inversion => true,
             }
 
             class other_service {

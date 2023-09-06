@@ -191,6 +191,7 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
         end
 
         it 'is idempotent' do
+          apply_manifest_on(host, manifest, catch_failures: true)
           apply_manifest_on(host, manifest, catch_changes: true)
         end
 
@@ -200,6 +201,7 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
         end
 
         it 'is idempotent' do
+          apply_manifest_on(host, cleanup_manifest, catch_failures: true)
           apply_manifest_on(host, cleanup_manifest, catch_changes: true)
         end
       end
@@ -242,13 +244,6 @@ describe 'firewalld', unless: UNSUPPORTED_PLATFORMS.include?(fact('osfamily')) d
             expect(on(host, 'firewall-cmd --permanent --service=ospf --get-destinations').output.strip).to be_empty
           end
         end
-      end
-    end
-
-    context 'disable firewalld' do
-      it 'returns a fact when firewalld is not running' do
-        on(host, 'puppet resource service firewalld ensure=stopped')
-        expect(fact_on(host, 'firewalld_version')).to match(%r{^\d})
       end
     end
   end

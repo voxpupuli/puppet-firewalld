@@ -31,7 +31,6 @@ describe provider_class do
         resource.expects(:[]).with(:sources).returns(nil).at_least_once
         resource.expects(:[]).with(:interfaces).returns(['eth0']).at_least_once
         resource.expects(:[]).with(:icmp_blocks).returns(nil).at_least_once
-        resource.expects(:[]).with(:icmp_block_inversion).returns(false).at_least_once
         resource.expects(:[]).with(:description).returns(nil).at_least_once
         resource.expects(:[]).with(:short).returns('little description').at_least_once
         provider.expects(:execute_firewall_cmd).with(['--list-interfaces'])
@@ -51,7 +50,6 @@ describe provider_class do
         resource.expects(:[]).with(:sources).returns(nil).at_least_once
         resource.expects(:[]).with(:interfaces).returns(['eth0']).at_least_once
         resource.expects(:[]).with(:icmp_blocks).returns(nil).at_least_once
-        resource.expects(:[]).with(:icmp_block_inversion).returns(false).at_least_once
         resource.expects(:[]).with(:description).returns(nil).at_least_once
         resource.expects(:[]).with(:short).returns('little description').at_least_once
         provider.expects(:execute_firewall_cmd).with(['--list-interfaces'])

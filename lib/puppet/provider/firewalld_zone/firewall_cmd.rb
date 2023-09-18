@@ -23,7 +23,6 @@ Puppet::Type.type(:firewalld_zone).provide(
     self.sources = (@resource[:sources]) if @resource[:sources]
     self.interfaces = @resource[:interfaces]
     self.icmp_blocks = (@resource[:icmp_blocks]) if @resource[:icmp_blocks]
-    self.icmp_block_inversion = (@resource[:icmp_block_inversion]) if @resource[:icmp_block_inversion]
     self.description = (@resource[:description]) if @resource[:description]
     self.short = (@resource[:short]) if @resource[:short]
   end
@@ -153,25 +152,6 @@ Puppet::Type.type(:firewalld_zone).provide(
       set_blocks.each do |block|
         execute_firewall_cmd(['--add-icmp-block', block])
       end
-    end
-  end
-
-  def icmp_block_inversion
-    if execute_firewall_cmd(['--query-icmp-block-inversion'], @resource[:name]).chomp == 'no'
-      :false
-    else
-      :true
-    end
-  end
-
-  def icmp_block_inversion=(bool)
-    case bool
-    when :true
-      debug("adding icmp block inversion for zone #{@resource[:name]}")
-      execute_firewall_cmd(['--add-icmp-block-inversion'], @resource[:name])
-    when :false
-      debug("removing icmp block inversion for zone #{@resource[:name]}")
-      execute_firewall_cmd(['--remove-icmp-block-inversion'], @resource[:name])
     end
   end
 

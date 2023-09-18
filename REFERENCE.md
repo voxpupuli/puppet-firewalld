@@ -1198,7 +1198,7 @@ not work, and will generate an error. This is a limitation of firewalld itself, 
 
 #### Examples
 
-##### Create a zone called `restricted` allowing only `echo-request` icmp types
+##### Create a zone called `restricted`
 
 ```puppet
 firewalld_zone { 'restricted':
@@ -1209,8 +1209,7 @@ firewalld_zone { 'restricted':
   purge_rich_rules     => true,
   purge_services       => true,
   purge_ports          => true,
-  icmp_blocks          => 'echo-request'
-  icmp_block_inversion => true,
+  icmp_blocks          => 'router-advertisement'
 }
 ```
 
@@ -1225,12 +1224,6 @@ Valid values: `present`, `absent`
 The basic property that the resource should be in.
 
 Default value: `present`
-
-##### `icmp_block_inversion`
-
-Valid values: `true`, `false`
-
-Can be set to true or false, specifies whether to set icmp_block_inversion from the zone
 
 ##### `icmp_blocks`
 

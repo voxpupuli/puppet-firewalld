@@ -1232,6 +1232,8 @@ Valid values: `true`, `false`
 
 Can be set to true or false, specifies whether to set icmp_block_inversion from the zone
 
+Default value: `false`
+
 ##### `icmp_blocks`
 
 Specify the icmp-blocks for the zone. Can be a single string specifying one icmp type,

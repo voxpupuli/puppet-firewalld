@@ -93,9 +93,9 @@ Puppet::Type.type(:firewalld_zone).provide(
   def masquerade=(bool)
     case bool
     when :true
-      execute_firewall_cmd(['--add-masquerade'])
+      execute_firewall_cmd(['--add-masquerade'], @resource[:name])
     when :false
-      execute_firewall_cmd(['--remove-masquerade'])
+      execute_firewall_cmd(['--remove-masquerade'], @resource[:name])
     end
   end
 
@@ -112,17 +112,13 @@ Puppet::Type.type(:firewalld_zone).provide(
     case new_icmp_blocks
     when Array
       get_icmp_blocks.each do |remove_block|
-        unless new_icmp_blocks.include?(remove_block)
-          debug("removing block #{remove_block} from zone #{@resource[:name]}")
-          remove_blocks.push(remove_block)
-        end
+        remove_blocks.push(remove_block) unless new_icmp_blocks.include?(remove_block)
       end
 
       new_icmp_blocks.each do |block|
         raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!' unless block.is_a?(String)
 
         if icmp_types.include?(block)
-          debug("adding block #{block} to zone #{@resource[:name]}")
           set_blocks.push(block)
         else
           valid_types = icmp_types.join(', ')
@@ -131,11 +127,9 @@ Puppet::Type.type(:firewalld_zone).provide(
       end
     when String
       get_icmp_blocks.reject { |x| x == new_icmp_blocks }.each do |remove_block|
-        debug("removing block #{remove_block} from zone #{@resource[:name]}")
         remove_blocks.push(remove_block)
       end
       if icmp_types.include?(new_icmp_blocks)
-        debug("adding block #{new_icmp_blocks} to zone #{@resource[:name]}")
         set_blocks.push(new_icmp_blocks)
       else
         valid_types = icmp_types.join(', ')
@@ -144,23 +138,28 @@ Puppet::Type.type(:firewalld_zone).provide(
     else
       raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'
     end
-    unless remove_blocks.empty? # should this list the zone explicitly
+
+    # rubocop:disable Style/GuardClause
+    unless remove_blocks.empty?
       remove_blocks.each do |block|
-        execute_firewall_cmd(['--remove-icmp-block', block])
+        debug("removing block #{remove_block} from zone #{@resource[:name]}")
+        execute_firewall_cmd(['--remove-icmp-block', block], @resource[:name])
       end
     end
-    unless set_blocks.empty? # rubocop:disable Style/GuardClause
+    unless set_blocks.empty?
       set_blocks.each do |block|
-        execute_firewall_cmd(['--add-icmp-block', block])
+        debug("adding block #{new_icmp_blocks} to zone #{@resource[:name]}")
+        execute_firewall_cmd(['--add-icmp-block', block], @resource[:name])
       end
     end
+    # rubocop:enable Style/GuardClause
   end
 
   def icmp_block_inversion
-    if execute_firewall_cmd(['--query-icmp-block-inversion'], @resource[:name]).chomp == 'no'
-      :false
-    else
+    if execute_firewall_cmd(['--query-icmp-block-inversion'], @resource[:name], true, false).chomp == 'yes'
       :true
+    else
+      :false
     end
   end
 
@@ -175,7 +174,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     end
   end
 
-  # rubocop:disable Style/AccessorMethodName
+  # rubocop:disable Naming/AccessorMethodName
   def get_rules
     perm = execute_firewall_cmd(['--list-rich-rules']).split(%r{\n})
     curr = execute_firewall_cmd(['--list-rich-rules'], @resource[:name], false).split(%r{\n})
@@ -200,13 +199,13 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def get_icmp_blocks
-    execute_firewall_cmd(['--list-icmp-blocks']).split.sort
+    execute_firewall_cmd(['--list-icmp-blocks'], @resource[:name]).split.sort
   end
 
   def get_icmp_types
     execute_firewall_cmd(['--get-icmptypes'], nil).split
   end
-  # rubocop:enable Style/AccessorMethodName
+  # rubocop:enable Naming/AccessorMethodName
 
   def description
     execute_firewall_cmd(['--get-description'], @resource[:name], true, false)

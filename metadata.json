@@ -1,6 +1,6 @@
 {
   "name": "puppet-firewalld",
-  "version": "4.5.2-rc0",
+  "version": "5.0.0-rc0",
   "author": "Vox Pupuli",
   "summary": "Configure firewalld zones, services, and rich rules and direct config",
   "license": "Apache-2.0",
@@ -23,21 +23,30 @@
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
         "7",
-        "8"
+        "8",
+        "9"
+      ]
+    },
+    {
+      "operatingsystem": "AlmaLinux",
+      "operatingsystemrelease": [
+        "8",
+        "9"
       ]
     },
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
         "7",
-        "8"
+        "8",
+        "9"
       ]
     },
     {
-      "operatingsystem": "OracleLinux",
+      "operatingsystem": "Rocky",
       "operatingsystemrelease": [
-        "7",
-        "8"
+        "8",
+        "9"
       ]
     },
     {

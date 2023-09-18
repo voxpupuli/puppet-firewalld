@@ -218,7 +218,7 @@ Puppet::Type.type(:firewalld_custom_service).provide(
     return @destinations if @destinations
 
     @destinations = execute_firewall_cmd(['--service', @resource[:name], '--get-destinations'], nil).strip.split(%r{\s+})
-    @destinations = @destinations.map { |x| x.split(':', 2) }.to_h
+    @destinations = @destinations.to_h { |x| x.split(':', 2) }
 
     @destinations
   end

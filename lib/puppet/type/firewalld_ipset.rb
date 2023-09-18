@@ -13,10 +13,10 @@ Puppet::Type.newtype(:firewalld_ipset) do
         }
   "
 
-  def po2?(n)
+  def po2?(num)
     # A power of two value in binary representation only has one "1" in it.
     # ie. 01 10, 100 etc. are all power of 2.
-    n.to_s(2).count('1') == 1
+    num.to_s(2).count('1') == 1
   end
 
   ensurable do

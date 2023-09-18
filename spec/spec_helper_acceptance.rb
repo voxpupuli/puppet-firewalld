@@ -1,34 +1,10 @@
 # frozen_string_literal: true
 
-require 'beaker-rspec'
-require 'tmpdir'
-require 'yaml'
-require 'simp/beaker_helpers'
-include Simp::BeakerHelpers
+# Managed by modulesync - DO NOT EDIT
+# https://voxpupuli.org/docs/updating-files-managed-with-modulesync/
 
-UNSUPPORTED_PLATFORMS = %w[windows Darwin].freeze
+require 'voxpupuli/acceptance/spec_helper_acceptance'
 
-unless ENV['BEAKER_provision'] == 'no'
-  hosts.each do |host|
-    # Install Puppet
-    if host.is_pe?
-      install_pe
-    else
-      install_puppet
-    end
-  end
-end
+configure_beaker(modules: :metadata)
 
-RSpec.configure do |c|
-  # ensure that environment OS is ready on each host
-  fix_errata_on hosts
-
-  # Readable test descriptions
-  c.formatter = :documentation
-
-  # Configure all nodes in nodeset
-  c.before :suite do
-    # Install modules and dependencies from spec/fixtures/modules
-    copy_fixture_modules_to(hosts)
-  end
-end
+Dir['./spec/support/acceptance/**/*.rb'].sort.each { |f| require f }

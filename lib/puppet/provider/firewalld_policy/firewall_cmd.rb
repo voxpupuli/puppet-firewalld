@@ -43,7 +43,7 @@ Puppet::Type.type(:firewalld_policy).provide(
     policy_target
   end
 
-  def target=(_t)
+  def target=(__target)
     debug("Setting target for policy #{@resource[:name]} to #{@resource[:target]}")
     execute_firewall_cmd_policy(['--set-target', @resource[:target]])
   end

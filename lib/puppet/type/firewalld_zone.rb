@@ -128,6 +128,7 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   newproperty(:icmp_block_inversion) do
     desc 'Can be set to true or false, specifies whether to set icmp_block_inversion from the zone'
+    defaultto :false
     newvalue(:true)
     newvalue(:false)
   end

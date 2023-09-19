@@ -19,6 +19,7 @@ Puppet::Type.newtype(:firewalld_direct_rule) do
   "
 
   ensurable do
+    desc 'Manage the state of this type.'
     defaultvalues
     defaultto :present
   end

@@ -21,6 +21,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
   "
 
   ensurable do
+    desc 'Manage the state of this type.'
     defaultto(:purged)
     newvalue(:purgable)
     newvalue(:purged) do
@@ -43,6 +44,7 @@ Puppet::Type.newtype(:firewalld_direct_purge) do
   end
 
   newparam(:purge) do
+    desc 'If unmaintained definitions should be purged'
     newvalues(:true, :false)
     defaultto(:true)
   end

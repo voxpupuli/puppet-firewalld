@@ -20,6 +20,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
   end
 
   ensurable do
+    desc 'Manage the state of this type.'
     defaultvalues
     defaultto :present
   end

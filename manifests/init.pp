@@ -17,6 +17,106 @@
 #      install_gui => true,
 #    }
 #
+# === Documentation
+#
+# @param package_ensure
+#   Define if firewalld-package should be handled
+#   Defaults to `installed` but can be set to `absent` or `latest`
+#
+# @param package
+#   The name of the `firewalld`-package
+#
+# @param service_enable
+#   If the `firewalld`-service should be enabled
+#
+# @param service_ensure
+#   The state that the `firewalld`-service should be in
+#
+# @param install_gui
+#   Set to true to install the `firewall-config`-package
+#
+# @param config_package
+#   The name of package that is installed if `install_gui` is true
+#
+# @param zones
+#   A hash of `firewalld_zone`-definitions
+#
+# @param policies
+#   A hash of `firewalld_policy`-definitions
+#
+# @param ports
+#   A hash of `firewalld_port`-definitions
+#
+# @param services
+#   A hash of `firewalld_service`-definitions
+#
+# @param rich_rules
+#   A hash of `firewalld_rich_rule`-definitions
+#
+# @param custom_services
+#   A hash of `firewalld_custom_service`-definitions
+#
+# @param ipsets
+#   A hash of `firewalld_ipset`-definitions
+#
+# @param direct_rules
+#   A hash of `firewalld_direct_rule`-definitions
+#
+# @param direct_chains
+#   A hash of `firewalld_direct_chain`-definitions
+#
+# @param direct_passthroughs
+#   A hash of `firewalld_direct_passthrough`-definitions
+#
+# @param purge_direct_rules
+#   If direct_rules not maintained by puppet should be removed
+#
+# @param purge_direct_chains
+#   If direct_chains not maintained by puppet should be removed
+#
+# @param purge_direct_passthroughs
+#   If direct_passthroughs not maintained by puppet should be removed
+#
+# @param purge_unknown_ipsets
+#   If ipsets not maintained by puppet should be removed
+#
+# @param default_zone
+#   Optional string to set the default zone
+#
+# @param log_denied
+#   Sets the mode for which denied packets should be logged
+#
+# @param cleanup_on_exit
+#   Controls the `CleanupOnExit` setting of `firewalld`
+#
+# @param zone_drifting
+#   Controls the `AllowZoneDrifting` setting of `firewalld`
+#   should be `no` because zone-drifting is deprecated
+#
+# @param minimal_mark
+#   Controls the `MinimalMark` setting of `firewalld`
+#
+# @param lockdown
+#   Controls the `Lockdown` setting of `firewalld`
+#
+# @param individual_calls
+#   Controls the `IndividualCalls` setting of `firewalld`
+#
+# @param ipv6_rpfilter
+#   Controls the `IPv6_rpfilter` setting of `firewalld`
+#
+# @param firewall_backend
+#   Chooses the backend between `iptables` (deprecated) or `nftables`
+#
+# @param default_service_zone
+#   Sets the default zone for `firewalld_service`
+#
+# @param default_port_zone
+#   Sets the default zone for `firewalld_port`
+#
+# @param default_port_protocol
+#   Sets the default protocol for `firewalld_port`
+#
 # === Authors
 #
 # Craig Dunn <craig@craigdunn.org>

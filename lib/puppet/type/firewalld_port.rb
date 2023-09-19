@@ -20,6 +20,8 @@ Puppet::Type.newtype(:firewalld_port) do
   "
 
   ensurable do
+    desc 'Manage the state of this type.'
+
     newvalue(:present) do
       @resource.provider.create
     end

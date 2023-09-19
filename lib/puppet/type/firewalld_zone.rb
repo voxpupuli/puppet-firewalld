@@ -34,6 +34,7 @@ Puppet::Type.newtype(:firewalld_zone) do
   DOC
 
   ensurable do
+    desc 'Manage the state of this type.'
     defaultvalues
     defaultto :present
   end

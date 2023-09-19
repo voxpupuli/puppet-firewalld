@@ -22,6 +22,7 @@ Puppet::Type.newtype(:firewalld_direct_passthrough) do
   "
 
   ensurable do
+    desc 'Manage the state of this type.'
     defaultvalues
     defaultto :present
   end

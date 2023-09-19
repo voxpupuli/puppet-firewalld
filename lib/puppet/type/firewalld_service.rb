@@ -24,6 +24,8 @@ Puppet::Type.newtype(:firewalld_service) do
   DOC
 
   ensurable do
+    desc 'Manage the state of this type.'
+
     newvalue(:present) do
       @resource.provider.create
     end

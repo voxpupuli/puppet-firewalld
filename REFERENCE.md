@@ -49,6 +49,8 @@ firewalld_rich_rule types
      install_gui => true,
    }
 
+=== Documentation
+
 === Authors
 
 Craig Dunn <craig@craigdunn.org>
@@ -63,10 +65,10 @@ The following parameters are available in the `firewalld` class:
 
 * [`package_ensure`](#-firewalld--package_ensure)
 * [`package`](#-firewalld--package)
-* [`service_ensure`](#-firewalld--service_ensure)
-* [`config_package`](#-firewalld--config_package)
-* [`install_gui`](#-firewalld--install_gui)
 * [`service_enable`](#-firewalld--service_enable)
+* [`service_ensure`](#-firewalld--service_ensure)
+* [`install_gui`](#-firewalld--install_gui)
+* [`config_package`](#-firewalld--config_package)
 * [`zones`](#-firewalld--zones)
 * [`policies`](#-firewalld--policies)
 * [`ports`](#-firewalld--ports)
@@ -98,7 +100,8 @@ The following parameters are available in the `firewalld` class:
 
 Data type: `Enum['present','absent','latest','installed']`
 
-
+Define if firewalld-package should be handled
+Defaults to `installed` but can be set to `absent` or `latest`
 
 Default value: `'installed'`
 
@@ -106,47 +109,47 @@ Default value: `'installed'`
 
 Data type: `String`
 
-
+The name of the `firewalld`-package
 
 Default value: `'firewalld'`
-
-##### <a name="-firewalld--service_ensure"></a>`service_ensure`
-
-Data type: `Stdlib::Ensure::Service`
-
-
-
-Default value: `'running'`
-
-##### <a name="-firewalld--config_package"></a>`config_package`
-
-Data type: `String`
-
-
-
-Default value: `'firewall-config'`
-
-##### <a name="-firewalld--install_gui"></a>`install_gui`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
 
 ##### <a name="-firewalld--service_enable"></a>`service_enable`
 
 Data type: `Boolean`
 
-
+If the `firewalld`-service should be enabled
 
 Default value: `true`
+
+##### <a name="-firewalld--service_ensure"></a>`service_ensure`
+
+Data type: `Stdlib::Ensure::Service`
+
+The state that the `firewalld`-service should be in
+
+Default value: `'running'`
+
+##### <a name="-firewalld--install_gui"></a>`install_gui`
+
+Data type: `Boolean`
+
+Set to true to install the `firewall-config`-package
+
+Default value: `false`
+
+##### <a name="-firewalld--config_package"></a>`config_package`
+
+Data type: `String`
+
+The name of package that is installed if `install_gui` is true
+
+Default value: `'firewall-config'`
 
 ##### <a name="-firewalld--zones"></a>`zones`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_zone`-definitions
 
 Default value: `{}`
 
@@ -154,7 +157,7 @@ Default value: `{}`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_policy`-definitions
 
 Default value: `{}`
 
@@ -162,7 +165,7 @@ Default value: `{}`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_port`-definitions
 
 Default value: `{}`
 
@@ -170,7 +173,7 @@ Default value: `{}`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_service`-definitions
 
 Default value: `{}`
 
@@ -178,7 +181,7 @@ Default value: `{}`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_rich_rule`-definitions
 
 Default value: `{}`
 
@@ -186,7 +189,7 @@ Default value: `{}`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_custom_service`-definitions
 
 Default value: `{}`
 
@@ -194,7 +197,7 @@ Default value: `{}`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_ipset`-definitions
 
 Default value: `{}`
 
@@ -202,7 +205,7 @@ Default value: `{}`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_direct_rule`-definitions
 
 Default value: `{}`
 
@@ -210,7 +213,7 @@ Default value: `{}`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_direct_chain`-definitions
 
 Default value: `{}`
 
@@ -218,7 +221,7 @@ Default value: `{}`
 
 Data type: `Hash`
 
-
+A hash of `firewalld_direct_passthrough`-definitions
 
 Default value: `{}`
 
@@ -226,7 +229,7 @@ Default value: `{}`
 
 Data type: `Boolean`
 
-
+If direct_rules not maintained by puppet should be removed
 
 Default value: `false`
 
@@ -234,7 +237,7 @@ Default value: `false`
 
 Data type: `Boolean`
 
-
+If direct_chains not maintained by puppet should be removed
 
 Default value: `false`
 
@@ -242,7 +245,7 @@ Default value: `false`
 
 Data type: `Boolean`
 
-
+If direct_passthroughs not maintained by puppet should be removed
 
 Default value: `false`
 
@@ -250,7 +253,7 @@ Default value: `false`
 
 Data type: `Boolean`
 
-
+If ipsets not maintained by puppet should be removed
 
 Default value: `false`
 
@@ -258,7 +261,7 @@ Default value: `false`
 
 Data type: `Optional[String]`
 
-
+Optional string to set the default zone
 
 Default value: `undef`
 
@@ -266,7 +269,7 @@ Default value: `undef`
 
 Data type: `Optional[Enum['off','all','unicast','broadcast','multicast']]`
 
-
+Sets the mode for which denied packets should be logged
 
 Default value: `undef`
 
@@ -274,7 +277,7 @@ Default value: `undef`
 
 Data type: `Optional[Enum['yes', 'no']]`
 
-
+Controls the `CleanupOnExit` setting of `firewalld`
 
 Default value: `undef`
 
@@ -282,7 +285,8 @@ Default value: `undef`
 
 Data type: `Optional[Enum['yes', 'no']]`
 
-
+Controls the `AllowZoneDrifting` setting of `firewalld`
+should be `no` because zone-drifting is deprecated
 
 Default value: `undef`
 
@@ -290,7 +294,7 @@ Default value: `undef`
 
 Data type: `Optional[Integer]`
 
-
+Controls the `MinimalMark` setting of `firewalld`
 
 Default value: `undef`
 
@@ -298,7 +302,7 @@ Default value: `undef`
 
 Data type: `Optional[Enum['yes', 'no']]`
 
-
+Controls the `Lockdown` setting of `firewalld`
 
 Default value: `undef`
 
@@ -306,7 +310,7 @@ Default value: `undef`
 
 Data type: `Optional[Enum['yes', 'no']]`
 
-
+Controls the `IndividualCalls` setting of `firewalld`
 
 Default value: `undef`
 
@@ -314,7 +318,7 @@ Default value: `undef`
 
 Data type: `Optional[Enum['yes', 'no']]`
 
-
+Controls the `IPv6_rpfilter` setting of `firewalld`
 
 Default value: `undef`
 
@@ -322,7 +326,7 @@ Default value: `undef`
 
 Data type: `Optional[Enum['iptables', 'nftables']]`
 
-
+Chooses the backend between `iptables` (deprecated) or `nftables`
 
 Default value: `undef`
 
@@ -330,7 +334,7 @@ Default value: `undef`
 
 Data type: `Optional[String]`
 
-
+Sets the default zone for `firewalld_service`
 
 Default value: `undef`
 
@@ -338,7 +342,7 @@ Default value: `undef`
 
 Data type: `Optional[String]`
 
-
+Sets the default zone for `firewalld_port`
 
 Default value: `undef`
 
@@ -346,7 +350,7 @@ Default value: `undef`
 
 Data type: `Optional[String]`
 
-
+Sets the default protocol for `firewalld_port`
 
 Default value: `undef`
 
@@ -390,7 +394,7 @@ The long description of the service
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 
@@ -475,7 +479,7 @@ The following properties are available in the `firewalld_direct_chain` type.
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 
@@ -539,7 +543,7 @@ The following properties are available in the `firewalld_direct_passthrough` typ
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 
@@ -588,7 +592,7 @@ The following properties are available in the `firewalld_direct_purge` type.
 
 Valid values: `purgable`, `purged`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `purged`
 
@@ -617,6 +621,7 @@ will usually discover the appropriate provider for your platform.
 
 Valid values: `true`, `false`
 
+If unmaintained definitions should be purged
 
 Default value: `true`
 
@@ -643,7 +648,7 @@ The following properties are available in the `firewalld_direct_rule` type.
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 
@@ -714,7 +719,7 @@ The following properties are available in the `firewalld_ipset` type.
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 
@@ -822,7 +827,7 @@ Specify the egress zones for the policy as an array of strings
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 
@@ -930,7 +935,7 @@ The following properties are available in the `firewalld_port` type.
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 
@@ -1002,7 +1007,7 @@ The following properties are available in the `firewalld_rich_rule` type.
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 
@@ -1032,6 +1037,7 @@ The following parameters are available in the `firewalld_rich_rule` type.
 
 ##### <a name="-firewalld_rich_rule--action"></a>`action`
 
+Specify the action fo this rule
 
 ##### <a name="-firewalld_rich_rule--audit"></a>`audit`
 
@@ -1148,7 +1154,7 @@ The following properties are available in the `firewalld_service` type.
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 
@@ -1222,7 +1228,7 @@ The following properties are available in the `firewalld_zone` type.
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Manage the state of this type.
 
 Default value: `present`
 

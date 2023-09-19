@@ -18,6 +18,7 @@ Puppet::Type.newtype(:firewalld_custom_service) do
   DOC
 
   ensurable do
+    desc 'Manage the state of this type.'
     defaultvalues
     defaultto(:present)
   end

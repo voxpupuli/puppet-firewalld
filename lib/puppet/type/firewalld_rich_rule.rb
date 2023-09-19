@@ -20,6 +20,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   "
 
   ensurable do
+    desc 'Manage the state of this type.'
     defaultvalues
     defaultto :present
   end
@@ -121,6 +122,7 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
   end
 
   newparam(:action) do
+    desc 'Specify the action fo this rule'
     def _validate_action(value)
       raise Puppet::Error, "Authorized action values are `accept`, `reject`, `drop` or `mark`, got #{value}" unless %w[accept drop reject mark].include? value
     end

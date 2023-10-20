@@ -4,13 +4,46 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
-## [v4.5.1](https://github.com/voxpupuli/puppet-firewalld/tree/v4.5.1) (2022-08-15)
+## [v6.0.0](https://github.com/voxpupuli/puppet-firewalld/tree/v6.0.0) (2023-10-20)
 
-[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.5.0...v4.5.1)
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.5.1...v6.0.0)
+
+**Breaking changes:**
+
+- modulesync 7.0.0 and modernization [\#347](https://github.com/voxpupuli/puppet-firewalld/pull/347) ([jcpunk](https://github.com/jcpunk))
+- Drop Puppet 6 support [\#339](https://github.com/voxpupuli/puppet-firewalld/pull/339) ([bastelfreak](https://github.com/bastelfreak))
+- Add support for icmp-block-inversion [\#330](https://github.com/voxpupuli/puppet-firewalld/pull/330) ([jcpunk](https://github.com/jcpunk))
+
+**Implemented enhancements:**
+
+- Support ICMP block inversion in zones [\#270](https://github.com/voxpupuli/puppet-firewalld/issues/270)
+- add missing documentation [\#353](https://github.com/voxpupuli/puppet-firewalld/pull/353) ([sircubbi](https://github.com/sircubbi))
+- Run rubocop linter [\#350](https://github.com/voxpupuli/puppet-firewalld/pull/350) ([jcpunk](https://github.com/jcpunk))
+- Add Puppet 8 support [\#343](https://github.com/voxpupuli/puppet-firewalld/pull/343) ([bastelfreak](https://github.com/bastelfreak))
+- puppetlabs/stdlib: Allow 9.x [\#342](https://github.com/voxpupuli/puppet-firewalld/pull/342) ([bastelfreak](https://github.com/bastelfreak))
+- Add individual\_calls parameter to set IndividualCalls [\#337](https://github.com/voxpupuli/puppet-firewalld/pull/337) ([Griphon](https://github.com/Griphon))
+- Add support SLES 15 [\#334](https://github.com/voxpupuli/puppet-firewalld/pull/334) ([marek130](https://github.com/marek130))
+- Add methods instances and prefetch for firewalld\_service [\#332](https://github.com/voxpupuli/puppet-firewalld/pull/332) ([marek130](https://github.com/marek130))
+- Add support for policy objects [\#324](https://github.com/voxpupuli/puppet-firewalld/pull/324) ([qha](https://github.com/qha))
+- Set default\_zone and log\_denied when firewalld is offline [\#317](https://github.com/voxpupuli/puppet-firewalld/pull/317) ([jameslikeslinux](https://github.com/jameslikeslinux))
+- enable eb-family for all relevant firewalld-types [\#299](https://github.com/voxpupuli/puppet-firewalld/pull/299) ([sircubbi](https://github.com/sircubbi))
+- Support specifying priority on rich rules [\#296](https://github.com/voxpupuli/puppet-firewalld/pull/296) ([ananace](https://github.com/ananace))
 
 **Fixed bugs:**
 
-- Simple version bump to fix internal release issues
+- Fixup ICMP tests and set defaults [\#352](https://github.com/voxpupuli/puppet-firewalld/pull/352) ([jcpunk](https://github.com/jcpunk))
+- Fix rich rule with typed action [\#329](https://github.com/voxpupuli/puppet-firewalld/pull/329) ([bmagistro](https://github.com/bmagistro))
+
+**Closed issues:**
+
+- Upgrade compatibility to \<8.0.0? [\#333](https://github.com/voxpupuli/puppet-firewalld/issues/333)
+- support for policy objects missing [\#316](https://github.com/voxpupuli/puppet-firewalld/issues/316)
+- missing support for bridges/eb-familiy [\#298](https://github.com/voxpupuli/puppet-firewalld/issues/298)
+- Cannot create rich rule with reject type [\#193](https://github.com/voxpupuli/puppet-firewalld/issues/193)
+
+## [v4.5.1](https://github.com/voxpupuli/puppet-firewalld/tree/v4.5.1) (2022-08-15)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.5.0...v4.5.1)
 
 ## [v4.5.0](https://github.com/voxpupuli/puppet-firewalld/tree/v4.5.0) (2022-08-15)
 

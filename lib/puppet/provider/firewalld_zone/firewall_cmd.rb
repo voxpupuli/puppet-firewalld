@@ -104,55 +104,26 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def icmp_blocks=(new_icmp_blocks)
-    set_blocks = []
-    remove_blocks = []
+    new_icmp_blocks = new_icmp_blocks.split(%r{\s+}) if new_icmp_blocks.is_a?(String)
+    raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!' unless new_icmp_blocks.is_a?(Array)
 
     icmp_types = get_icmp_types
+    invalid_blocks = new_icmp_blocks - icmp_types
+    raise Puppet::Error, "Invalid ICMP types: '#{invalid_blocks.join(', ')}'! Valid types are: '#{icmp_types.join(', ')}'" unless invalid_blocks.empty?
 
-    case new_icmp_blocks
-    when Array
-      get_icmp_blocks.each do |remove_block|
-        remove_blocks.push(remove_block) unless new_icmp_blocks.include?(remove_block)
-      end
+    icmp_blocks = get_icmp_blocks
 
-      new_icmp_blocks.each do |block|
-        raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!' unless block.is_a?(String)
+    set_blocks = new_icmp_blocks - icmp_blocks
+    remove_blocks = icmp_blocks - new_icmp_blocks
 
-        if icmp_types.include?(block)
-          set_blocks.push(block)
-        else
-          valid_types = icmp_types.join(', ')
-          raise Puppet::Error, "#{block} is not a valid icmp type on this system! Valid types are: #{valid_types}"
-        end
-      end
-    when String
-      get_icmp_blocks.reject { |x| x == new_icmp_blocks }.each do |remove_block|
-        remove_blocks.push(remove_block)
-      end
-      if icmp_types.include?(new_icmp_blocks)
-        set_blocks.push(new_icmp_blocks)
-      else
-        valid_types = icmp_types.join(', ')
-        raise Puppet::Error, "#{new_icmp_blocks} is not a valid icmp type on this system! Valid types are: #{valid_types}"
-      end
-    else
-      raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'
+    Array(remove_blocks).each do |block|
+      debug("removing block #{block} from zone #{@resource[:name]}")
+      execute_firewall_cmd(['--remove-icmp-block', block], @resource[:name])
     end
-
-    # rubocop:disable Style/GuardClause
-    unless remove_blocks.empty?
-      remove_blocks.each do |block|
-        debug("removing block #{remove_block} from zone #{@resource[:name]}")
-        execute_firewall_cmd(['--remove-icmp-block', block], @resource[:name])
-      end
+    Array(set_blocks).each do |block|
+      debug("adding block #{new_icmp_blocks} to zone #{@resource[:name]}")
+      execute_firewall_cmd(['--add-icmp-block', block], @resource[:name])
     end
-    unless set_blocks.empty?
-      set_blocks.each do |block|
-        debug("adding block #{new_icmp_blocks} to zone #{@resource[:name]}")
-        execute_firewall_cmd(['--add-icmp-block', block], @resource[:name])
-      end
-    end
-    # rubocop:enable Style/GuardClause
   end
 
   def icmp_block_inversion

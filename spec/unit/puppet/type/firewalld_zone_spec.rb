@@ -7,6 +7,56 @@ describe Puppet::Type.type(:firewalld_zone) do
     Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
   end
 
+  let(:icmptypes) do
+    %w[
+      address-unreachable
+      bad-header
+      beyond-scope
+      communication-prohibited
+      destination-unreachable
+      echo-reply
+      echo-request
+      failed-policy
+      fragmentation-needed
+      host-precedence-violation
+      host-prohibited
+      host-redirect
+      host-unknown
+      host-unreachable
+      ip-header-bad
+      neighbour-advertisement
+      neighbour-solicitation
+      network-prohibited
+      network-redirect
+      network-unknown
+      network-unreachable
+      no-route
+      packet-too-big
+      parameter-problem
+      port-unreachable
+      precedence-cutoff
+      protocol-unreachable
+      redirect
+      reject-route
+      required-option-missing
+      router-advertisement
+      router-solicitation
+      source-quench
+      source-route-failed
+      time-exceeded
+      timestamp-reply
+      timestamp-request
+      tos-host-redirect
+      tos-host-unreachable
+      tos-network-redirect
+      tos-network-unreachable
+      ttl-zero-during-reassembly
+      ttl-zero-during-transit
+      unknown-header-type
+      unknown-option
+    ]
+  end
+
   describe 'type' do
     context 'with no params' do
       describe 'when validating attributes' do
@@ -186,19 +236,21 @@ describe Puppet::Type.type(:firewalld_zone) do
       end
 
       it 'lists icmp types' do
-        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns('echo-reply echo-request val')
-        expect(provider.get_icmp_types).to eq(%w[echo-reply echo-request val])
+        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns('echo-reply echo-request')
+        expect(provider.get_icmp_types).to eq(%w[echo-reply echo-request])
       end
 
       it 'gets icmp_blocks' do
-        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'restricted').returns('val')
-        expect(provider.icmp_blocks).to eq(['val'])
+        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'restricted').returns('redirect router-advertisement')
+        expect(provider.icmp_blocks).to eq(%w[redirect router-advertisement])
       end
 
       it 'sets icmp_blocks' do
-        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'restricted').returns('val')
-        provider.expects(:execute_firewall_cmd).with(['--add-icmp-blocks', 'redirect,router-advertisment'], 'restricted')
-        provider.expects(:execute_firewall_cmd).with(['--remove-icmp-block', 'val'], 'public')
+        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'restricted').returns('redirect router-advertisement')
+        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns(icmptypes.join(' '))
+        provider.expects(:execute_firewall_cmd).with(['--add-icmp-block', 'bad-header'], 'restricted')
+        provider.expects(:execute_firewall_cmd).with(['--remove-icmp-block', 'router-advertisement'], 'restricted')
+        provider.icmp_blocks = %w[redirect bad-header]
       end
     end
 
@@ -268,11 +320,11 @@ describe Puppet::Type.type(:firewalld_zone) do
         expect(provider.icmp_block_inversion).to eq(:true)
       end
 
-      it 'sets icmp blocks' do
-        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'public').returns('val')
+      it 'sets icmp_blocks' do
+        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'public').returns('')
+        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns(icmptypes.join(' '))
         provider.expects(:execute_firewall_cmd).with(['--add-icmp-block', 'echo-request'], 'public')
-        provider.expects(:execute_firewall_cmd).with(['--remove-icmp-block', 'val'], 'public')
-        provider.create
+        provider.icmp_blocks = %w[echo-request]
       end
     end
 
@@ -290,10 +342,8 @@ describe Puppet::Type.type(:firewalld_zone) do
       end
 
       it 'errors out' do
-        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns('echo-reply echo-request val')
-        expect(provider.get_icmp_types).to eq(%w[echo-reply echo-request val])
-        expect(provider).to raise_error(Puppet::Error, %r{is not a valid icmp type})
-        provider.create
+        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns(icmptypes.join(' '))
+        expect { provider.icmp_blocks = 'banana' }.to raise_error(Puppet::Error, %r{Invalid ICMP types})
       end
     end
   end

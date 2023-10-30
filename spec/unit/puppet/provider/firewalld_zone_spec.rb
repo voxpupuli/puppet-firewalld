@@ -29,6 +29,7 @@ describe provider_class do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:target).returns(nil).at_least_once
         resource.expects(:[]).with(:sources).returns(nil).at_least_once
+        resource.expects(:[]).with(:protocols).returns(nil).at_least_once
         resource.expects(:[]).with(:interfaces).returns(['eth0']).at_least_once
         resource.expects(:[]).with(:icmp_blocks).returns(nil).at_least_once
         resource.expects(:[]).with(:icmp_block_inversion).returns(false).at_least_once
@@ -49,6 +50,7 @@ describe provider_class do
         resource.expects(:[]).with(:name).returns('white').at_least_once
         resource.expects(:[]).with(:target).returns(nil).at_least_once
         resource.expects(:[]).with(:sources).returns(nil).at_least_once
+        resource.expects(:[]).with(:protocols).returns(nil).at_least_once
         resource.expects(:[]).with(:interfaces).returns(['eth0']).at_least_once
         resource.expects(:[]).with(:icmp_blocks).returns(nil).at_least_once
         resource.expects(:[]).with(:icmp_block_inversion).returns(false).at_least_once

@@ -1255,6 +1255,10 @@ Valid values: `true`, `false`
 
 Can be set to true or false, specifies whether to add or remove masquerading from the zone
 
+##### `protocols`
+
+Specify the protocols for the zone
+
 ##### `purge_ports`
 
 Valid values: `false`, `true`

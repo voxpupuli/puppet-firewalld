@@ -21,6 +21,7 @@ Puppet::Type.type(:firewalld_zone).provide(
 
     self.target = (@resource[:target]) if @resource[:target]
     self.sources = (@resource[:sources]) if @resource[:sources]
+    self.protocols = (@resource[:protocols]) if @resource[:protocols]
     self.interfaces = @resource[:interfaces]
     self.icmp_blocks = (@resource[:icmp_blocks]) if @resource[:icmp_blocks]
     self.icmp_block_inversion = (@resource[:icmp_block_inversion]) if @resource[:icmp_block_inversion]
@@ -79,6 +80,23 @@ Puppet::Type.type(:firewalld_zone).provide(
     (cur_sources - new_sources).each do |extraneous_source|
       debug("Removing source '#{extraneous_source}' from zone #{@resource[:name]}")
       execute_firewall_cmd(['--remove-source', extraneous_source])
+    end
+  end
+
+  def protocols
+    execute_firewall_cmd(['--list-protocols']).chomp.split.sort || []
+  end
+
+  def protocols=(new_protocols)
+    new_protocols ||= []
+    cur_protocols = protocols
+    (new_protocols - cur_protocols).each do |p|
+      debug("Adding protocol '#{p}' to zone #{@resource[:name]}")
+      execute_firewall_cmd(['--add-protocol', p])
+    end
+    (cur_protocols - new_protocols).each do |p|
+      debug("Removing protocol '#{p}' from zone #{@resource[:name]}")
+      execute_firewall_cmd(['--remove-protocol', p])
     end
   end
 

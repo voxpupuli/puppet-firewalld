@@ -127,6 +127,7 @@ firewalld::zones:
 * `target`: Specify the target of the zone.
 * `interfaces`: An array of interfaces for this zone
 * `sources`: An array of sources for the zone
+* `protocols`: An array of protocols for the zone
 * `icmp_blocks`: An array of ICMP blocks for the zone
 * `masquerade`: If set to `true` or `false` specifies whether or not
   to add masquerading to the zone

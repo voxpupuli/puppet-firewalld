@@ -68,7 +68,7 @@ describe Puppet::Type.type(:firewalld_zone) do
           end
         end
 
-        %i[target icmp_blocks icmp_block_inversion sources purge_rich_rules purge_services purge_ports].each do |param|
+        %i[target icmp_blocks icmp_block_inversion sources protocols purge_rich_rules purge_services purge_ports].each do |param|
           it "has a #{param} parameter" do
             expect(described_class.attrtype(param)).to eq(:property)
           end
@@ -143,6 +143,7 @@ describe Puppet::Type.type(:firewalld_zone) do
           interfaces: ['eth0'],
           icmp_blocks: %w[redirect router-advertisment],
           icmp_block_inversion: true,
+          protocols: %w[icmp igmp],
           sources: ['192.168.2.2', '10.72.1.100']
         )
       end
@@ -185,6 +186,10 @@ describe Puppet::Type.type(:firewalld_zone) do
         provider.expects(:sources).returns([])
         provider.expects(:execute_firewall_cmd).with(['--add-source', '192.168.2.2'])
         provider.expects(:execute_firewall_cmd).with(['--add-source', '10.72.1.100'])
+
+        provider.expects(:protocols).returns([])
+        provider.expects(:execute_firewall_cmd).with(['--add-protocol', 'icmp'])
+        provider.expects(:execute_firewall_cmd).with(['--add-protocol', 'igmp'])
 
         provider.expects(:interfaces).returns([])
         provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
@@ -238,6 +243,18 @@ describe Puppet::Type.type(:firewalld_zone) do
       it 'lists icmp types' do
         provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns('echo-reply echo-request')
         expect(provider.get_icmp_types).to eq(%w[echo-reply echo-request])
+      end
+
+      it 'gets protocols' do
+        provider.expects(:execute_firewall_cmd).with(['--list-protocols']).returns('val val')
+        expect(provider.protocols).to eq(%w[val val])
+      end
+
+      it 'sets protocols' do
+        provider.expects(:protocols).returns(['valx'])
+        provider.expects(:execute_firewall_cmd).with(['--add-protocol', 'valy'])
+        provider.expects(:execute_firewall_cmd).with(['--remove-protocol', 'valx'])
+        provider.protocols = ['valy']
       end
 
       it 'gets icmp_blocks' do

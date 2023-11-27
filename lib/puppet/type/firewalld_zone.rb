@@ -28,7 +28,7 @@ Puppet::Type.newtype(:firewalld_zone) do
         purge_rich_rules     => true,
         purge_services       => true,
         purge_ports          => true,
-        icmp_blocks          => 'echo-request'
+        icmp_blocks          => 'echo-request',
         icmp_block_inversion => true,
       }
   DOC

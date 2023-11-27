@@ -1215,7 +1215,7 @@ firewalld_zone { 'restricted':
   purge_rich_rules     => true,
   purge_services       => true,
   purge_ports          => true,
-  icmp_blocks          => 'echo-request'
+  icmp_blocks          => 'echo-request',
   icmp_block_inversion => true,
 }
 ```

@@ -8,6 +8,7 @@ Puppet::Type.newtype(:firewalld_zone) do
   #
   Puppet::Type.type(:firewalld_rich_rule)
   Puppet::Type.type(:firewalld_service)
+  Puppet::Type.type(:firewalld_ipset)
   Puppet::Type.type(:firewalld_port)
 
   desc <<-DOC
@@ -209,6 +210,17 @@ Puppet::Type.newtype(:firewalld_zone) do
 
   autorequire(:service) do
     ['firewalld']
+  end
+
+  autorequire(:firewalld_ipset) do
+    ipsets = []
+    if self[:sources]
+      (self[:sources]).each do |source|
+        ipsets.append(source.sub('ipset:', '')) if source.start_with?('ipset:')
+      end
+    end
+
+    ipsets
   end
 
   def purge_resource(res_type)

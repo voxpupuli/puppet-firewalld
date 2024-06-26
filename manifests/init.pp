@@ -182,14 +182,9 @@ class firewalld (
     enable => $service_enable,
   }
 
-  # create ports
-  Firewalld_port {
-    zone      => $default_port_zone,
-    protocol  => $default_port_protocol,
-  }
-
-  $ports.each |String $key, Hash $attrs| {
-    firewalld_port { $key:
+  #...ipsets
+  $ipsets.each | String $key, Hash $attrs| {
+    firewalld_ipset { $key:
       *       => $attrs,
     }
   }
@@ -208,22 +203,21 @@ class firewalld (
     }
   }
 
+  # create ports
+  Firewalld_port {
+    zone      => $default_port_zone,
+    protocol  => $default_port_protocol,
+  }
+
+  $ports.each |String $key, Hash $attrs| {
+    firewalld_port { $key:
+      *       => $attrs,
+    }
+  }
+
   #...services
   Firewalld_service {
     zone      => $default_service_zone,
-  }
-
-  $services.each | String $key, Hash $attrs| {
-    firewalld_service { $key:
-      *       => $attrs,
-    }
-  }
-
-  #...rich rules
-  $rich_rules.each | String $key, Hash $attrs| {
-    firewalld_rich_rule { $key:
-      *       => $attrs,
-    }
   }
 
   #...custom services
@@ -233,9 +227,8 @@ class firewalld (
     }
   }
 
-  #...ipsets
-  $ipsets.each | String $key, Hash $attrs| {
-    firewalld_ipset { $key:
+  $services.each | String $key, Hash $attrs| {
+    firewalld_service { $key:
       *       => $attrs,
     }
   }
@@ -255,6 +248,13 @@ class firewalld (
 
   $direct_passthroughs.each | String $key, Hash $attrs| {
     firewalld_direct_passthrough { $key:
+      *       => $attrs,
+    }
+  }
+
+  #...rich rules
+  $rich_rules.each | String $key, Hash $attrs| {
+    firewalld_rich_rule { $key:
       *       => $attrs,
     }
   }

@@ -165,15 +165,19 @@ Puppet::Type.newtype(:firewalld_rich_rule) do
     self[:policy] if self[:policy] != :unset
   end
 
-  autorequire(:ipset) do
+  autorequire(:firewalld_ipset) do
     self[:source]['ipset'] if self[:source].is_a?(Hash)
   end
 
-  autorequire(:ipset) do
+  autorequire(:firewalld_ipset) do
     self[:dest]['ipset'] if self[:dest].is_a?(Hash)
   end
 
   autorequire(:service) do
     ['firewalld']
+  end
+
+  autorequire(:firewalld_custom_service) do
+    self[:service]&.gsub(%r{[^\w-]}, '_')
   end
 end

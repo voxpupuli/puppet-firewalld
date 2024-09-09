@@ -178,8 +178,9 @@ class firewalld (
   }
 
   service { 'firewalld':
-    ensure => $service_ensure,
-    enable => $service_enable,
+    ensure  => $service_ensure,
+    enable  => $service_enable,
+    require => Package[$package],
   }
 
   #...ipsets

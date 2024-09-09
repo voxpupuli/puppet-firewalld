@@ -33,7 +33,8 @@ describe 'firewalld' do
           it {
             is_expected.to contain_service('firewalld').
               with_ensure('running').
-              with_enable(true)
+              with_enable(true).
+              with_require('Package[firewalld]')
           }
 
           it { is_expected.not_to contain_augeas('firewalld::firewallbackend') }

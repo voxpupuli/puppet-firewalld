@@ -61,7 +61,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
     end
 
     munge do |value|
-      value.gsub(/(\b(?:\d{1,3}\.){3}\d{1,3})\/32\b|(\b[0-9a-fA-F:]+)\/128\b/) { |m| $1 || $2 }
+      value.gsub(%r{(?<ipv4>\b(?:\d{1,3}\.){3}\d{1,3})/32\b|(?<ipv6>\b[0-9a-fA-F:]+)/128\b}) { Regexp.last_match[:ipv4] || Regexp.last_match[:ipv6] }
     end
   end
 

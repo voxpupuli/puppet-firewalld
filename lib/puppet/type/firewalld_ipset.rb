@@ -61,7 +61,7 @@ Puppet::Type.newtype(:firewalld_ipset) do
     end
 
     munge do |value|
-      value.gsub('/32', '')
+      value.gsub(/(\b(?:\d{1,3}\.){3}\d{1,3})\/32\b|(\b[0-9a-fA-F:]+)\/128\b/) { |m| $1 || $2 }
     end
   end
 

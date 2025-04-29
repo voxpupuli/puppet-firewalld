@@ -186,21 +186,21 @@ class firewalld (
   #...ipsets
   $ipsets.each | String $key, Hash $attrs| {
     firewalld_ipset { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 
   #...zones
   $zones.each | String $key, Hash $attrs| {
     firewalld_zone { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 
   #...policies
   $policies.each | String $key, Hash $attrs| {
     firewalld_policy { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 
@@ -212,7 +212,7 @@ class firewalld (
 
   $ports.each |String $key, Hash $attrs| {
     firewalld_port { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 
@@ -224,39 +224,39 @@ class firewalld (
   #...custom services
   $custom_services.each | String $key, Hash $attrs| {
     firewalld_custom_service { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 
   $services.each | String $key, Hash $attrs| {
     firewalld_service { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 
   # Direct rules, chains and passthroughs
   $direct_chains.each | String $key, Hash $attrs| {
     firewalld_direct_chain { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 
   $direct_rules.each | String $key, Hash $attrs| {
     firewalld_direct_rule { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 
   $direct_passthroughs.each | String $key, Hash $attrs| {
     firewalld_direct_passthrough { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 
   #...rich rules
   $rich_rules.each | String $key, Hash $attrs| {
     firewalld_rich_rule { $key:
-      *       => $attrs,
+      * => $attrs,
     }
   }
 

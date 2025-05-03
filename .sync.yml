@@ -1,19 +1,6 @@
 ---
-.travis.yml:
-  secure: "S+FbvY0fDhzg5uPJZm/mkJCGTUuA2ps2Yay9pPrkjTuCqYcbhjm/NOhXPRWJDONo/3Zo7vQZey9PKcsdK3hznwlfkvB1Ghb/829655lZ2lwHZCoZfGURV/FB+ztjyVT2B/xOwisjz8OGQ8AECOX7l6SjUHzLZWZxpSUWYKTLOAyD+b08jR9eiQBshxjmhxzXl+shHXXRVnGo9TEjPMLXqKpwirNucKjHYdWcYcD+Z1Yfacu3O6Ry4PqCZ0VfRf+ahIbUcnriEke1IF6NU0VquyyaSw1nYrTAUW3bHeRTyAU3Uruh2O+lXRkt8UuxDhFs17JLbrb+0a8odr0mg6kdVowEuPYJSCMEUciyoi6ztHJiVceXK2rge5Yi0jw120wRK/cWxDImc8hUh9atGgE5VzMIzu3DJOcpslVSc+iffCPg3/EVol/Ekg9WVb4s1Vj7XFwjczXVaG7mJVF5HSg0JrP+xz1rTvVLvNaNVtZDvEYphscBBUt8ujqqmz4oICWSNa7wo1JLEd1qBwPk+tgmGr1EB3wvcU12KjKotswSjkG2uqNwKO7b9ETUMOzaIxo5dLOr5pUrV9LCDIBAzkeD8HqX6pNHJE1qhZJxLUWOVaDrQNBbJp6yY5xmkg5oNwykPAGKJXAuzTYlBjYBs7ss9RO/Wpn73ExnHEI9DX43rfo="
 spec/spec_helper.rb:
   mock_with: ':mocha'
 
 spec/spec_helper_acceptance.rb:
   unmanaged: false
-
-Gemfile:
-  optional:
-    ':test':
-      - gem: 'mocha'
-        version: '~> 1.10.0'
-
-.rubocop.yml:
-  default_configs:
-    Style/SymbolArray:
-      Enabled: false

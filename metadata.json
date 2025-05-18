@@ -63,6 +63,10 @@
     {
       "name": "puppetlabs/stdlib",
       "version_requirement": ">= 4.25.0 < 10.0.0"
+    },
+    {
+      "name": "puppetlabs/augeas_core",
+      "version_requirement": ">= 1.5.0 < 2.0.0"
     }
   ]
 }

@@ -4,3 +4,8 @@ spec/spec_helper.rb:
 
 spec/spec_helper_acceptance.rb:
   unmanaged: false
+
+Gemfile:
+  optional:
+    ':test':
+      - gem: 'mocha'

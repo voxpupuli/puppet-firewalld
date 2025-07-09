@@ -4,7 +4,37 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
-## [v5.0.0](https://github.com/voxpupuli/puppet-firewalld/tree/v5.0.0) (2023-11-03)
+## [v6.0.0](https://github.com/voxpupuli/puppet-firewalld/tree/v6.0.0) (2025-07-09)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v5.0.0...v6.0.0)
+
+**Implemented enhancements:**
+
+- Follow-up lint fixes for PR \#381 + upgrade beaker to v3 [\#382](https://github.com/voxpupuli/puppet-firewalld/pull/382) ([lyse-akjaer](https://github.com/lyse-akjaer))
+- metadata.json: Add OpenVox [\#380](https://github.com/voxpupuli/puppet-firewalld/pull/380) ([jstraw](https://github.com/jstraw))
+
+**Fixed bugs:**
+
+- Fixes missing IPv6 support in firewalld\_ipset [\#381](https://github.com/voxpupuli/puppet-firewalld/pull/381) ([lyse-akjaer](https://github.com/lyse-akjaer))
+- Add missing explicit require on Package [\#377](https://github.com/voxpupuli/puppet-firewalld/pull/377) ([jcpunk](https://github.com/jcpunk))
+- Fixes ordering for ipsets so that ipsets are defined before they are used [\#373](https://github.com/voxpupuli/puppet-firewalld/pull/373) ([jbirdman](https://github.com/jbirdman))
+- Try to fix ordering with ipsets [\#363](https://github.com/voxpupuli/puppet-firewalld/pull/363) ([jcpunk](https://github.com/jcpunk))
+
+**Closed issues:**
+
+- Missing require parameters [\#376](https://github.com/voxpupuli/puppet-firewalld/issues/376)
+- Server Error: no parameter named 'icmp\_block\_inversion' [\#365](https://github.com/voxpupuli/puppet-firewalld/issues/365)
+- firewalld\_zone doesn't autorequire consumed firewalld\_ipset elements [\#362](https://github.com/voxpupuli/puppet-firewalld/issues/362)
+- \[5.0.0\] icmp\_block\_inversion setting for zone is unkown. [\#359](https://github.com/voxpupuli/puppet-firewalld/issues/359)
+- Proposal: Archive this module [\#346](https://github.com/voxpupuli/puppet-firewalld/issues/346)
+- Dependency Problem - puppetlabs-stdlib [\#344](https://github.com/voxpupuli/puppet-firewalld/issues/344)
+- /32 is incorrectly stripped from IPv6 networks [\#287](https://github.com/voxpupuli/puppet-firewalld/issues/287)
+
+**Merged pull requests:**
+
+- Add puppetlabs/augeas\_core dependency [\#384](https://github.com/voxpupuli/puppet-firewalld/pull/384) ([TamesNU](https://github.com/TamesNU))
+
+## [v5.0.0](https://github.com/voxpupuli/puppet-firewalld/tree/v5.0.0) (2023-11-06)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v4.5.1...v5.0.0)
 
@@ -26,7 +56,7 @@ These should not affect the functionality of the module.
 - Add support SLES 15 [\#334](https://github.com/voxpupuli/puppet-firewalld/pull/334) ([marek130](https://github.com/marek130))
 - Add methods instances and prefetch for firewalld\_service [\#332](https://github.com/voxpupuli/puppet-firewalld/pull/332) ([marek130](https://github.com/marek130))
 - Add support for policy objects [\#324](https://github.com/voxpupuli/puppet-firewalld/pull/324) ([qha](https://github.com/qha))
-- Set default\_zone and log\_denied when firewalld is offline [\#317](https://github.com/voxpupuli/puppet-firewalld/pull/317) ([jameslikeslinux](https://github.com/jameslikeslinux))
+- Set default\_zone and log\_denied when firewalld is offline [\#317](https://github.com/voxpupuli/puppet-firewalld/pull/317) ([puppetjoy](https://github.com/puppetjoy))
 - enable eb-family for all relevant firewalld-types [\#299](https://github.com/voxpupuli/puppet-firewalld/pull/299) ([sircubbi](https://github.com/sircubbi))
 - Support specifying priority on rich rules [\#296](https://github.com/voxpupuli/puppet-firewalld/pull/296) ([ananace](https://github.com/ananace))
 

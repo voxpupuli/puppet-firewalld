@@ -9,9 +9,7 @@ describe provider_class do
   include REXML
 
   before do
-    # rubocop:disable RSpec/AnyInstance
-    provider.class.stubs(:execute_firewall_cmd).returns(Object.any_instance.stubs(exitstatus: 0))
-    # rubocop:enable RSpec/AnyInstance
+    allow_any_instance_of(provider_class).to receive(:execute_firewall_cmd).and_return(double(exitstatus: 0))
   end
 
   let(:provider) { resource.provider }
@@ -25,12 +23,12 @@ describe provider_class do
     end
 
     it 'creates the service' do
-      provider.expects(:execute_firewall_cmd).with(['--new-service', resource[:name]], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--new-service', resource[:name]], nil)
       provider.create
     end
 
     it 'retrieves and formats the system ports' do
-      provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--get-ports'], nil).returns('123/tcp 456/udp')
+      expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--get-ports'], nil).and_return('123/tcp 456/udp')
 
       expect(provider.ports).to eq([
                                      {
@@ -45,21 +43,21 @@ describe provider_class do
     end
 
     it 'retrieves and formats the system destinations' do
-      provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--get-destinations'], nil).returns('ipv4:1.2.3.4/23 ipv6:::1')
+      expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--get-destinations'], nil).and_return('ipv4:1.2.3.4/23 ipv6:::1')
 
       expect(provider.ipv4_destination).to eq('1.2.3.4/23')
       expect(provider.ipv6_destination).to eq('::1')
     end
 
     it 'exists when returned by the system' do
-      provider.expects(:execute_firewall_cmd).with(['--get-services'], nil).returns("#{resource[:name]} foo bar baz")
-      provider.expects(:execute_firewall_cmd).with(['--path-service', resource[:name]], nil).returns('/etc/foo_bar_baz.xml')
+      expect(provider).to receive(:execute_firewall_cmd).with(['--get-services'], nil).and_return("#{resource[:name]} foo bar baz")
+      expect(provider).to receive(:execute_firewall_cmd).with(['--path-service', resource[:name]], nil).and_return('/etc/foo_bar_baz.xml')
 
       expect(provider.exists?).to be true
     end
 
     it 'does not exist when not returned by the system' do
-      provider.expects(:execute_firewall_cmd).with(['--get-services'], nil).returns('foo bar baz')
+      expect(provider).to receive(:execute_firewall_cmd).with(['--get-services'], nil).and_return('foo bar baz')
 
       expect(provider.exists?).to be false
     end
@@ -74,13 +72,14 @@ describe provider_class do
     end
 
     it 'runs delete-service when it is not a builtin' do
-      provider.expects(:execute_firewall_cmd).with(['--delete-service', resource[:name]], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--delete-service', resource[:name]], nil)
       provider.destroy
     end
 
     it 'runs load-service-defaults when it is a builtin' do
-      provider.expects(:execute_firewall_cmd).with(['--delete-service', resource[:name]], nil).raises(Puppet::ExecutionFailure, 'nooooooooooooo')
-      provider.expects(:execute_firewall_cmd).with(['--load-service-default', resource[:name]], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--delete-service', resource[:name]], nil).and_raise(Puppet::ExecutionFailure, 'nooooooooooooo')
+      expect(provider).to receive(:execute_firewall_cmd).with(['--load-service-default', resource[:name]], nil)
+
       provider.destroy
     end
   end
@@ -107,29 +106,28 @@ describe provider_class do
     end
 
     it 'creates the service' do
-      provider.expects(:execute_firewall_cmd).with(['--new-service', resource[:name]], nil)
-
-      provider.expects(:short=).with(resource[:short])
-      provider.expects(:description=).with(resource[:description])
-      provider.expects(:ports).returns(true)
-      provider.expects(:ports=).with(resource[:ports])
-      provider.expects(:protocols).returns(true)
-      provider.expects(:protocols=).with(resource[:protocols])
-      provider.expects(:modules).returns(true)
-      provider.expects(:modules=).with(resource[:modules])
-      provider.expects(:ipv4_destination=).with(resource[:ipv4_destination])
-      provider.expects(:ipv6_destination=).with(resource[:ipv6_destination])
+      expect(provider).to receive(:execute_firewall_cmd).with(['--new-service', resource[:name]], nil)
+      expect(provider).to receive(:short=).with(resource[:short])
+      expect(provider).to receive(:description=).with(resource[:description])
+      expect(provider).to receive(:ports).and_return(true)
+      expect(provider).to receive(:ports=).with(resource[:ports])
+      expect(provider).to receive(:protocols).and_return(true)
+      expect(provider).to receive(:protocols=).with(resource[:protocols])
+      expect(provider).to receive(:modules).and_return(true)
+      expect(provider).to receive(:modules=).with(resource[:modules])
+      expect(provider).to receive(:ipv4_destination=).with(resource[:ipv4_destination])
+      expect(provider).to receive(:ipv6_destination=).with(resource[:ipv6_destination])
 
       provider.create
     end
 
     it 'sets the short description' do
-      provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--set-short', resource[:short]], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--set-short', resource[:short]], nil)
       provider.short = resource[:short]
     end
 
     it 'sets the full description' do
-      provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--set-description', resource[:description]], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--set-description', resource[:description]], nil)
       provider.description = resource[:description]
     end
 
@@ -141,7 +139,7 @@ describe provider_class do
           '345/udp',
           '456/tcp'
         ].each do |port|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--add-port', port], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-port', port], nil)
         end
 
         ports = []
@@ -156,7 +154,7 @@ describe provider_class do
           '345/udp',
           '456/tcp'
         ].each do |port|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--add-port', port], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-port', port], nil)
         end
 
         ports = [
@@ -169,7 +167,7 @@ describe provider_class do
           '789/udp',
           '8910/tcp'
         ].each do |port|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-port', port], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-port', port], nil)
         end
 
         provider.ports = resource[:ports]
@@ -181,7 +179,7 @@ describe provider_class do
           '234/udp',
           '456/tcp'
         ].each do |port|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--add-port', port], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-port', port], nil)
         end
 
         ports = [
@@ -193,7 +191,7 @@ describe provider_class do
         [
           '8910/tcp'
         ].each do |port|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-port', port], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-port', port], nil)
         end
 
         provider.ports = resource[:ports]
@@ -208,7 +206,7 @@ describe provider_class do
           baz
           dccp
         ].each do |protocol|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--add-protocol', protocol], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-protocol', protocol], nil)
         end
 
         protocols = []
@@ -223,7 +221,7 @@ describe provider_class do
           baz
           dccp
         ].each do |protocol|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--add-protocol', protocol], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-protocol', protocol], nil)
         end
 
         protocols = %w[
@@ -233,7 +231,7 @@ describe provider_class do
         provider.instance_variable_set('@property_hash', protocols: protocols)
 
         protocols.each do |protocol|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-protocol', protocol], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-protocol', protocol], nil)
         end
 
         provider.protocols = resource[:protocols]
@@ -245,7 +243,7 @@ describe provider_class do
           baz
           dccp
         ].each do |protocol|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--add-protocol', protocol], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-protocol', protocol], nil)
         end
 
         protocols = %w[
@@ -255,7 +253,7 @@ describe provider_class do
         provider.instance_variable_set('@property_hash', protocols: protocols)
 
         ['icmp'].each do |protocol|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-protocol', protocol], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-protocol', protocol], nil)
         end
 
         provider.protocols = resource[:protocols]
@@ -268,7 +266,7 @@ describe provider_class do
           nf_thingy
           nf_other_thingy
         ].each do |mod|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', mod], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', mod], nil)
         end
 
         modules = []
@@ -281,7 +279,7 @@ describe provider_class do
           nf_thingy
           nf_other_thingy
         ].each do |mod|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', mod], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', mod], nil)
         end
 
         modules = %w[
@@ -291,7 +289,7 @@ describe provider_class do
         provider.instance_variable_set('@property_hash', modules: modules)
 
         modules.each do |mod|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-module', mod], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-module', mod], nil)
         end
 
         provider.modules = resource[:modules]
@@ -301,7 +299,7 @@ describe provider_class do
         [
           'nf_other_thingy'
         ].each do |mod|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', mod], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', mod], nil)
         end
 
         modules = %w[
@@ -311,7 +309,7 @@ describe provider_class do
         provider.instance_variable_set('@property_hash', modules: modules)
 
         ['nf_bob'].each do |mod|
-          provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-module', mod], nil)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-module', mod], nil)
         end
 
         provider.modules = resource[:modules]
@@ -319,12 +317,12 @@ describe provider_class do
     end
 
     it 'sets the ipv4_destination' do
-      provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--set-destination', "ipv4:#{resource[:ipv4_destination]}"], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--set-destination', "ipv4:#{resource[:ipv4_destination]}"], nil)
       provider.ipv4_destination = resource[:ipv4_destination]
     end
 
     it 'sets the ipv6_destination' do
-      provider.expects(:execute_firewall_cmd).with(['--service', resource[:name], '--set-destination', "ipv6:#{resource[:ipv6_destination]}"], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--set-destination', "ipv6:#{resource[:ipv6_destination]}"], nil)
       provider.ipv6_destination = resource[:ipv6_destination]
     end
   end

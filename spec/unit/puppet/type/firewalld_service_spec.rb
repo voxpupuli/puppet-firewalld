@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'rspec/mocks'
+RSpec.configure { |c| c.mock_with :rspec }
 
 describe Puppet::Type.type(:firewalld_service) do
   before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
+    allow_any_instance_of(Puppet::Provider::Firewalld).to receive(:state).and_return(true)
   end
 
   context 'with no params' do

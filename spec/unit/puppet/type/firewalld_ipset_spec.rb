@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'rspec/mocks'
+RSpec.configure { |c| c.mock_with :rspec }
 
 describe Puppet::Type.type(:firewalld_ipset) do
   before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
+    allow_any_instance_of(Puppet::Provider::Firewalld).to receive(:state).and_return(true)
   end
 
   describe 'type' do
@@ -115,29 +117,29 @@ describe Puppet::Type.type(:firewalld_ipset) do
     end
 
     it 'creates' do
-      provider.expects(:execute_firewall_cmd).with(['--new-ipset=whitelist', '--type=hash:ip'], nil)
-      provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
-      provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=10.72.1.100'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--new-ipset=whitelist', '--type=hash:ip'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=10.72.1.100'], nil)
       provider.create
     end
 
     it 'removes' do
-      provider.expects(:execute_firewall_cmd).with(['--delete-ipset=whitelist'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--delete-ipset=whitelist'], nil)
       provider.destroy
     end
 
     it 'sets entries' do
-      provider.expects(:entries).returns([])
-      provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
-      provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=10.72.1.100'], nil)
+      expect(provider).to receive(:entries).and_return([])
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=10.72.1.100'], nil)
       provider.entries = ['192.168.2.2', '10.72.1.100']
     end
 
     it 'removes unconfigured entries' do
-      provider.expects(:entries).returns(['10.9.9.9', '10.8.8.8', '10.72.1.100'])
-      provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
-      provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.9.9.9'], nil)
-      provider.expects(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.8.8.8'], nil)
+      expect(provider).to receive(:entries).and_return(['10.9.9.9', '10.8.8.8', '10.72.1.100'])
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.9.9.9'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.8.8.8'], nil)
       provider.entries = ['192.168.2.2', '10.72.1.100']
     end
   end

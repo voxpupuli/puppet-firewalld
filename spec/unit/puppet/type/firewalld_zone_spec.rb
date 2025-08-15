@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'rspec/mocks'
+RSpec.configure { |c| c.mock_with :rspec }
 
 describe Puppet::Type.type(:firewalld_zone) do
   before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
+    allow_any_instance_of(Puppet::Provider::Firewalld).to receive(:state).and_return(true)
   end
 
   let(:icmptypes) do
@@ -93,44 +95,44 @@ describe Puppet::Type.type(:firewalld_zone) do
       end
 
       it 'checks if it exists' do
-        provider.expects(:execute_firewall_cmd).with(['--get-zones'], nil).returns('public restricted')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-zones'], nil).and_return('public restricted')
         expect(provider).to be_exists
       end
 
       it 'evalulates target' do
-        provider.expects(:execute_firewall_cmd).with(['--get-target']).returns('%%REJECT%%')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-target']).and_return('%%REJECT%%')
         expect(provider.target).to eq('%%REJECT%%')
       end
 
       it 'gets masquerading state as false when not set' do
-        provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'restricted', true, false).returns("no\n")
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-masquerade'], 'restricted', true, false).and_return("no\n")
         expect(provider.masquerade).to eq(:false)
       end
 
       it 'sets target' do
-        provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
         provider.target = '%%REJECT%%'
       end
 
       it 'gets interfaces' do
-        provider.expects(:execute_firewall_cmd).with(['--list-interfaces']).returns('')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-interfaces']).and_return('')
         provider.interfaces
       end
 
       it 'sets interfaces' do
-        provider.expects(:interfaces).returns(['eth1'])
-        provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
-        provider.expects(:execute_firewall_cmd).with(['--remove-interface', 'eth1'])
+        expect(provider).to receive(:interfaces).and_return(['eth1'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-interface', 'eth1'])
         provider.interfaces = ['eth0']
       end
 
       it 'creates' do
-        provider.expects(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
-        provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
-        provider.expects(:execute_firewall_cmd).with(['--remove-icmp-block-inversion'], 'restricted')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-icmp-block-inversion'], 'restricted')
 
-        provider.expects(:interfaces).returns([])
-        provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
+        expect(provider).to receive(:interfaces).and_return([])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
         provider.create
       end
     end
@@ -152,121 +154,121 @@ describe Puppet::Type.type(:firewalld_zone) do
       end
 
       it 'checks if it exists' do
-        provider.expects(:execute_firewall_cmd).with(['--get-zones'], nil).returns('public restricted')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-zones'], nil).and_return('public restricted')
         expect(provider).to be_exists
       end
 
       it 'checks if it doesnt exist' do
-        provider.expects(:execute_firewall_cmd).with(['--get-zones'], nil).returns('public private')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-zones'], nil).and_return('public private')
         expect(provider).not_to be_exists
       end
 
       it 'evalulates target' do
-        provider.expects(:execute_firewall_cmd).with(['--get-target']).returns('%%REJECT%%')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-target']).and_return('%%REJECT%%')
         expect(provider.target).to eq('%%REJECT%%')
       end
 
       it 'evalulates target correctly when not surrounded with %%' do
-        provider.expects(:execute_firewall_cmd).with(['--get-target']).returns('REJECT')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-target']).and_return('REJECT')
         expect(provider.target).to eq('%%REJECT%%')
       end
 
       it 'gets masquerading state as false when not set' do
-        provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'restricted', true, false).returns("no\n")
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-masquerade'], 'restricted', true, false).and_return("no\n")
         expect(provider.masquerade).to eq(:false)
       end
 
       it 'creates' do
-        provider.expects(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
-        provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
 
-        provider.expects(:icmp_blocks=).with(%w[redirect router-advertisment])
-        provider.expects(:icmp_block_inversion=).with(:true)
+        expect(provider).to receive(:icmp_blocks=).with(%w[redirect router-advertisment])
+        expect(provider).to receive(:icmp_block_inversion=).with(:true)
 
-        provider.expects(:sources).returns([])
-        provider.expects(:execute_firewall_cmd).with(['--add-source', '192.168.2.2'])
-        provider.expects(:execute_firewall_cmd).with(['--add-source', '10.72.1.100'])
+        expect(provider).to receive(:sources).and_return([])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-source', '192.168.2.2'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-source', '10.72.1.100'])
 
-        provider.expects(:protocols).returns([])
-        provider.expects(:execute_firewall_cmd).with(['--add-protocol', 'icmp'])
-        provider.expects(:execute_firewall_cmd).with(['--add-protocol', 'igmp'])
+        expect(provider).to receive(:protocols).and_return([])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-protocol', 'icmp'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-protocol', 'igmp'])
 
-        provider.expects(:interfaces).returns([])
-        provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
+        expect(provider).to receive(:interfaces).and_return([])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
         provider.create
       end
 
       it 'removes' do
-        provider.expects(:execute_firewall_cmd).with(['--delete-zone', 'restricted'], nil)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--delete-zone', 'restricted'], nil)
         provider.destroy
       end
 
       it 'sets target' do
-        provider.expects(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
         provider.target = '%%REJECT%%'
       end
 
       it 'gets interfaces' do
-        provider.expects(:execute_firewall_cmd).with(['--list-interfaces']).returns('')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-interfaces']).and_return('')
         provider.interfaces
       end
 
       it 'sets interfaces' do
-        provider.expects(:interfaces).returns(['eth1'])
-        provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
-        provider.expects(:execute_firewall_cmd).with(['--remove-interface', 'eth1'])
+        expect(provider).to receive(:interfaces).and_return(['eth1'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-interface', 'eth1'])
         provider.interfaces = ['eth0']
       end
 
       it 'gets sources' do
-        provider.expects(:execute_firewall_cmd).with(['--list-sources']).returns('val val')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-sources']).and_return('val val')
         expect(provider.sources).to eq(%w[val val])
       end
 
       it 'sources should always return in alphanumerical order' do
-        provider.expects(:execute_firewall_cmd).with(['--list-sources']).returns('4.4.4.4/32 2.2.2.2/32 3.3.3.3/32')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-sources']).and_return('4.4.4.4/32 2.2.2.2/32 3.3.3.3/32')
         expect(provider.sources).to eq(['2.2.2.2/32', '3.3.3.3/32', '4.4.4.4/32'])
       end
 
       it 'sets sources' do
-        provider.expects(:sources).returns(['valx'])
-        provider.expects(:execute_firewall_cmd).with(['--add-source', 'valy'])
-        provider.expects(:execute_firewall_cmd).with(['--remove-source', 'valx'])
+        expect(provider).to receive(:sources).and_return(['valx'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-source', 'valy'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-source', 'valx'])
         provider.sources = ['valy']
       end
 
       it 'gets icmp_block_inversion' do
-        provider.expects(:execute_firewall_cmd).with(['--query-icmp-block-inversion'], 'restricted', true, false).returns("no\n")
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-icmp-block-inversion'], 'restricted', true, false).and_return("no\n")
         expect(provider.icmp_block_inversion).to eq(:false)
       end
 
       it 'lists icmp types' do
-        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns('echo-reply echo-request')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-icmptypes'], nil).and_return('echo-reply echo-request')
         expect(provider.get_icmp_types).to eq(%w[echo-reply echo-request])
       end
 
       it 'gets protocols' do
-        provider.expects(:execute_firewall_cmd).with(['--list-protocols']).returns('val val')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-protocols']).and_return('val val')
         expect(provider.protocols).to eq(%w[val val])
       end
 
       it 'sets protocols' do
-        provider.expects(:protocols).returns(['valx'])
-        provider.expects(:execute_firewall_cmd).with(['--add-protocol', 'valy'])
-        provider.expects(:execute_firewall_cmd).with(['--remove-protocol', 'valx'])
+        expect(provider).to receive(:protocols).and_return(['valx'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-protocol', 'valy'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-protocol', 'valx'])
         provider.protocols = ['valy']
       end
 
       it 'gets icmp_blocks' do
-        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'restricted').returns('redirect router-advertisement')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'restricted').and_return('redirect router-advertisement')
         expect(provider.icmp_blocks).to eq(%w[redirect router-advertisement])
       end
 
       it 'sets icmp_blocks' do
-        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'restricted').returns('redirect router-advertisement')
-        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns(icmptypes.join(' '))
-        provider.expects(:execute_firewall_cmd).with(['--add-icmp-block', 'bad-header'], 'restricted')
-        provider.expects(:execute_firewall_cmd).with(['--remove-icmp-block', 'router-advertisement'], 'restricted')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'restricted').and_return('redirect router-advertisement')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-icmptypes'], nil).and_return(icmptypes.join(' '))
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-icmp-block', 'bad-header'], 'restricted')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-icmp-block', 'router-advertisement'], 'restricted')
         provider.icmp_blocks = %w[redirect bad-header]
       end
     end
@@ -284,22 +286,22 @@ describe Puppet::Type.type(:firewalld_zone) do
       end
 
       it 'sets masquerading' do
-        provider.expects(:execute_firewall_cmd).with(['--add-masquerade'], 'public')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-masquerade'], 'public')
         provider.masquerade = :true
       end
 
       it 'disables masquerading' do
-        provider.expects(:execute_firewall_cmd).with(['--remove-masquerade'], 'public')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-masquerade'], 'public')
         provider.masquerade = :false
       end
 
       it 'gets masquerading state as false when not set' do
-        provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).returns("no\n")
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).and_return("no\n")
         expect(provider.masquerade).to eq(:false)
       end
 
       it 'gets masquerading state as true when set' do
-        provider.expects(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).returns("yes\n")
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-masquerade'], 'public', true, false).and_return("yes\n")
         expect(provider.masquerade).to eq(:true)
       end
     end
@@ -318,29 +320,29 @@ describe Puppet::Type.type(:firewalld_zone) do
       end
 
       it 'sets icmp_block_inversion' do
-        provider.expects(:execute_firewall_cmd).with(['--add-icmp-block-inversion'], 'public')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-icmp-block-inversion'], 'public')
         provider.icmp_block_inversion = :true
       end
 
       it 'disables icmp_block_inversion' do
-        provider.expects(:execute_firewall_cmd).with(['--remove-icmp-block-inversion'], 'public')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-icmp-block-inversion'], 'public')
         provider.icmp_block_inversion = :false
       end
 
       it 'gets icmp_block_inversion state as false when not set' do
-        provider.expects(:execute_firewall_cmd).with(['--query-icmp-block-inversion'], 'public', true, false).returns("no\n")
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-icmp-block-inversion'], 'public', true, false).and_return("no\n")
         expect(provider.icmp_block_inversion).to eq(:false)
       end
 
       it 'gets icmp_block_inversion state as true when set' do
-        provider.expects(:execute_firewall_cmd).with(['--query-icmp-block-inversion'], 'public', true, false).returns("yes\n")
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-icmp-block-inversion'], 'public', true, false).and_return("yes\n")
         expect(provider.icmp_block_inversion).to eq(:true)
       end
 
       it 'sets icmp_blocks' do
-        provider.expects(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'public').returns('')
-        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns(icmptypes.join(' '))
-        provider.expects(:execute_firewall_cmd).with(['--add-icmp-block', 'echo-request'], 'public')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-icmp-blocks'], 'public').and_return('')
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-icmptypes'], nil).and_return(icmptypes.join(' '))
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-icmp-block', 'echo-request'], 'public')
         provider.icmp_blocks = %w[echo-request]
       end
     end
@@ -359,7 +361,7 @@ describe Puppet::Type.type(:firewalld_zone) do
       end
 
       it 'errors out' do
-        provider.expects(:execute_firewall_cmd).with(['--get-icmptypes'], nil).returns(icmptypes.join(' '))
+        expect(provider).to receive(:execute_firewall_cmd).with(['--get-icmptypes'], nil).and_return(icmptypes.join(' '))
         expect { provider.icmp_blocks = 'banana' }.to raise_error(Puppet::Error, %r{Invalid ICMP types})
       end
     end

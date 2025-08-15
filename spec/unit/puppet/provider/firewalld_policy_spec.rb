@@ -18,32 +18,29 @@ describe provider_class do
   let(:provider) { resource.provider }
 
   before do
-    # rubocop:disable RSpec/AnyInstance
-    provider.class.stubs(:execute_firewall_cmd_policy).returns(Object.any_instance.stubs(exitstatus: 0))
-    provider.class.stubs(:execute_firewall_cmd_policy).with(['--list-ingress-zones']).returns(Object.any_instance.stubs(exitstatus: 0, chomp: ''))
-    provider.class.stubs(:execute_firewall_cmd_policy).with(['--list-egress-zones']).returns(Object.any_instance.stubs(exitstatus: 0, chomp: ''))
-    # rubocop:enable RSpec/AnyInstance
+    allow(provider).to receive(:execute_firewall_cmd_policy).and_return(double(exitstatus: 0))
+    allow(provider).to receive(:execute_firewall_cmd_policy).with(['--list-ingress-zones']).and_return(double(exitstatus: 0, chomp: ''))
+    allow(provider).to receive(:execute_firewall_cmd_policy).with(['--list-egress-zones']).and_return(double(exitstatus: 0, chomp: ''))
   end
 
   describe 'when creating policy' do
     context 'with name public2restricted' do
       it 'executes firewall_cmd with new-policy' do
-        resource.expects(:[]).with(:name).returns('public2restricted').at_least_once
-        resource.expects(:[]).with(:target).returns(nil).at_least_once
-        resource.expects(:[]).with(:ingress_zones).returns(['public']).at_least_once
-        resource.expects(:[]).with(:egress_zones).returns(['restricted']).at_least_once
-        resource.expects(:[]).with(:priority).returns(nil).at_least_once
-        resource.expects(:[]).with(:icmp_blocks).returns(nil).at_least_once
-        resource.expects(:[]).with(:description).returns(nil).at_least_once
-        resource.expects(:[]).with(:short).returns('public2restricted').at_least_once
-        provider.expects(:execute_firewall_cmd_policy).with(['--list-ingress-zones'])
-        provider.expects(:execute_firewall_cmd_policy).with(['--list-egress-zones'])
-        provider.expects(:execute_firewall_cmd_policy).with(['--add-ingress-zone', 'public'])
-        provider.expects(:execute_firewall_cmd_policy).with(['--add-egress-zone', 'restricted'])
-        provider.expects(:execute_firewall_cmd_policy).with(['--new-policy', 'public2restricted'], nil)
-        provider.expects(:execute_firewall_cmd_policy).with(['--set-short', 'public2restricted'], 'public2restricted', true, false)
+        expect(resource).to receive(:[]).with(:name).and_return('public2restricted').at_least(:once)
+        expect(resource).to receive(:[]).with(:target).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:ingress_zones).and_return(['public']).at_least(:once)
+        expect(resource).to receive(:[]).with(:egress_zones).and_return(['restricted']).at_least(:once)
+        expect(resource).to receive(:[]).with(:priority).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:icmp_blocks).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:description).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:short).and_return('public2restricted').at_least(:once)
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--list-ingress-zones'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--list-egress-zones'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--add-ingress-zone', 'public'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--add-egress-zone', 'restricted'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--new-policy', 'public2restricted'], nil)
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--set-short', 'public2restricted'], 'public2restricted', true, false)
 
-        # Create policy
         provider.create
       end
     end
@@ -52,26 +49,25 @@ describe provider_class do
   describe 'when modifying description' do
     context 'type' do
       it 'stores updated description' do
-        resource.expects(:[]).with(:name).returns('public2restricted').at_least_once
-        resource.expects(:[]).with(:target).returns(nil).at_least_once
-        resource.expects(:[]).with(:ingress_zones).returns(['public']).at_least_once
-        resource.expects(:[]).with(:egress_zones).returns(['restricted']).at_least_once
-        resource.expects(:[]).with(:priority).returns(nil).at_least_once
-        resource.expects(:[]).with(:icmp_blocks).returns(nil).at_least_once
-        resource.expects(:[]).with(:description).returns(nil).at_least_once
-        resource.expects(:[]).with(:short).returns('public2restricted').at_least_once
-        provider.expects(:execute_firewall_cmd_policy).with(['--list-ingress-zones'])
-        provider.expects(:execute_firewall_cmd_policy).with(['--list-egress-zones'])
-        provider.expects(:execute_firewall_cmd_policy).with(['--add-ingress-zone', 'public'])
-        provider.expects(:execute_firewall_cmd_policy).with(['--add-egress-zone', 'restricted'])
-        provider.expects(:execute_firewall_cmd_policy).with(['--new-policy', 'public2restricted'], nil)
-        provider.expects(:execute_firewall_cmd_policy).with(['--set-short', 'public2restricted'], 'public2restricted', true, false)
+        expect(resource).to receive(:[]).with(:name).and_return('public2restricted').at_least(:once)
+        expect(resource).to receive(:[]).with(:target).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:ingress_zones).and_return(['public']).at_least(:once)
+        expect(resource).to receive(:[]).with(:egress_zones).and_return(['restricted']).at_least(:once)
+        expect(resource).to receive(:[]).with(:priority).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:icmp_blocks).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:description).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:short).and_return('public2restricted').at_least(:once)
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--list-ingress-zones'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--list-egress-zones'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--add-ingress-zone', 'public'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--add-egress-zone', 'restricted'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--new-policy', 'public2restricted'], nil)
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--set-short', 'public2restricted'], 'public2restricted', true, false)
 
         provider.create
 
-        provider.expects(:execute_firewall_cmd_policy).with(['--set-description', :'Modified description'], 'public2restricted', true, false)
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--set-description', :'Modified description'], 'public2restricted', true, false)
 
-        # Modify description
         provider.description = :'Modified description'
       end
     end

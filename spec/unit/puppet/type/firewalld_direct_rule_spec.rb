@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'rspec/mocks'
+RSpec.configure { |c| c.mock_with :rspec }
 
 describe Puppet::Type.type(:firewalld_direct_rule) do
   before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
+    allow_any_instance_of(Puppet::Provider::Firewalld).to receive(:state).and_return(true)
   end
 
   context 'with no params' do
@@ -59,12 +61,12 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
     let(:provider) { resource.provider }
 
     it 'creates' do
-      provider.expects(:execute_firewall_cmd).with(['--direct', '--add-rule', ['ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--direct', '--add-rule', ['ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
       provider.create
     end
 
     it 'destroys' do
-      provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-rule', ['ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--direct', '--remove-rule', ['ipv4', 'filter', 'OUTPUT', '4', '-p', 'tcp', '--dport=22', '-j', 'ACCEPT']], nil)
       provider.destroy
     end
 
@@ -97,12 +99,12 @@ describe Puppet::Type.type(:firewalld_direct_rule) do
     let(:provider) { resource.provider }
 
     it 'creates' do
-      provider.expects(:execute_firewall_cmd).with(['--direct', '--add-rule', ['eb', 'filter', 'FORWARD', '10', '-i', 'vnet+', '-d', 'BGA', '-j', 'DROP']], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--direct', '--add-rule', ['eb', 'filter', 'FORWARD', '10', '-i', 'vnet+', '-d', 'BGA', '-j', 'DROP']], nil)
       provider.create
     end
 
     it 'destroys' do
-      provider.expects(:execute_firewall_cmd).with(['--direct', '--remove-rule', ['eb', 'filter', 'FORWARD', '10', '-i', 'vnet+', '-d', 'BGA', '-j', 'DROP']], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--direct', '--remove-rule', ['eb', 'filter', 'FORWARD', '10', '-i', 'vnet+', '-d', 'BGA', '-j', 'DROP']], nil)
       provider.destroy
     end
   end

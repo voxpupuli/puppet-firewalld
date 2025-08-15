@@ -4,8 +4,9 @@ require 'spec_helper'
 require 'puppet/provider/firewalld'
 
 describe 'firewalld' do
+  include RSpec::Mocks::ExampleMethods
   before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:running).returns(:true) # rubocop:disable RSpec/AnyInstance
+    allow_any_instance_of(Puppet::Provider::Firewalld).to receive(:running).and_return(true)
   end
 
   let(:facts) do

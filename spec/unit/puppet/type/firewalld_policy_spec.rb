@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'rspec/mocks'
+RSpec.configure { |c| c.mock_with :rspec }
 
 describe Puppet::Type.type(:firewalld_policy) do
-  before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
-  end
-
   describe 'type' do
     context 'with no params' do
       describe 'when validating attributes' do
@@ -139,68 +137,72 @@ describe Puppet::Type.type(:firewalld_policy) do
         resource.provider
       end
 
+      before do
+        allow(provider).to receive(:state).and_return(true)
+      end
+
       it 'checks if it exists' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--get-policies'], nil).returns('public2restricted other')
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--get-policies'], nil).and_return('public2restricted other')
         expect(provider).to be_exists
       end
 
       it 'checks if it doesnt exist' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--get-policies'], nil).returns('wrong other')
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--get-policies'], nil).and_return('wrong other')
         expect(provider).not_to be_exists
       end
 
       it 'evalulates target' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--get-target']).returns('%%REJECT%%')
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--get-target']).and_return('%%REJECT%%')
         expect(provider.target).to eq('%%REJECT%%')
       end
 
       it 'evalulates target correctly when not surrounded with %%' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--get-target']).returns('REJECT')
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--get-target']).and_return('REJECT')
         expect(provider.target).to eq('%%REJECT%%')
       end
 
       it 'adds policy when created' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--new-policy', 'public2restricted'], nil)
-        provider.expects(:execute_firewall_cmd_policy).with(['--set-target', '%%REJECT%%'])
-        provider.expects(:execute_firewall_cmd_policy).with(['--set-priority', '-1'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--new-policy', 'public2restricted'], nil)
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--set-target', '%%REJECT%%'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--set-priority', '-1'])
 
-        provider.expects(:icmp_blocks=).with(%w[redirect router-advertisment])
+        expect(provider).to receive(:icmp_blocks=).with(%w[redirect router-advertisment])
 
-        provider.expects(:ingress_zones).returns([])
-        provider.expects(:execute_firewall_cmd_policy).with(['--add-ingress-zone', 'public'])
+        expect(provider).to receive(:ingress_zones).and_return([])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--add-ingress-zone', 'public'])
 
-        provider.expects(:egress_zones).returns([])
-        provider.expects(:execute_firewall_cmd_policy).with(['--add-egress-zone', 'restricted'])
+        expect(provider).to receive(:egress_zones).and_return([])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--add-egress-zone', 'restricted'])
         provider.create
       end
 
       it 'deletes policy when destroyed' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--delete-policy', 'public2restricted'], nil)
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--delete-policy', 'public2restricted'], nil)
         provider.destroy
       end
 
       it 'sets target' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--set-target', '%%REJECT%%'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--set-target', '%%REJECT%%'])
         provider.target = '%%REJECT%%'
       end
 
       it 'gets ingress zones' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--list-ingress-zones']).returns('public')
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--list-ingress-zones']).and_return('public')
         expect(provider.ingress_zones).to eq(['public'])
       end
 
       it 'gets egress zones' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--list-egress-zones']).returns('restricted')
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--list-egress-zones']).and_return('restricted')
         expect(provider.egress_zones).to eq(['restricted'])
       end
 
       it 'gets icmp_blocks' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--list-icmp-blocks']).returns('val')
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--list-icmp-blocks']).and_return('val')
         expect(provider.icmp_blocks).to eq(['val'])
       end
 
       it 'lists icmp types' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--get-icmptypes'], nil).returns('echo-reply echo-request')
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--get-icmptypes'], nil).and_return('echo-reply echo-request')
         expect(provider.get_icmp_types).to eq(%w[echo-reply echo-request])
       end
     end
@@ -219,23 +221,27 @@ describe Puppet::Type.type(:firewalld_policy) do
         resource.provider
       end
 
+      before do
+        allow(provider).to receive(:state).and_return(true)
+      end
+
       it 'sets masquerading' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--add-masquerade'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--add-masquerade'])
         provider.masquerade = :true
       end
 
       it 'disables masquerading' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--remove-masquerade'])
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--remove-masquerade'])
         provider.masquerade = :false
       end
 
       it 'gets masquerading state as false when not set' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--query-masquerade'], 'public2restricted', true, false).returns("no\n")
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--query-masquerade'], 'public2restricted', true, false).and_return("no\n")
         expect(provider.masquerade).to eq(:false)
       end
 
       it 'gets masquerading state as true when set' do
-        provider.expects(:execute_firewall_cmd_policy).with(['--query-masquerade'], 'public2restricted', true, false).returns("yes\n")
+        expect(provider).to receive(:execute_firewall_cmd_policy).with(['--query-masquerade'], 'public2restricted', true, false).and_return("yes\n")
         expect(provider.masquerade).to eq(:true)
       end
     end

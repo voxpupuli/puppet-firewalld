@@ -17,28 +17,26 @@ describe provider_class do
   let(:provider) { resource.provider }
 
   before do
-    # rubocop:disable RSpec/AnyInstance
-    provider.class.stubs(:execute_firewall_cmd).returns(Object.any_instance.stubs(exitstatus: 0))
-    provider.class.stubs(:execute_firewall_cmd).with(['--list-interfaces']).returns(Object.any_instance.stubs(exitstatus: 0, chomp: ''))
-    # rubocop:enable RSpec/AnyInstance
+    allow(provider).to receive(:execute_firewall_cmd).and_return(double(exitstatus: 0))
+    allow(provider).to receive(:execute_firewall_cmd).with(['--list-interfaces']).and_return(double(exitstatus: 0, chomp: ''))
   end
 
   describe 'when creating' do
     context 'with name white' do
       it 'executes firewall_cmd with new-zone' do
-        resource.expects(:[]).with(:name).returns('white').at_least_once
-        resource.expects(:[]).with(:target).returns(nil).at_least_once
-        resource.expects(:[]).with(:sources).returns(nil).at_least_once
-        resource.expects(:[]).with(:protocols).returns(nil).at_least_once
-        resource.expects(:[]).with(:interfaces).returns(['eth0']).at_least_once
-        resource.expects(:[]).with(:icmp_blocks).returns(nil).at_least_once
-        resource.expects(:[]).with(:icmp_block_inversion).returns(false).at_least_once
-        resource.expects(:[]).with(:description).returns(nil).at_least_once
-        resource.expects(:[]).with(:short).returns('little description').at_least_once
-        provider.expects(:execute_firewall_cmd).with(['--list-interfaces'])
-        provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
-        provider.expects(:execute_firewall_cmd).with(['--new-zone', 'white'], nil)
-        provider.expects(:execute_firewall_cmd).with(['--set-short', 'little description'], 'white', true, false)
+        expect(resource).to receive(:[]).with(:name).and_return('white').at_least(:once)
+        expect(resource).to receive(:[]).with(:target).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:sources).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:protocols).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:interfaces).and_return(['eth0']).at_least(:once)
+        expect(resource).to receive(:[]).with(:icmp_blocks).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:icmp_block_inversion).and_return(false).at_least(:once)
+        expect(resource).to receive(:[]).with(:description).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:short).and_return('little description').at_least(:once)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-interfaces'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--new-zone', 'white'], nil)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--set-short', 'little description'], 'white', true, false)
         provider.create
       end
     end
@@ -47,20 +45,20 @@ describe provider_class do
   describe 'when modifying' do
     context 'type' do
       it 'removes and create a new ipset' do
-        resource.expects(:[]).with(:name).returns('white').at_least_once
-        resource.expects(:[]).with(:target).returns(nil).at_least_once
-        resource.expects(:[]).with(:sources).returns(nil).at_least_once
-        resource.expects(:[]).with(:protocols).returns(nil).at_least_once
-        resource.expects(:[]).with(:interfaces).returns(['eth0']).at_least_once
-        resource.expects(:[]).with(:icmp_blocks).returns(nil).at_least_once
-        resource.expects(:[]).with(:icmp_block_inversion).returns(false).at_least_once
-        resource.expects(:[]).with(:description).returns(nil).at_least_once
-        resource.expects(:[]).with(:short).returns('little description').at_least_once
-        provider.expects(:execute_firewall_cmd).with(['--list-interfaces'])
-        provider.expects(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
-        provider.expects(:execute_firewall_cmd).with(['--new-zone', 'white'], nil)
-        provider.expects(:execute_firewall_cmd).with(['--set-short', 'little description'], 'white', true, false)
-        provider.expects(:execute_firewall_cmd).with(['--set-description', :'Better description'], 'white', true, false)
+        expect(resource).to receive(:[]).with(:name).and_return('white').at_least(:once)
+        expect(resource).to receive(:[]).with(:target).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:sources).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:protocols).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:interfaces).and_return(['eth0']).at_least(:once)
+        expect(resource).to receive(:[]).with(:icmp_blocks).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:icmp_block_inversion).and_return(false).at_least(:once)
+        expect(resource).to receive(:[]).with(:description).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:short).and_return('little description').at_least(:once)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--list-interfaces'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--new-zone', 'white'], nil)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--set-short', 'little description'], 'white', true, false)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--set-description', :'Better description'], 'white', true, false)
         provider.create
 
         provider.description = :'Better description'

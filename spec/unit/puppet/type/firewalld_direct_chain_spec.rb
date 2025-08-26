@@ -4,7 +4,7 @@ require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_direct_chain) do
   before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
+    allow_any_instance_of(Puppet::Provider::Firewalld).to receive(:state).and_return(true)
   end
 
   context 'with no params' do

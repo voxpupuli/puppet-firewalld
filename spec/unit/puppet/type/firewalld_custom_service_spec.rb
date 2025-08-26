@@ -3,12 +3,11 @@
 require 'spec_helper'
 
 describe Puppet::Type.type(:firewalld_custom_service) do
+  let(:catalog) { Puppet::Resource::Catalog.new }
+
   before do
-    # rubocop:disable RSpec/InstanceVariable
-    @catalog = Puppet::Resource::Catalog.new
-    described_class.any_instance.stubs(:catalog).returns(@catalog) # rubocop:disable RSpec/AnyInstance
-    Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
-    # rubocop:enable RSpec/InstanceVariable
+    allow_any_instance_of(described_class).to receive(:catalog).and_return(catalog)
+    allow_any_instance_of(Puppet::Provider::Firewalld).to receive(:state).and_return(true)
   end
 
   context ':name validation' do
@@ -313,18 +312,16 @@ describe Puppet::Type.type(:firewalld_custom_service) do
   end
 
   context 'autorequires' do
-    # rubocop:disable RSpec/InstanceVariable
     before do
       firewalld_service = Puppet::Type.type(:service).new(name: 'firewalld')
-      @catalog.add_resource(firewalld_service)
+      catalog.add_resource(firewalld_service)
     end
 
     it 'autorequires the firewalld service' do
       resource = described_class.new(name: 'test')
-      @catalog.add_resource(resource)
+      catalog.add_resource(resource)
 
       expect(resource.autorequire.map { |rp| rp.source.to_s }).to include('Service[firewalld]')
     end
-    # rubocop:enable RSpec/InstanceVariable
   end
 end

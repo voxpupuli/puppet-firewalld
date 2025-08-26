@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'rspec/mocks'
+RSpec.configure { |c| c.mock_with :rspec }
 
 describe Puppet::Type.type(:firewalld_rich_rule) do
   before do
-    Puppet::Provider::Firewalld.any_instance.stubs(:state).returns(:true) # rubocop:disable RSpec/AnyInstance
+    allow_any_instance_of(Puppet::Provider::Firewalld).to receive(:state).and_return(true)
   end
 
   context 'with no params' do
@@ -268,18 +270,18 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         let(:provider) { resource.provider }
 
         it 'queries the status' do
-          fakeclass.stubs(:exitstatus).returns(0)
-          provider.expects(:execute_firewall_cmd).with(['--query-rich-rule', rawrule], 'restricted', true, false).returns(fakeclass)
+          allow(fakeclass).to receive(:exitstatus).and_return(0)
+          expect(provider).to receive(:execute_firewall_cmd).with(['--query-rich-rule', rawrule], 'restricted', true, false).and_return(fakeclass)
           expect(provider).to be_exists
         end
 
         it 'creates' do
-          provider.expects(:execute_firewall_cmd).with(['--add-rich-rule', rawrule])
+          expect(provider).to receive(:execute_firewall_cmd).with(['--add-rich-rule', rawrule])
           provider.create
         end
 
         it 'destroys' do
-          provider.expects(:execute_firewall_cmd).with(['--remove-rich-rule', rawrule])
+          expect(provider).to receive(:execute_firewall_cmd).with(['--remove-rich-rule', rawrule])
           provider.destroy
         end
       end

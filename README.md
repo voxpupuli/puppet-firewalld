@@ -1,8 +1,7 @@
 # Module: firewalld
 
 [![License](https://img.shields.io/github/license/voxpupuli/puppet-firewalld.svg)](https://github.com/voxpupuli/puppet-firewalld/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/voxpupuli/puppet-firewalld.png?branch=master)](https://travis-ci.org/voxpupuli/puppet-firewalld)
-[![Code Coverage](https://coveralls.io/repos/github/voxpupuli/puppet-firewalld/badge.svg?branch=master)](https://coveralls.io/github/voxpupuli/puppet-firewalld)
+[![Build Status](https://github.com/voxpupuli/puppet-firewalld/actions/workflows/ci.yml/badge.svg)](https://github.com/voxpupuli/puppet-firewalld/actions/workflows/ci.yml)
 [![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/firewalld.svg)](https://forge.puppetlabs.com/puppet/firewalld)
 [![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/firewalld.svg)](https://forge.puppetlabs.com/puppet/firewalld)
 [![Puppet Forge - endorsement](https://img.shields.io/puppetforge/e/puppet/firewalld.svg)](https://forge.puppetlabs.com/puppet/firewalld)

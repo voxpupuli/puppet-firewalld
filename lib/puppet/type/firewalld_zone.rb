@@ -89,6 +89,12 @@ Puppet::Type.newtype(:firewalld_zone) do
     end
   end
 
+  newproperty(:forward) do
+    desc 'Can be set to true or false, specifies whether to add or remove forwarding from the zone'
+    newvalue(:true)
+    newvalue(:false)
+  end
+
   newproperty(:masquerade) do
     desc 'Can be set to true or false, specifies whether to add or remove masquerading from the zone'
     newvalue(:true)

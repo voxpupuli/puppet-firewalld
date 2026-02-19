@@ -130,7 +130,8 @@ describe Puppet::Type.type(:firewalld_policy) do
           target: '%%REJECT%%',
           ingress_zones: ['public'],
           egress_zones: ['restricted'],
-          icmp_blocks: %w[redirect router-advertisment]
+          icmp_blocks: %w[redirect router-advertisment],
+          provider: :firewall_cmd,
         )
       end
       let(:provider) do
@@ -214,7 +215,8 @@ describe Puppet::Type.type(:firewalld_policy) do
           ensure: :present,
           masquerade: true,
           ingress_zones: ['public'],
-          egress_zones: ['restricted']
+          egress_zones: ['restricted'],
+          provider: :firewall_cmd,
         )
       end
       let(:provider) do

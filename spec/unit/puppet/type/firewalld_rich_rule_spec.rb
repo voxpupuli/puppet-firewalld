@@ -6,6 +6,14 @@ RSpec.configure { |c| c.mock_with :rspec }
 
 describe Puppet::Type.type(:firewalld_rich_rule) do
   before do
+    provider_class = instance_double 'provider class'
+    allow(provider_class).to receive(:name).and_return('fake')
+    allow(provider_class).to receive(:suitable?).and_return(true)
+    allow(provider_class).to receive(:supports_parameter?).and_return(true)
+    allow(provider_class).to receive(:new)
+    allow(Puppet::Type.type(:firewalld_custom_service)).to receive(:defaultprovider).and_return(provider_class)
+    allow(Puppet::Type.type(:firewalld_custom_service)).to receive(:provider).and_return(provider_class)
+
     allow_any_instance_of(Puppet::Provider::Firewalld).to receive(:state).and_return(true)
   end
 
@@ -264,7 +272,7 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
     scenarios.each do |attrs, rawrule|
       context "for rule #{rawrule}" do
         let(:resource) do
-          described_class.new(attrs)
+          described_class.new(attrs.merge(provider: :firewall_cmd))
         end
         let(:fakeclass) { Class.new }
         let(:provider) { resource.provider }
@@ -304,7 +312,8 @@ describe Puppet::Type.type(:firewalld_rich_rule) do
         source: '192.168.1.2/32',
         dest: '192.168.99.2/32',
         service: 'ssh',
-        action: 'accept'
+        action: 'accept',
+        provider: :firewall_cmd,
       }
     end
 

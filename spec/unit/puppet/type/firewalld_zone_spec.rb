@@ -87,7 +87,8 @@ describe Puppet::Type.type(:firewalld_zone) do
         described_class.new(
           name: 'restricted',
           target: '%%REJECT%%',
-          interfaces: ['eth0']
+          interfaces: ['eth0'],
+          provider: :firewall_cmd
         )
       end
       let(:provider) do
@@ -146,7 +147,8 @@ describe Puppet::Type.type(:firewalld_zone) do
           icmp_blocks: %w[redirect router-advertisment],
           icmp_block_inversion: true,
           protocols: %w[icmp igmp],
-          sources: ['192.168.2.2', '10.72.1.100']
+          sources: ['192.168.2.2', '10.72.1.100'],
+          provider: :firewall_cmd
         )
       end
       let(:provider) do
@@ -278,7 +280,8 @@ describe Puppet::Type.type(:firewalld_zone) do
         described_class.new(
           name: 'public',
           ensure: :present,
-          masquerade: true
+          masquerade: true,
+          provider: :firewall_cmd
         )
       end
       let(:provider) do
@@ -312,7 +315,8 @@ describe Puppet::Type.type(:firewalld_zone) do
           name: 'public',
           ensure: :present,
           sources: '192.168.2.2',
-          icmp_blocks: 'echo-request'
+          icmp_blocks: 'echo-request',
+          provider: :firewall_cmd
         )
       end
       let(:provider) do
@@ -353,7 +357,8 @@ describe Puppet::Type.type(:firewalld_zone) do
           name: 'public',
           ensure: :present,
           sources: '192.168.2.2',
-          icmp_blocks: 'invalid-request'
+          icmp_blocks: 'invalid-request',
+          provider: :firewall_cmd
         )
       end
       let(:provider) do

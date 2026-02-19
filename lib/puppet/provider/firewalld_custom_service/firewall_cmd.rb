@@ -11,6 +11,11 @@ Puppet::Type.type(:firewalld_custom_service).provide(
 
   mk_resource_methods
 
+  def self.instances
+    # Not implemented due to performance reasons - a listing on a fresh install of firewalld 2.4.0 takes 40s
+    return []
+  end
+
   def exists?
     builtin = true
 

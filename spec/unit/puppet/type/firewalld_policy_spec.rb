@@ -138,8 +138,7 @@ describe Puppet::Type.type(:firewalld_policy) do
       end
 
       before do
-        allow(provider).to receive(:state).and_return(true)
-        allow(provider).to receive(:available?).and_return(true)
+        allow(provider).to receive_messages(state: true, available?: true)
       end
 
       it 'checks if it exists' do
@@ -223,8 +222,7 @@ describe Puppet::Type.type(:firewalld_policy) do
       end
 
       before do
-        allow(provider).to receive(:state).and_return(true)
-        allow(provider).to receive(:available?).and_return(true)
+        allow(provider).to receive_messages(state: true, available?: true)
       end
 
       it 'sets masquerading' do

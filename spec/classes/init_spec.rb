@@ -61,6 +61,7 @@ describe 'firewalld' do
       ).that_requires('Service[firewalld]')
       is_expected.to contain_exec('firewalld::set_default_zone_offline').with(
         command: ['firewall-offline-cmd', '--set-default-zone', 'restricted'],
+        onlyif: 'which firewall-offline-cmd',
         unless: ['[ $(firewall-offline-cmd --get-default-zone) = restricted ]', 'firewall-cmd --state'],
       )
     end
@@ -267,6 +268,7 @@ describe 'firewalld' do
       ).that_requires('Service[firewalld]')
       is_expected.to contain_exec('firewalld::set_default_zone_offline').with(
         command: ['firewall-offline-cmd', '--set-default-zone', 'public'],
+        onlyif: 'which firewall-offline-cmd',
         unless: ['[ $(firewall-offline-cmd --get-default-zone) = public ]', 'firewall-cmd --state'],
       )
     end
@@ -289,6 +291,7 @@ describe 'firewalld' do
         ).that_requires('Service[firewalld]')
         is_expected.to contain_exec('firewalld::set_log_denied_offline').with(
           command: ['firewall-offline-cmd', '--set-log-denied', cond],
+          onlyif: 'which firewall-offline-cmd',
           unless: ["[ $(firewall-offline-cmd --get-log-denied) = #{cond} ]", 'firewall-cmd --state'],
         )
       end

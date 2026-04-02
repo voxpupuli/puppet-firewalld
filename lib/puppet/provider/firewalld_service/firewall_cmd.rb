@@ -10,6 +10,8 @@ Puppet::Type.type(:firewalld_service).provide(
   desc 'Interact with firewall-cmd'
 
   def self.instances
+    return [] unless available?
+
     services = execute_firewall_cmd(['--get-services'], nil).split
     services.map do |service|
       new(

@@ -35,6 +35,17 @@ describe provider_class do
   end
 
   describe 'self.instances' do
+    context 'when firewalld is not available' do
+      before do
+        allow(provider_class).to receive(:available?).and_return(false)
+      end
+
+      it 'returns an empty array without calling firewall-cmd' do
+        expect(provider_class).not_to receive(:execute_firewall_cmd)
+        expect(provider_class.instances).to eq([])
+      end
+    end
+
     describe 'returns an array of ip sets' do
       it 'with correct names' do
         ipsets_names = provider.class.instances.map(&:name)

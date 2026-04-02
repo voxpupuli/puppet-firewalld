@@ -11,6 +11,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   desc 'Interact with firewall-cmd'
 
   def exists?
+    return false unless available?
+
     @resource[:zone] = @resource[:name]
     execute_firewall_cmd(['--get-zones'], nil).split.include?(@resource[:name])
   end

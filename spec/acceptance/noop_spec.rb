@@ -44,7 +44,7 @@ describe 'firewalld noop mode without package installed', unless: UNSUPPORTED_PL
       end
 
       it 'is idempotent in noop mode' do
-        apply_manifest_on(host, manifest, noop: true, catch_failures: true)
+        apply_manifest_on(host, manifest, noop: true, catch_changes: true)
       end
     end
   end

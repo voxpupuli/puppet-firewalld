@@ -2,9 +2,7 @@
 
 require 'spec_helper'
 
-provider_class = Puppet::Type.type(:firewalld_service).provider(:firewall_cmd)
-
-describe provider_class do
+describe Puppet::Type.type(:firewalld_service).provider(:firewall_cmd) do
   let(:resource) do
     @resource = Puppet::Type.type(:firewalld_service).new(
       ensure: :present,
@@ -16,29 +14,29 @@ describe provider_class do
   let(:provider) { resource.provider }
 
   before do
-    allow(provider_class).to receive(:execute_firewall_cmd).with(['--state'], nil, nil, false, false, false).and_return(double(exitstatus: 0))
-    allow(provider_class).to receive(:execute_firewall_cmd).with(['--get-services'], nil).and_return('ssh http https')
+    allow(described_class).to receive(:execute_firewall_cmd).with(['--state'], nil, nil, false, false, false).and_return(double(exitstatus: 0))
+    allow(described_class).to receive(:execute_firewall_cmd).with(['--get-services'], nil).and_return('ssh http https')
   end
 
   describe 'self.instances' do
     context 'when firewalld is not available' do
       before do
-        allow(provider_class).to receive(:available?).and_return(false)
+        allow(described_class).to receive(:available?).and_return(false)
       end
 
       it 'returns an empty array without calling firewall-cmd' do
-        expect(provider_class).not_to receive(:execute_firewall_cmd).with(['--get-services'], nil)
-        expect(provider_class.instances).to eq([])
+        expect(described_class).not_to receive(:execute_firewall_cmd).with(['--get-services'], nil)
+        expect(described_class.instances).to eq([])
       end
     end
 
     context 'when firewalld is available' do
       before do
-        allow(provider_class).to receive(:available?).and_return(true)
+        allow(described_class).to receive(:available?).and_return(true)
       end
 
       it 'returns instances for each available service' do
-        instances = provider_class.instances
+        instances = described_class.instances
         expect(instances.map(&:name)).to include('ssh', 'http', 'https')
       end
     end

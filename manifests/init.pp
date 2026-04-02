@@ -284,14 +284,17 @@ class firewalld (
     exec { 'firewalld::set_default_zone_active':
       command => ['firewall-cmd', '--set-default-zone', $default_zone],
       unless  => "[ $(firewall-cmd --get-default-zone) = ${default_zone} ]",
-      onlyif  => 'sh -c "firewall-cmd --state"',
+      onlyif  => 'sh -c "command -v firewall-cmd > /dev/null 2>&1 && firewall-cmd --state"',
       require => Service['firewalld'],
     }
 
     exec { 'firewalld::set_default_zone_offline':
       command => ['firewall-offline-cmd', '--set-default-zone', $default_zone],
       onlyif  => 'which firewall-offline-cmd',
-      unless  => ["[ $(firewall-offline-cmd --get-default-zone) = ${default_zone} ]", 'sh -c "firewall-cmd --state"',],
+      unless  => [
+        "[ $(firewall-offline-cmd --get-default-zone) = ${default_zone} ]",
+        'sh -c "command -v firewall-cmd > /dev/null 2>&1 && firewall-cmd --state"',
+      ],
     }
 
     Firewalld_zone <||> -> Exec['firewalld::set_default_zone']
@@ -309,13 +312,16 @@ class firewalld (
     exec { 'firewalld::set_log_denied_active':
       command => ['firewall-cmd', '--set-log-denied', $log_denied],
       unless  => "[ $(firewall-cmd --get-log-denied) = ${log_denied} ]",
-      onlyif  => 'sh -c "firewall-cmd --state"',
+      onlyif  => 'sh -c "command -v firewall-cmd > /dev/null 2>&1 && firewall-cmd --state"',
       require => Service['firewalld'],
     }
     exec { 'firewalld::set_log_denied_offline':
       command => ['firewall-offline-cmd', '--set-log-denied', $log_denied],
       onlyif  => 'which firewall-offline-cmd',
-      unless  => ["[ $(firewall-offline-cmd --get-log-denied) = ${log_denied} ]", 'sh -c "firewall-cmd --state"'],
+      unless  => [
+        "[ $(firewall-offline-cmd --get-log-denied) = ${log_denied} ]",
+        'sh -c "command -v firewall-cmd > /dev/null 2>&1 && firewall-cmd --state"',
+      ],
     }
   }
 

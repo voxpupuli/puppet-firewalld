@@ -17,6 +17,7 @@ describe provider_class do
   let(:provider) { resource.provider }
 
   before do
+    allow(provider_class).to receive(:available?).and_return(true)
     allow(provider_class).to receive(:execute_firewall_cmd).with(['--get-ipsets'], nil).and_return('white black')
     allow(provider_class).to receive(:execute_firewall_cmd).with(['--state'], nil, false, false, false).and_return(double(exitstatus: 0))
     allow(provider_class).to receive(:execute_firewall_cmd).with(['--info-ipset=white'], nil).and_return(<<~DATA.chomp)

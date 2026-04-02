@@ -32,6 +32,8 @@ Puppet::Type.type(:firewalld_service).provide(
   end
 
   def exists?
+    return false unless available?
+
     if @resource[:zone] == :unset
       execute_firewall_cmd_policy(['--list-services']).split.include?(@resource[:service])
     else

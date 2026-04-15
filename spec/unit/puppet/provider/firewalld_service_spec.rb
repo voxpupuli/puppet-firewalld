@@ -41,4 +41,63 @@ describe Puppet::Type.type(:firewalld_service).provider(:firewall_cmd) do
       end
     end
   end
+
+  describe '#exists?' do
+    context 'when firewalld is not available' do
+      before do
+        allow(provider).to receive(:available?).and_return(false)
+      end
+
+      it 'returns false without calling firewall-cmd' do
+        expect(provider).not_to receive(:execute_firewall_cmd)
+        expect(provider.exists?).to be false
+      end
+    end
+
+    context 'when a zone is set' do
+      before do
+        allow(provider).to receive(:available?).and_return(true)
+      end
+
+      context 'and the zone exists with the service present' do
+        before do
+          allow(provider).to receive(:execute_firewall_cmd)
+            .with(['--list-services'], 'public', true, false)
+            .and_return(double(exitstatus: 0, split: ['ssh', 'http', 'https']))
+        end
+
+        it 'returns true' do
+          expect(provider.exists?).to be true
+        end
+      end
+
+      context 'and the zone exists but the service is absent' do
+        before do
+          allow(provider).to receive(:execute_firewall_cmd)
+            .with(['--list-services'], 'public', true, false)
+            .and_return(double(exitstatus: 0, split: ['http', 'https']))
+        end
+
+        it 'returns false' do
+          expect(provider.exists?).to be false
+        end
+      end
+
+      context 'and the zone does not exist (e.g. during noop when zone is being created)' do
+        before do
+          allow(provider).to receive(:execute_firewall_cmd)
+            .with(['--list-services'], 'public', true, false)
+            .and_return(double(exitstatus: 2))
+        end
+
+        it 'returns false without raising an error' do
+          expect { provider.exists? }.not_to raise_error
+        end
+
+        it 'returns false' do
+          expect(provider.exists?).to be false
+        end
+      end
+    end
+  end
 end

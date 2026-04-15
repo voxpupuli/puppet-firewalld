@@ -37,7 +37,12 @@ Puppet::Type.type(:firewalld_service).provide(
     if @resource[:zone] == :unset
       execute_firewall_cmd_policy(['--list-services']).split.include?(@resource[:service])
     else
-      execute_firewall_cmd(['--list-services']).split.include?(@resource[:service])
+      # Use failonfail: false so that a non-existent zone (e.g. during noop when
+      # the zone hasn't been created yet) returns false rather than raising an error.
+      result = execute_firewall_cmd(['--list-services'], @resource[:zone], true, false)
+      return false unless result.exitstatus.zero?
+
+      result.split.include?(@resource[:service])
     end
   end
 

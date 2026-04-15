@@ -63,7 +63,7 @@ describe Puppet::Type.type(:firewalld_service).provider(:firewall_cmd) do
         before do
           allow(provider).to receive(:execute_firewall_cmd)
             .with(['--list-services'], 'public', true, false)
-            .and_return(double(exitstatus: 0, split: ['ssh', 'http', 'https']))
+            .and_return(double(exitstatus: 0, split: %w[ssh http https]))
         end
 
         it 'returns true' do
@@ -75,7 +75,7 @@ describe Puppet::Type.type(:firewalld_service).provider(:firewall_cmd) do
         before do
           allow(provider).to receive(:execute_firewall_cmd)
             .with(['--list-services'], 'public', true, false)
-            .and_return(double(exitstatus: 0, split: ['http', 'https']))
+            .and_return(double(exitstatus: 0, split: %w[http https]))
         end
 
         it 'returns false' do

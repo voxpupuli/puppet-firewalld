@@ -10,8 +10,65 @@ Puppet::Type.type(:firewalld_zone).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  # Bulk-load all zone state in a single `firewall-cmd --list-all-zones`
+  # invocation. The parsed result is cached on Puppet::Provider::Firewalld
+  # so that subsequent resources processed in the same Puppet transaction
+  # do not re-shell. reload_firewall invalidates this cache.
+  def self.prefetched_zones
+    Puppet::Provider::Firewalld.catalog_cache[:zones] ||= begin
+      raw = execute_firewall_cmd(['--list-all-zones'], nil)
+      text = raw.respond_to?(:to_str) ? raw.to_str : raw.to_s
+      Puppet::Provider::Firewalld.parse_list_all_output(text)
+    end
+  end
+
+  # Translate a single parsed zone Hash (from parse_list_all_output) into
+  # a @property_hash suitable for seeding a provider instance.
+  def self.property_hash_from_parsed(name, parsed)
+    hash = { ensure: :present, name: name }
+    hash[:target] = parsed['target'] if parsed.key?('target')
+    hash[:interfaces] = parsed['interfaces'].to_s.split if parsed.key?('interfaces')
+    hash[:sources]    = parsed['sources'].to_s.split.sort if parsed.key?('sources')
+    hash[:protocols]  = parsed['protocols'].to_s.split.sort if parsed.key?('protocols')
+    if parsed.key?('masquerade')
+      hash[:masquerade] = (parsed['masquerade'].to_s.strip == 'yes') ? :true : :false
+    end
+    if parsed.key?('icmp-block-inversion')
+      hash[:icmp_block_inversion] = (parsed['icmp-block-inversion'].to_s.strip == 'yes') ? :true : :false
+    end
+    hash[:icmp_blocks] = parsed['icmp-blocks'].to_s.split.sort if parsed.key?('icmp-blocks')
+    hash[:description] = parsed['description'] if parsed.key?('description')
+    hash[:short]       = parsed['short']       if parsed.key?('short')
+    hash
+  end
+
+  def self.instances
+    prefetched_zones.map do |name, parsed|
+      new(property_hash_from_parsed(name, parsed))
+    end
+  end
+
+  def self.prefetch(resources)
+    zones = prefetched_zones
+    resources.each do |name, resource|
+      next unless zones.key?(name)
+
+      resource.provider = new(property_hash_from_parsed(name, zones[name]))
+    end
+  end
+
+  # Was this provider instance seeded from a bulk prefetch?  Used by
+  # getters to decide whether to trust @property_hash or fall back to a
+  # per-property shell-out (the latter is needed when a zone was created
+  # mid-run, after prefetch).
+  def prefetched?
+    !@property_hash.nil? && !@property_hash.empty?
+  end
+
   def exists?
     @resource[:zone] = @resource[:name]
+    return @property_hash[:ensure] == :present if prefetched?
+
     execute_firewall_cmd(['--get-zones'], nil).split.include?(@resource[:name])
   end
 
@@ -27,15 +84,26 @@ Puppet::Type.type(:firewalld_zone).provide(
     self.icmp_block_inversion = (@resource[:icmp_block_inversion]) if @resource[:icmp_block_inversion]
     self.description = (@resource[:description]) if @resource[:description]
     self.short = (@resource[:short]) if @resource[:short]
+
+    # Newly-created zones invalidate the bulk cache so that downstream
+    # resources (e.g. another zone in the same run) see consistent state.
+    Puppet::Provider::Firewalld.invalidate_cache!(:zones)
+    @property_hash[:ensure] = :present
   end
 
   def destroy
     debug("Deleting zone #{@resource[:name]}")
     execute_firewall_cmd(['--delete-zone', @resource[:name]], nil)
+    Puppet::Provider::Firewalld.invalidate_cache!(:zones)
+    @property_hash[:ensure] = :absent
   end
 
   def target
-    zone_target = execute_firewall_cmd(['--get-target']).chomp
+    zone_target = if prefetched? && @property_hash.key?(:target)
+                    @property_hash[:target]
+                  else
+                    execute_firewall_cmd(['--get-target']).chomp
+                  end
     # The firewall-cmd may or may not return the target surrounded by
     # %% depending on the version. See:
     # https://github.com/crayfishx/puppet-firewalld/issues/111
@@ -50,6 +118,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def interfaces
+    return @property_hash[:interfaces] || [] if prefetched? && @property_hash.key?(:interfaces)
+
     execute_firewall_cmd(['--list-interfaces']).chomp.split || []
   end
 
@@ -67,6 +137,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def sources
+    return @property_hash[:sources] || [] if prefetched? && @property_hash.key?(:sources)
+
     execute_firewall_cmd(['--list-sources']).chomp.split.sort || []
   end
 
@@ -84,6 +156,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def protocols
+    return @property_hash[:protocols] || [] if prefetched? && @property_hash.key?(:protocols)
+
     execute_firewall_cmd(['--list-protocols']).chomp.split.sort || []
   end
 
@@ -101,6 +175,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def masquerade
+    return @property_hash[:masquerade] if prefetched? && @property_hash.key?(:masquerade)
+
     if execute_firewall_cmd(['--query-masquerade'], @resource[:name], true, false).chomp == 'yes'
       :true
     else
@@ -118,6 +194,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def icmp_blocks
+    return @property_hash[:icmp_blocks] || [] if prefetched? && @property_hash.key?(:icmp_blocks)
+
     get_icmp_blocks
   end
 
@@ -145,6 +223,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def icmp_block_inversion
+    return @property_hash[:icmp_block_inversion] if prefetched? && @property_hash.key?(:icmp_block_inversion)
+
     if execute_firewall_cmd(['--query-icmp-block-inversion'], @resource[:name], true, false).chomp == 'yes'
       :true
     else
@@ -197,6 +277,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   # rubocop:enable Naming/AccessorMethodName
 
   def description
+    return @property_hash[:description] if prefetched? && @property_hash.key?(:description)
+
     execute_firewall_cmd(['--get-description'], @resource[:name], true, false)
   end
 
@@ -205,6 +287,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def short
+    return @property_hash[:short] if prefetched? && @property_hash.key?(:short)
+
     execute_firewall_cmd(['--get-short'], @resource[:name], true, false)
   end
 

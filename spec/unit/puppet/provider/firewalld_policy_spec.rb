@@ -127,16 +127,16 @@ describe provider_class do
     end
 
     it 'serves a second prefetched_policies call from the cache' do
+      expect(described_class).to receive(:execute_firewall_cmd).with(['--list-all-policies'], nil, nil).once.and_return(list_all_policies_output)
       described_class.prefetched_policies
       described_class.prefetched_policies
-      expect(described_class).to have_received(:execute_firewall_cmd).with(['--list-all-policies'], nil, nil).once
     end
 
     it 'invalidate_cache! forces a fresh read' do
+      expect(described_class).to receive(:execute_firewall_cmd).with(['--list-all-policies'], nil, nil).twice.and_return(list_all_policies_output)
       described_class.prefetched_policies
       Puppet::Provider::Firewalld.invalidate_cache!(:policies)
       described_class.prefetched_policies
-      expect(described_class).to have_received(:execute_firewall_cmd).with(['--list-all-policies'], nil, nil).twice
     end
   end
 end

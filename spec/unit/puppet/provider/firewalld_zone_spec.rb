@@ -126,17 +126,17 @@ describe provider_class do
     end
 
     it 'serves a second prefetched_zones call from the cache' do
-      described_class.prefetched_zones
-      described_class.prefetched_zones
       # Only the very first invocation should shell out.
-      expect(described_class).to have_received(:execute_firewall_cmd).with(['--list-all-zones'], nil).once
+      expect(described_class).to receive(:execute_firewall_cmd).with(['--list-all-zones'], nil).once.and_return(list_all_zones_output)
+      described_class.prefetched_zones
+      described_class.prefetched_zones
     end
 
     it 'invalidate_cache! forces a fresh read' do
+      expect(described_class).to receive(:execute_firewall_cmd).with(['--list-all-zones'], nil).twice.and_return(list_all_zones_output)
       described_class.prefetched_zones
       Puppet::Provider::Firewalld.invalidate_cache!(:zones)
       described_class.prefetched_zones
-      expect(described_class).to have_received(:execute_firewall_cmd).with(['--list-all-zones'], nil).twice
     end
   end
 

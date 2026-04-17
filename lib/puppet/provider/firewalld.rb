@@ -71,21 +71,31 @@ class Puppet::Provider::Firewalld < Puppet::Provider
 
       next if current.nil?
 
-      # Continuation lines for list-valued keys start with a tab or
-      # multiple spaces and have no "key:" prefix. firewalld uses this
-      # format for `rich rules:` where each rule is on its own line.
-      if line =~ %r{\A\s+(\S.*)\z} && line !~ %r{\A\s+[\w-]+:\s*(?:.*)\z}
-        (current[current_list_key] ||= []) << Regexp.last_match(1).strip if current_list_key
+      # Standard "  key: value" line.
+      if line =~ %r{\A\s+([\w-]+):\s*(.*)\z}
+        key = Regexp.last_match(1)
+        value = Regexp.last_match(2)
+        current_list_key = key
+        current[key] = value
         next
       end
 
-      # Standard "  key: value" line.
-      next unless line =~ %r{\A\s+([\w-]+):\s*(.*)\z}
+      # Continuation lines for list-valued keys start with indentation
+      # and have no "key:" prefix. firewalld uses this format for
+      # `rich rules:` where each rule is on its own line.
+      next unless line =~ %r{\A\s+(\S.*)\z}
 
-      key = Regexp.last_match(1)
-      value = Regexp.last_match(2)
-      current_list_key = key
-      current[key] = value
+      continuation = Regexp.last_match(1).strip
+      next unless current_list_key
+
+      prev = current[current_list_key]
+      if prev.is_a?(Array)
+        prev << continuation
+      elsif prev.nil? || prev.to_s.strip.empty?
+        current[current_list_key] = [continuation]
+      else
+        current[current_list_key] = [prev.to_s.strip, continuation]
+      end
     end
 
     result

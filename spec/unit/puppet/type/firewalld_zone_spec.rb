@@ -104,6 +104,11 @@ describe Puppet::Type.type(:firewalld_zone) do
         expect(provider.target).to eq('%%REJECT%%')
       end
 
+      it 'gets forwarding state as false when not set' do
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-forward'], 'restricted', true, false).and_return("no\n")
+        expect(provider.forward).to eq(:false)
+      end
+
       it 'gets masquerading state as false when not set' do
         expect(provider).to receive(:execute_firewall_cmd).with(['--query-masquerade'], 'restricted', true, false).and_return("no\n")
         expect(provider.masquerade).to eq(:false)
@@ -171,6 +176,11 @@ describe Puppet::Type.type(:firewalld_zone) do
       it 'evalulates target correctly when not surrounded with %%' do
         expect(provider).to receive(:execute_firewall_cmd).with(['--get-target']).and_return('REJECT')
         expect(provider.target).to eq('%%REJECT%%')
+      end
+
+      it 'gets forwarding state as false when not set' do
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-forward'], 'restricted', true, false).and_return("no\n")
+        expect(provider.forward).to eq(:false)
       end
 
       it 'gets masquerading state as false when not set' do
@@ -270,6 +280,39 @@ describe Puppet::Type.type(:firewalld_zone) do
         expect(provider).to receive(:execute_firewall_cmd).with(['--add-icmp-block', 'bad-header'], 'restricted')
         expect(provider).to receive(:execute_firewall_cmd).with(['--remove-icmp-block', 'router-advertisement'], 'restricted')
         provider.icmp_blocks = %w[redirect bad-header]
+      end
+    end
+
+    context 'when specifiying forward' do
+      let(:resource) do
+        described_class.new(
+          name: 'public',
+          ensure: :present,
+          forward: true
+        )
+      end
+      let(:provider) do
+        resource.provider
+      end
+
+      it 'sets forwarding' do
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-forward'], 'public')
+        provider.forward = :true
+      end
+
+      it 'disables forwarding' do
+        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-forward'], 'public')
+        provider.forward = :false
+      end
+
+      it 'gets forwarding state as false when not set' do
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-forward'], 'public', true, false).and_return("no\n")
+        expect(provider.forward).to eq(:false)
+      end
+
+      it 'gets forwarding state as true when set' do
+        expect(provider).to receive(:execute_firewall_cmd).with(['--query-forward'], 'public', true, false).and_return("yes\n")
+        expect(provider.forward).to eq(:true)
       end
     end
 

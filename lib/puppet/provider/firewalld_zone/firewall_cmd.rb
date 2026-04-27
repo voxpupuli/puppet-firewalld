@@ -27,6 +27,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     self.icmp_block_inversion = (@resource[:icmp_block_inversion]) if @resource[:icmp_block_inversion]
     self.description = (@resource[:description]) if @resource[:description]
     self.short = (@resource[:short]) if @resource[:short]
+    self.forward = (@resource[:forward]) if @resource[:forward]
   end
 
   def destroy
@@ -97,6 +98,23 @@ Puppet::Type.type(:firewalld_zone).provide(
     (cur_protocols - new_protocols).each do |p|
       debug("Removing protocol '#{p}' from zone #{@resource[:name]}")
       execute_firewall_cmd(['--remove-protocol', p])
+    end
+  end
+
+  def forward
+    if execute_firewall_cmd(['--query-forward'], @resource[:name], true, false).chomp == 'yes'
+      :true
+    else
+      :false
+    end
+  end
+
+  def forward=(bool)
+    case bool
+    when :true
+      execute_firewall_cmd(['--add-forward'], @resource[:name])
+    when :false
+      execute_firewall_cmd(['--remove-forward'], @resource[:name])
     end
   end
 

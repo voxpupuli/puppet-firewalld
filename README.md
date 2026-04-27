@@ -128,6 +128,8 @@ firewalld::zones:
 * `sources`: An array of sources for the zone
 * `protocols`: An array of protocols for the zone
 * `icmp_blocks`: An array of ICMP blocks for the zone
+* `forward`: If set to `true` or `false` specifies whether or not
+  to add forwarding to the zone
 * `masquerade`: If set to `true` or `false` specifies whether or not
   to add masquerading to the zone
 * `purge_rich_rules`: Optional, and defaulted to false. When true any

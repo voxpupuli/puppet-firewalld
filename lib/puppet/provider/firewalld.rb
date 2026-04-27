@@ -11,6 +11,96 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     attr_accessor :running, :runstate
   end
 
+  # Transaction-scoped cache shared by provider subclasses that perform
+  # bulk introspection (e.g. `firewall-cmd --list-all-zones`). The cache
+  # is intentionally class-level so that getters invoked after prefetch
+  # can find the parsed data without re-shelling.
+  #
+  # Invalidated on reload_firewall (see below) and explicitly from specs
+  # via invalidate_cache!.
+  def self.catalog_cache
+    @catalog_cache ||= {}
+  end
+
+  def self.invalidate_cache!(key = nil)
+    if key.nil?
+      @catalog_cache = {}
+    elsif @catalog_cache
+      @catalog_cache.delete(key)
+    end
+  end
+
+  # Parse the output of `firewall-cmd --list-all-zones` or
+  # `firewall-cmd --list-all-policies`. Both commands emit the same
+  # block-style format:
+  #
+  #   <name> (active)
+  #     target: default
+  #     icmp-block-inversion: no
+  #     interfaces: eth0 eth1
+  #     sources:
+  #     services: ssh dhcpv6-client
+  #     ...
+  #
+  # Returns a Hash keyed by zone/policy name whose values are Hashes of
+  # `property => parsed_value`. The parser is intentionally permissive:
+  # unknown keys are retained (as strings) and missing keys are simply
+  # absent from the inner Hash, letting callers fall back to per-property
+  # queries when needed.
+  def self.parse_list_all_output(text)
+    result = {}
+    return result if text.nil? || text.empty?
+
+    current_name = nil
+    current = nil
+    current_list_key = nil
+
+    text.each_line do |line|
+      line = line.chomp
+      next if line.empty?
+
+      # Top-level entries start at column 0 and contain the name
+      # optionally followed by " (active)" or " (default)".
+      if line =~ %r{\A(\S+)(?:\s+\([^)]+\))?\s*\z}
+        current_name = Regexp.last_match(1)
+        current = {}
+        result[current_name] = current
+        current_list_key = nil
+        next
+      end
+
+      next if current.nil?
+
+      # Standard "  key: value" line.
+      if line =~ %r{\A\s+([\w-]+):\s*(.*)\z}
+        key = Regexp.last_match(1)
+        value = Regexp.last_match(2)
+        current_list_key = key
+        current[key] = value
+        next
+      end
+
+      # Continuation lines for list-valued keys start with indentation
+      # and have no "key:" prefix. firewalld uses this format for
+      # `rich rules:` where each rule is on its own line.
+      next unless line =~ %r{\A\s+(\S.*)\z}
+
+      continuation = Regexp.last_match(1).strip
+      next unless current_list_key
+
+      prev = current[current_list_key]
+      if prev.is_a?(Array)
+        prev << continuation
+      elsif prev.nil? || prev.to_s.strip.empty?
+        current[current_list_key] = [continuation]
+      else
+        current[current_list_key] = [prev.to_s.strip, continuation]
+      end
+    end
+
+    result
+  end
+
   def state
     self.class.state
   end
@@ -94,7 +184,13 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   # (eg: services) so the provider needs an an-hoc way of doing this since we can't
   # do it from the puppet level by notifying the service.
   def reload_firewall
-    execute_firewall_cmd(['--reload'], nil, false) if online?
+    return unless online?
+
+    execute_firewall_cmd(['--reload'], nil, false)
+    # Any bulk-prefetched state captured before the reload may no longer
+    # reflect on-disk state, so drop it and force subsequent resources to
+    # re-read authoritatively.
+    Puppet::Provider::Firewalld.invalidate_cache!
   end
 
   def offline?

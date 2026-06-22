@@ -290,7 +290,7 @@ class firewalld (
 
     exec { 'firewalld::set_default_zone_offline':
       command => ['firewall-offline-cmd', '--set-default-zone', $default_zone],
-      onlyif  => 'which firewall-offline-cmd',
+      onlyif  => 'sh -c "command -v firewall-offline-cmd > /dev/null 2>&1"',
       unless  => [
         "[ $(firewall-offline-cmd --get-default-zone) = ${default_zone} ]",
         'sh -c "command -v firewall-cmd > /dev/null 2>&1 && firewall-cmd --state"',
@@ -317,7 +317,7 @@ class firewalld (
     }
     exec { 'firewalld::set_log_denied_offline':
       command => ['firewall-offline-cmd', '--set-log-denied', $log_denied],
-      onlyif  => 'which firewall-offline-cmd',
+      onlyif  => 'sh -c "command -v firewall-offline-cmd > /dev/null 2>&1"',
       unless  => [
         "[ $(firewall-offline-cmd --get-log-denied) = ${log_denied} ]",
         'sh -c "command -v firewall-cmd > /dev/null 2>&1 && firewall-cmd --state"',

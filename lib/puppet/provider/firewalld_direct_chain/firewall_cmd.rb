@@ -7,6 +7,8 @@ Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, parent: Puppet
   desc 'Provider for managing firewalld direct chains using firewall-cmd'
 
   def exists?
+    return false unless available?
+
     @chain_args ||= generate_raw
     output = execute_firewall_cmd(['--direct', '--query-chain', @chain_args], nil, true, false)
     output.include?('yes')

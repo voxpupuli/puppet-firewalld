@@ -46,7 +46,8 @@ describe 'firewalld noop mode without package installed', unless: UNSUPPORTED_PL
       it 'runs repeatably in noop mode without failures' do
         # Idempotence cannot be asserted in noop mode: Puppet always reports
         # that it *would* make changes since nothing is ever applied. Assert
-        # that a repeat run is still failure-free instead.
+        # that repeated runs are still failure-free instead.
+        apply_manifest_on(host, manifest, noop: true, catch_failures: true)
         apply_manifest_on(host, manifest, noop: true, catch_failures: true)
       end
     end

@@ -4,7 +4,7 @@
 Facter.add(:firewalld_version) do
   confine { Process.uid.zero? }
 
-  @firewall_cmd = Facter::Util::Resolution.which('firewall-offline-cmd')
+  @firewall_cmd = Facter::Core::Execution.which('firewall-offline-cmd')
   confine { @firewall_cmd }
 
   setcode do
@@ -16,8 +16,8 @@ Facter.add(:firewalld_version) do
 
     if failed_value?(value)
       # Python gets stuck in some weird places
-      python = Facter::Util::Resolution.which('python')
-      python ||= Facter::Util::Resolution.which('platform-python')
+      python = Facter::Core::Execution.which('python')
+      python ||= Facter::Core::Execution.which('platform-python')
 
       python_path = '/usr/libexec/platform-python'
       python ||= python_path if File.exist?(python_path)

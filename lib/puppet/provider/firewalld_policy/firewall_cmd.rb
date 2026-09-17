@@ -11,6 +11,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   desc 'Interact with firewall-cmd'
 
   def exists?
+    return false unless available?
+
     @resource[:policy] = @resource[:name]
     execute_firewall_cmd_policy(['--get-policies'], nil).split.include?(@resource[:name])
   end

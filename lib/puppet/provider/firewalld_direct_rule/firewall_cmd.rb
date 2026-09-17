@@ -10,6 +10,8 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
   desc 'Interact with firewall-cmd'
 
   def exists?
+    return false unless available?
+
     @rule_args ||= generate_raw
     output = execute_firewall_cmd(['--direct', '--query-rule', @rule_args], nil, true, false)
     output.include?('yes')

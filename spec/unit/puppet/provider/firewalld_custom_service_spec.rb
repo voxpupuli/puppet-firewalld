@@ -9,6 +9,7 @@ describe provider_class do
   include REXML
 
   before do
+    allow_any_instance_of(provider_class).to receive(:available?).and_return(true)
     allow_any_instance_of(provider_class).to receive(:execute_firewall_cmd).and_return(double(exitstatus: 0))
   end
 

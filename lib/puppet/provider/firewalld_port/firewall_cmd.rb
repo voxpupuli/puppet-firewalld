@@ -12,6 +12,8 @@ Puppet::Type.type(:firewalld_port).provide(
   mk_resource_methods
 
   def exists?
+    return false unless available?
+
     @rule_args ||= build_port_rule
 
     output = if @resource[:zone] == :unset

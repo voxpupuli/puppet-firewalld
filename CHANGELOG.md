@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v6.0.0](https://github.com/voxpupuli/puppet-firewalld/tree/v6.0.0) (2026-09-17)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v5.1.0...v6.0.0)
+
+**Breaking changes:**
+
+- Drop puppet, update openvox minimum version to 8.19 [\#388](https://github.com/voxpupuli/puppet-firewalld/pull/388) ([TheMeier](https://github.com/TheMeier))
+
+**Implemented enhancements:**
+
+- replace deprecated calls with Facter::Core::Execution [\#411](https://github.com/voxpupuli/puppet-firewalld/pull/411) ([corporate-gadfly](https://github.com/corporate-gadfly))
+- \(\#issue\_389\) Added el10 support to metadata.json [\#390](https://github.com/voxpupuli/puppet-firewalld/pull/390) ([michael-riddle](https://github.com/michael-riddle))
+
+**Closed issues:**
+
+- `zone` and `policy` support for `--set-description` and `--set-short` [\#398](https://github.com/voxpupuli/puppet-firewalld/issues/398)
+- Update the module to support el10 [\#389](https://github.com/voxpupuli/puppet-firewalld/issues/389)
+- \[4.5.1\] add support for Puppet 8 [\#340](https://github.com/voxpupuli/puppet-firewalld/issues/340)
+- Firewalld module support for puppet 7.x [\#318](https://github.com/voxpupuli/puppet-firewalld/issues/318)
+- \[4.5.1\] let it work with puppetlabs-stdlib 9.4.0 [\#311](https://github.com/voxpupuli/puppet-firewalld/issues/311)
+- Running Puppet 5.3.6 on Centos 7.6 new install Error: Could not install module 'crayfishx-firewalld' \(???\)   No version of 'crayfishx-firewalld' can satisfy all dependencies [\#198](https://github.com/voxpupuli/puppet-firewalld/issues/198)
+- CentOS 7 IPv6 trouble [\#138](https://github.com/voxpupuli/puppet-firewalld/issues/138)
+
+**Merged pull requests:**
+
+- docs: fix README badges [\#399](https://github.com/voxpupuli/puppet-firewalld/pull/399) ([d1nuc0m](https://github.com/d1nuc0m))
+
 ## [v5.1.0](https://github.com/voxpupuli/puppet-firewalld/tree/v5.1.0) (2025-07-10)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v5.0.0...v5.1.0)
@@ -198,7 +225,6 @@ The highlight of this release is a new native puppet type [`firewalld_custom_ser
 
 **Merged pull requests:**
 
-- check for running firewalld in custom\_service::reload [\#253](https://github.com/voxpupuli/puppet-firewalld/pull/253) ([domfi](https://github.com/domfi))
 - \(\#250\) Replace newer ruby %i syntax with older supported syntax [\#251](https://github.com/voxpupuli/puppet-firewalld/pull/251) ([typerlc](https://github.com/typerlc))
 
 ## [v4.1.1](https://github.com/voxpupuli/puppet-firewalld/tree/v4.1.1) (2019-11-01)

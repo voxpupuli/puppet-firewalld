@@ -24,7 +24,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     self.protocols = (@resource[:protocols]) if @resource[:protocols]
     self.interfaces = @resource[:interfaces]
     self.icmp_blocks = (@resource[:icmp_blocks]) if @resource[:icmp_blocks]
-    self.icmp_block_inversion = (@resource[:icmp_block_inversion]) if @resource[:icmp_block_inversion]
+    self.icmp_block_inversion = (@resource[:icmp_block_inversion]) if @resource[:icmp_block_inversion] == :true
     self.description = (@resource[:description]) if @resource[:description]
     self.short = (@resource[:short]) if @resource[:short]
   end

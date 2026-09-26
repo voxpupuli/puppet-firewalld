@@ -10,8 +10,55 @@ Puppet::Type.type(:firewalld_policy).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  # Bulk-load all policy state in a single
+  # `firewall-cmd --list-all-policies` invocation. Results are cached on
+  # Puppet::Provider::Firewalld and invalidated by reload_firewall.
+  def self.prefetched_policies
+    Puppet::Provider::Firewalld.catalog_cache[:policies] ||= begin
+      raw = execute_firewall_cmd(['--list-all-policies'], nil, nil)
+      text = raw.respond_to?(:to_str) ? raw.to_str : raw.to_s
+      Puppet::Provider::Firewalld.parse_list_all_output(text)
+    end
+  end
+
+  def self.property_hash_from_parsed(name, parsed)
+    hash = { ensure: :present, name: name }
+    hash[:target]        = parsed['target'] if parsed.key?('target')
+    hash[:ingress_zones] = parsed['ingress-zones'].to_s.split if parsed.key?('ingress-zones')
+    hash[:egress_zones]  = parsed['egress-zones'].to_s.split  if parsed.key?('egress-zones')
+    hash[:priority]      = parsed['priority'].to_s.strip      if parsed.key?('priority')
+    if parsed.key?('masquerade')
+      hash[:masquerade] = (parsed['masquerade'].to_s.strip == 'yes') ? :true : :false
+    end
+    hash[:icmp_blocks]   = parsed['icmp-blocks'].to_s.split.sort if parsed.key?('icmp-blocks')
+    hash[:description]   = parsed['description'] if parsed.key?('description')
+    hash[:short]         = parsed['short']       if parsed.key?('short')
+    hash
+  end
+
+  def self.instances
+    prefetched_policies.map do |name, parsed|
+      new(property_hash_from_parsed(name, parsed))
+    end
+  end
+
+  def self.prefetch(resources)
+    policies = prefetched_policies
+    resources.each do |name, resource|
+      next unless policies.key?(name)
+
+      resource.provider = new(property_hash_from_parsed(name, policies[name]))
+    end
+  end
+
+  def prefetched?
+    !@property_hash.nil? && !@property_hash.empty?
+  end
+
   def exists?
     @resource[:policy] = @resource[:name]
+    return @property_hash[:ensure] == :present if prefetched?
+
     execute_firewall_cmd_policy(['--get-policies'], nil).split.include?(@resource[:name])
   end
 
@@ -26,15 +73,24 @@ Puppet::Type.type(:firewalld_policy).provide(
     self.icmp_blocks = (@resource[:icmp_blocks]) if @resource[:icmp_blocks]
     self.description = (@resource[:description]) if @resource[:description]
     self.short = (@resource[:short]) if @resource[:short]
+
+    Puppet::Provider::Firewalld.invalidate_cache!(:policies)
+    @property_hash[:ensure] = :present
   end
 
   def destroy
     debug("Deleting policy #{@resource[:name]}")
     execute_firewall_cmd_policy(['--delete-policy', @resource[:name]], nil)
+    Puppet::Provider::Firewalld.invalidate_cache!(:policies)
+    @property_hash[:ensure] = :absent
   end
 
   def target
-    policy_target = execute_firewall_cmd_policy(['--get-target']).chomp
+    policy_target = if prefetched? && @property_hash.key?(:target)
+                      @property_hash[:target]
+                    else
+                      execute_firewall_cmd_policy(['--get-target']).chomp
+                    end
     # The firewall-cmd may or may not return the target surrounded by
     # %% depending on the version. See:
     # https://github.com/crayfishx/puppet-firewalld/issues/111
@@ -49,6 +105,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def ingress_zones
+    return @property_hash[:ingress_zones] || [] if prefetched? && @property_hash.key?(:ingress_zones)
+
     execute_firewall_cmd_policy(['--list-ingress-zones']).chomp.split || []
   end
 
@@ -69,6 +127,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def egress_zones
+    return @property_hash[:egress_zones] || [] if prefetched? && @property_hash.key?(:egress_zones)
+
     execute_firewall_cmd_policy(['--list-egress-zones']).chomp.split || []
   end
 
@@ -89,6 +149,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def priority
+    return @property_hash[:priority] if prefetched? && @property_hash.key?(:priority)
+
     execute_firewall_cmd_policy(['--get-priority']).chomp
   end
 
@@ -97,6 +159,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def masquerade
+    return @property_hash[:masquerade] if prefetched? && @property_hash.key?(:masquerade)
+
     if execute_firewall_cmd_policy(['--query-masquerade'], @resource[:name], true, false).chomp == 'yes'
       :true
     else
@@ -114,6 +178,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def icmp_blocks
+    return @property_hash[:icmp_blocks] || [] if prefetched? && @property_hash.key?(:icmp_blocks)
+
     get_icmp_blocks
   end
 
@@ -204,6 +270,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   # rubocop:enable Style/AccessorMethodName
 
   def description
+    return @property_hash[:description] if prefetched? && @property_hash.key?(:description)
+
     execute_firewall_cmd_policy(['--get-description'], @resource[:name], true, false)
   end
 
@@ -212,6 +280,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def short
+    return @property_hash[:short] if prefetched? && @property_hash.key?(:short)
+
     execute_firewall_cmd_policy(['--get-short'], @resource[:name], true, false)
   end
 

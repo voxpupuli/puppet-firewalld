@@ -18,6 +18,9 @@ describe provider_class do
   let(:provider) { resource.provider }
 
   before do
+    # Every test starts with a clean transaction cache so that prefetched
+    # state from one example does not leak into another.
+    Puppet::Provider::Firewalld.invalidate_cache!
     allow(provider).to receive(:execute_firewall_cmd_policy).and_return(double(exitstatus: 0))
     allow(provider).to receive(:execute_firewall_cmd_policy).with(['--list-ingress-zones']).and_return(double(exitstatus: 0, chomp: ''))
     allow(provider).to receive(:execute_firewall_cmd_policy).with(['--list-egress-zones']).and_return(double(exitstatus: 0, chomp: ''))
@@ -70,6 +73,70 @@ describe provider_class do
 
         provider.description = :'Modified description'
       end
+    end
+  end
+
+  describe 'bulk prefetch' do
+    let(:list_all_policies_output) do
+      <<~OUTPUT
+        anytorestricted (active)
+          priority: -1
+          target: REJECT
+          ingress-zones: ANY
+          egress-zones: restricted
+          services:
+          ports:
+          protocols:
+          masquerade: no
+          forward-ports:
+          source-ports:
+          icmp-blocks: router-advertisement
+          rich rules:
+          description: Any to restricted
+          short: a2r
+
+        public2restricted (active)
+          priority: 100
+          target: default
+          ingress-zones: public
+          egress-zones: restricted
+          masquerade: yes
+          description: Public to restricted
+          short: p2r
+      OUTPUT
+    end
+
+    before do
+      allow(described_class).to receive(:execute_firewall_cmd).with(['--list-all-policies'], nil, nil).and_return(list_all_policies_output)
+    end
+
+    after do
+      Puppet::Provider::Firewalld.invalidate_cache!
+    end
+
+    it 'parses policy state into property_hash for each policy' do
+      instances = described_class.instances
+      p2r = instances.find { |i| i.name == 'public2restricted' }
+      expect(p2r).not_to be_nil
+      expect(p2r.get(:target)).to eq('default')
+      expect(p2r.get(:ingress_zones)).to eq(['public'])
+      expect(p2r.get(:egress_zones)).to eq(['restricted'])
+      expect(p2r.get(:priority)).to eq('100')
+      expect(p2r.get(:masquerade)).to eq(:true)
+      expect(p2r.get(:short)).to eq('p2r')
+    end
+
+    it 'serves a second prefetched_policies call from the cache' do
+      expect(described_class).to receive(:execute_firewall_cmd).with(['--list-all-policies'], nil, nil).once.and_return(list_all_policies_output)
+      described_class.prefetched_policies
+      described_class.prefetched_policies
+    end
+
+    it 'invalidate_cache! forces a fresh read' do
+      expect(described_class).to receive(:execute_firewall_cmd).with(['--list-all-policies'], nil, nil).twice.and_return(list_all_policies_output)
+      described_class.prefetched_policies
+      Puppet::Provider::Firewalld.invalidate_cache!(:policies)
+      described_class.prefetched_policies
     end
   end
 end

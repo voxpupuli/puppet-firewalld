@@ -83,7 +83,35 @@ describe provider_class do
         expect(resource).to receive(:[]).with(:audit).and_return(nil)
         expect(resource).to receive(:[]).with(:raw_rule).and_return(nil)
         expect(resource).to receive(:[]).with(:action).and_return('action' => 'reject', 'type' => 'icmp-admin-prohibited')
-        expect(provider.build_rich_rule).to eq('rule family="ipv4" priority="1200" destination address="192.168.0.1/32" service name="ssh" reject type="icmp-admin-prohibited"')
+        expect(provider.build_rich_rule).to eq('rule priority="1200" family="ipv4" destination address="192.168.0.1/32" service name="ssh" reject type="icmp-admin-prohibited"')
+      end
+
+      # Regression test: firewalld's own Rich_Rule.__str__ serializes fields
+      # in the order rule [priority] [family] [source] [destination]
+      # [element] [log] [audit] [action]. If priority is built before family
+      # here, the string this module generates will never byte-for-byte
+      # match what `--list-rich-rules`/`--list-all-zones` reports back,
+      # silently breaking exact-string comparisons such as
+      # firewalld_zone's purge_rich_rules.
+      it 'places priority before family to match firewalld canonical ordering' do
+        expect(resource).to receive(:[]).with(:priority).and_return(1200)
+        expect(resource).to receive(:[]).with(:source).and_return(nil).at_least(:once)
+        expect(resource).to receive(:[]).with(:service).and_return('ssh').at_least(:once)
+        expect(resource).to receive(:[]).with('family').and_return('ipv4').at_least(:once)
+        expect(resource).to receive(:[]).with(:dest).and_return(nil)
+        expect(resource).to receive(:[]).with(:port).and_return(nil)
+        expect(resource).to receive(:[]).with(:protocol).and_return(nil)
+        expect(resource).to receive(:[]).with(:icmp_block).and_return(nil)
+        expect(resource).to receive(:[]).with(:icmp_type).and_return(nil)
+        expect(resource).to receive(:[]).with(:masquerade).and_return(nil)
+        expect(resource).to receive(:[]).with(:forward_port).and_return(nil)
+        expect(resource).to receive(:[]).with(:log).and_return(nil)
+        expect(resource).to receive(:[]).with(:audit).and_return(nil)
+        expect(resource).to receive(:[]).with(:raw_rule).and_return(nil)
+        expect(resource).to receive(:[]).with(:action).and_return('accept')
+
+        rule = provider.build_rich_rule
+        expect(rule.index('priority')).to be < rule.index('family')
       end
     end
   end

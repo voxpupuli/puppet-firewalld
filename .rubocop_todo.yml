@@ -25,7 +25,15 @@ RSpec/AnyInstance:
 RSpec/LeakyLocalVariable:
   Exclude:
     - 'spec/unit/puppet/provider/firewalld_custom_service_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_direct_chain_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_direct_passthrough_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_direct_rule_spec.rb'
     - 'spec/unit/puppet/provider/firewalld_ipset_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_policy_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_port_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_rich_rule_instances_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_service_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_zone_spec.rb'
 
 # Offense count: 297
 # Configuration parameters: .
@@ -37,8 +45,16 @@ RSpec/MessageSpies:
 RSpec/StubbedMock:
   Exclude:
     - 'spec/unit/puppet/provider/firewalld_custom_service_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_direct_chain_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_direct_passthrough_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_direct_rule_spec.rb'
     - 'spec/unit/puppet/provider/firewalld_ipset_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_policy_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_port_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_rich_rule_instances_spec.rb'
     - 'spec/unit/puppet/provider/firewalld_rich_rule_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_service_spec.rb'
+    - 'spec/unit/puppet/provider/firewalld_zone_spec.rb'
     - 'spec/unit/puppet/type/firewalld_ipset_spec.rb'
     - 'spec/unit/puppet/type/firewalld_policy_spec.rb'
     - 'spec/unit/puppet/type/firewalld_rich_rule_spec.rb'

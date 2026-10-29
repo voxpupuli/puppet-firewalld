@@ -10,8 +10,43 @@ Puppet::Type.type(:firewalld_policy).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  # Lists every existing policy with a single firewall-cmd invocation.
+  # Unlike firewalld_service's predefined service catalog, --get-policies
+  # does reflect real configured policies, so it's safe to use directly
+  # here.
+  #
+  # Deliberately not memoized across calls: firewalld's state can change
+  # between Puppet runs (and even within long-lived processes such as a
+  # puppetserver or an rspec suite), so each call to prefetch must re-fetch.
+  #
+  def self.all_policies
+    execute_firewall_cmd(['--get-policies'], nil).split
+  end
+
+  def self.instances
+    all_policies.map { |p| new(ensure: :present, name: p) }
+  end
+
+  # firewalld_policy's namevar is the policy name itself (unlike
+  # firewalld_service, where the Puppet title and the firewalld-level name
+  # can differ), so resources can safely be matched by name.
+  #
+  def self.prefetch(resources)
+    policies = all_policies
+
+    resources.each_value do |resource|
+      resource.provider = new(ensure: policies.include?(resource[:name]) ? :present : :absent, name: resource[:name])
+    end
+  end
+
+  # If this instance went through self.prefetch, @property_hash[:ensure] is
+  # already known and no shellout is needed. Resources built outside the
+  # normal catalog/prefetch flow have no prefetched state, so fall back to a
+  # live query for those.
   def exists?
     @resource[:policy] = @resource[:name]
+    return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+
     execute_firewall_cmd_policy(['--get-policies'], nil).split.include?(@resource[:name])
   end
 
@@ -52,40 +87,49 @@ Puppet::Type.type(:firewalld_policy).provide(
     execute_firewall_cmd_policy(['--list-ingress-zones']).chomp.split || []
   end
 
+  # NOTE: --add-ingress-zone and --remove-ingress-zone must never be
+  # combined in a single firewall-cmd invocation: firewall-cmd's argument
+  # parsing only acts on the first recognized action flag it sees, so a
+  # mixed call would silently drop everything after it. Repeating the same
+  # flag for multiple values is fine and is what collapses N calls into one
+  # here.
   def ingress_zones=(new_ingress_zones)
     new_ingress_zones ||= []
     cur_ingress_zones = ingress_zones
+    extraneous_zones = cur_ingress_zones - new_ingress_zones
+    missing_zones = new_ingress_zones - cur_ingress_zones
+
     # Current zones that the policy is not applied to in the catalog
     # must be removed first or we might end up trying to add a regular
     # zone to a policy that currently applies to ANY or HOST.
-    (cur_ingress_zones - new_ingress_zones).each do |extraneous_zone|
-      debug("Removing ingress zone '#{extraneous_zone}' from policy #{@resource[:name]}")
-      execute_firewall_cmd_policy(['--remove-ingress-zone', extraneous_zone])
-    end
-    (new_ingress_zones - cur_ingress_zones).each do |missing_zone|
-      debug("Adding ingress zone '#{missing_zone}' to policy #{@resource[:name]}")
-      execute_firewall_cmd_policy(['--add-ingress-zone', missing_zone])
-    end
+    extraneous_zones.each { |z| debug("Removing ingress zone '#{z}' from policy #{@resource[:name]}") }
+    execute_firewall_cmd_policy(batch_flag('--remove-ingress-zone', extraneous_zones)) unless extraneous_zones.empty?
+
+    missing_zones.each { |z| debug("Adding ingress zone '#{z}' to policy #{@resource[:name]}") }
+    execute_firewall_cmd_policy(batch_flag('--add-ingress-zone', missing_zones)) unless missing_zones.empty?
   end
 
   def egress_zones
     execute_firewall_cmd_policy(['--list-egress-zones']).chomp.split || []
   end
 
+  # See the note on ingress_zones= above: --add-egress-zone and
+  # --remove-egress-zone must not be combined in a single firewall-cmd
+  # invocation.
   def egress_zones=(new_egress_zones)
     new_egress_zones ||= []
     cur_egress_zones = egress_zones
+    extraneous_zones = cur_egress_zones - new_egress_zones
+    missing_zones = new_egress_zones - cur_egress_zones
+
     # Current zones that the policy is not applied to in the catalog
     # must be removed first or we might end up trying to add a regular
     # zone to a policy that currently applies to ANY or HOST.
-    (cur_egress_zones - new_egress_zones).each do |extraneous_zone|
-      debug("Removing egress zone '#{extraneous_zone}' from policy #{@resource[:name]}")
-      execute_firewall_cmd_policy(['--remove-egress-zone', extraneous_zone])
-    end
-    (new_egress_zones - cur_egress_zones).each do |missing_zone|
-      debug("Adding egress zone '#{missing_zone}' to policy #{@resource[:name]}")
-      execute_firewall_cmd_policy(['--add-egress-zone', missing_zone])
-    end
+    extraneous_zones.each { |z| debug("Removing egress zone '#{z}' from policy #{@resource[:name]}") }
+    execute_firewall_cmd_policy(batch_flag('--remove-egress-zone', extraneous_zones)) unless extraneous_zones.empty?
+
+    missing_zones.each { |z| debug("Adding egress zone '#{z}' to policy #{@resource[:name]}") }
+    execute_firewall_cmd_policy(batch_flag('--add-egress-zone', missing_zones)) unless missing_zones.empty?
   end
 
   def priority
@@ -158,16 +202,13 @@ Puppet::Type.type(:firewalld_policy).provide(
     else
       raise Puppet::Error, 'parameter icmp_blocks must be a string or array of strings!'
     end
-    unless remove_blocks.empty?
-      remove_blocks.each do |block|
-        execute_firewall_cmd_policy(['--remove-icmp-block', block])
-      end
-    end
-    unless set_blocks.empty? # rubocop:disable Style/GuardClause
-      set_blocks.each do |block|
-        execute_firewall_cmd_policy(['--add-icmp-block', block])
-      end
-    end
+    # NOTE: --add-icmp-block and --remove-icmp-block must never be combined
+    # in a single firewall-cmd invocation: firewall-cmd's argument parsing
+    # only acts on the first recognized action flag it sees. Repeating the
+    # same flag for multiple values is fine and is what collapses N calls
+    # into one here.
+    execute_firewall_cmd_policy(batch_flag('--remove-icmp-block', remove_blocks)) unless remove_blocks.empty?
+    execute_firewall_cmd_policy(batch_flag('--add-icmp-block', set_blocks)) unless set_blocks.empty?
   end
 
   # rubocop:disable Style/AccessorMethodName

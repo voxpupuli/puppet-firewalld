@@ -60,7 +60,7 @@ Puppet::Type.type(:firewalld_ipset).provide(
       args << ["--option=#{option_name}=#{value}"] if value
     end
     execute_firewall_cmd(args.flatten, nil)
-    @resource[:entries].each { |e| add_entry(e) } if @resource[:manage_entries]
+    add_entries(@resource[:entries]) if @resource[:manage_entries]
   end
 
   %i[type maxelem family hashsize timeout].each do |method|
@@ -88,6 +88,23 @@ Puppet::Type.type(:firewalld_ipset).provide(
     execute_firewall_cmd(["--ipset=#{@resource[:name]}", "--remove-entry=#{entry}"], nil)
   end
 
+  # --add-entry/--remove-entry accept being repeated in a single
+  # invocation, so adding or removing several entries is collapsed into one
+  # firewall-cmd call each instead of one call per entry. They must never
+  # be combined in the same call: firewall-cmd's argument parsing only acts
+  # on the first recognized action flag it sees.
+  def add_entries(new_entries)
+    return if new_entries.empty?
+
+    execute_firewall_cmd(["--ipset=#{@resource[:name]}"] + batch_flag('--add-entry', new_entries), nil)
+  end
+
+  def remove_entries(old_entries)
+    return if old_entries.empty?
+
+    execute_firewall_cmd(["--ipset=#{@resource[:name]}"] + batch_flag('--remove-entry', old_entries), nil)
+  end
+
   def entries=(should_entries)
     unless @resource[:manage_entries]
       debug("Not managing entries for ipset #{@resource[:name]}")
@@ -95,9 +112,9 @@ Puppet::Type.type(:firewalld_ipset).provide(
     end
     cur_entries = entries
     delete_entries = cur_entries - should_entries
-    add_entries = should_entries - cur_entries
-    delete_entries.each { |e| remove_entry(e) }
-    add_entries.each { |e| add_entry(e) }
+    add_entries_list = should_entries - cur_entries
+    remove_entries(delete_entries)
+    add_entries(add_entries_list)
   end
 
   def destroy

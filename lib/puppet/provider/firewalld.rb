@@ -3,10 +3,12 @@
 require 'puppet'
 require 'puppet/type'
 require 'puppet/provider'
+require 'shellwords'
 
 # Base provider class shared by all firewalld providers. It caches the
 # running state of the firewalld service and provides helper methods for
 # invoking firewall-cmd / firewall-offline-cmd.
+
 class Puppet::Provider::Firewalld < Puppet::Provider
   @running = nil
   @runstate = nil
@@ -151,8 +153,126 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     execute_firewall_cmd(['--reload'], nil, false) if online?
   end
 
+  # firewall-cmd accepts repeated flags in a single invocation (eg.
+  # `--add-source A --add-source B`), applying each one internally, which
+  # collapses what would be N interpreter-startup + D-Bus-connection-setup
+  # shellouts into one.
+  #
+  # IMPORTANT: firewall-cmd's argument parsing is one large if/elif chain,
+  # so only the *first* recognized action flag in a given invocation is
+  # acted on; mixing --add-X and --remove-X (or any two different actions)
+  # in the same call silently drops everything after the first match. This
+  # helper must therefore only ever be used to batch repetitions of the
+  # *same* flag, one call for additions and a separate call for removals.
+  #
+  # @param flag [String] eg. '--add-source'
+  # @param values [Array<String>] the values to add/remove, may be empty
+  # @return [Array<String>] the flag/value pairs ready to splat into args,
+  #   eg. ['--add-source', 'A', '--add-source', 'B']
+  def batch_flag(flag, values)
+    Array(values).flat_map { |v| [flag, v] }
+  end
+
   def offline?
     state == false || state.nil?
+  end
+
+  # Parses the output of `--list-all-zones` / `--list-all-policies` /
+  # `--permanent --list-all-zones` / `--permanent --list-all-policies` into
+  # a Hash keyed by zone/policy name. This lets callers fetch the services,
+  # ports, and rich rules bound to every zone or policy with a single
+  # firewall-cmd invocation instead of one invocation per zone/policy per
+  # property.
+  #
+  # @param output [String] raw output of one of the --list-all-* commands
+  # @return [Hash{String => Hash}] eg.
+  #   { 'public' => { 'services' => ['ssh'], 'ports' => [{'port'=>'80','protocol'=>'tcp'}], 'rich_rules' => [] } }
+  def self.parse_list_all(output)
+    entries = {}
+    name = nil
+    output.each_line do |line|
+      if line =~ %r{^(\S+)(?:\s+\(.*\))?\s*$} && !line.start_with?(' ', "\t")
+        name = Regexp.last_match(1)
+        entries[name] = { 'services' => [], 'ports' => [], 'rich_rules' => [] }
+        next
+      end
+      next if name.nil?
+
+      case line
+      when %r{^\s+services:\s*(.*)$}
+        entries[name]['services'] = Regexp.last_match(1).split
+      when %r{^\s+ports:\s*(.*)$}
+        entries[name]['ports'] = Regexp.last_match(1).split.map do |entry|
+          port, protocol = entry.split('/')
+          { 'port' => port, 'protocol' => protocol }
+        end
+      when %r{^\s+rich rules:\s*$}
+        entries[name]['in_rich_rules'] = true
+      when %r{^\t(.+)$}
+        entries[name]['rich_rules'] << Regexp.last_match(1) if entries[name]['in_rich_rules']
+      when %r{^\s+\S+:}
+        entries[name]['in_rich_rules'] = false
+      end
+    end
+    entries.each_value { |e| e.delete('in_rich_rules') }
+    entries
+  end
+
+  # Parses the output of `--direct --get-all-chains` (format: "ipv table
+  # chain" per line) into an Array of Hashes. Lets callers fetch every
+  # direct chain with a single firewall-cmd invocation instead of one
+  # --query-chain shellout per resource.
+  #
+  # @param output [String] raw output of --direct --get-all-chains
+  # @return [Array<Hash{String=>String}>]
+  def self.parse_all_chains(output)
+    output.each_line.map do |line|
+      line = line.chomp
+      next nil if line.empty?
+
+      inet_protocol, table, name = line.split(' ', 3)
+      { 'inet_protocol' => inet_protocol, 'table' => table, 'name' => name }
+    end.compact
+  end
+
+  # Parses the output of `--direct --get-all-rules` (format: "ipv table
+  # chain priority args..." per line, args shell-quoted) into an Array of
+  # Hashes. Lets callers fetch every direct rule with a single firewall-cmd
+  # invocation instead of one --query-rule shellout per resource.
+  #
+  # @param output [String] raw output of --direct --get-all-rules
+  # @return [Array<Hash>]
+  def self.parse_all_rules(output)
+    output.each_line.map do |line|
+      line = line.chomp
+      next nil if line.empty?
+
+      inet_protocol, table, chain, priority, rest = line.split(' ', 5)
+      {
+        'inet_protocol' => inet_protocol,
+        'table' => table,
+        'chain' => chain,
+        'priority' => priority,
+        'args' => Shellwords.split(rest || ''),
+      }
+    end.compact
+  end
+
+  # Parses the output of `--direct --get-all-passthroughs` (format: "ipv
+  # args..." per line, args shell-quoted) into an Array of Hashes. Lets
+  # callers fetch every direct passthrough with a single firewall-cmd
+  # invocation instead of one --query-passthrough shellout per resource.
+  #
+  # @param output [String] raw output of --direct --get-all-passthroughs
+  # @return [Array<Hash>]
+  def self.parse_all_passthroughs(output)
+    output.each_line.map do |line|
+      line = line.chomp
+      next nil if line.empty?
+
+      inet_protocol, rest = line.split(' ', 2)
+      { 'inet_protocol' => inet_protocol, 'args' => Shellwords.split(rest || '') }
+    end.compact
   end
 
   def online?

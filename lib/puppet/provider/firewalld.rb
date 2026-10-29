@@ -3,6 +3,10 @@
 require 'puppet'
 require 'puppet/type'
 require 'puppet/provider'
+
+# Base provider class shared by all firewalld providers. It caches the
+# running state of the firewalld service and provides helper methods for
+# invoking firewall-cmd / firewall-offline-cmd.
 class Puppet::Provider::Firewalld < Puppet::Provider
   @running = nil
   @runstate = nil
@@ -11,19 +15,38 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     attr_accessor :running, :runstate
   end
 
+  # Instance wrapper around the class-level cached running state.
+  #
+  # @return [Boolean, nil] true if firewalld is running, false if it is
+  #   not, or nil if the state could not be determined.
   def state
     self.class.state
   end
 
+  # Returns the cached running state of firewalld, checking it if it has
+  # not already been determined.
+  #
+  # @return [Boolean, nil] true if firewalld is running, false if it is
+  #   not, or nil if the state could not be determined.
   def self.state
     Puppet::Provider::Firewalld.runstate = check_running_state if Puppet::Provider::Firewalld.runstate.nil?
     Puppet::Provider::Firewalld.runstate
   end
 
+  # Instance wrapper that delegates to the class-level state check.
+  #
+  # @return [Boolean, nil] true if firewalld is running, false if it is
+  #   not, or nil if the executable could not be found.
   def check_running_state
     self.class.check_running_state
   end
 
+  # Queries firewalld directly, via `firewall-cmd --state`, to determine
+  # whether it is currently running.
+  #
+  # @return [Boolean, nil] true if firewalld is running, false if the
+  #   command fails, or nil if the firewall-cmd executable is not
+  #   available (eg: before the firewalld package is installed).
   def self.check_running_state
     debug("Executing --state command - current value #{@state}")
     ret = execute_firewall_cmd(['--state'], nil, nil, false, false, false)
@@ -42,6 +65,19 @@ class Puppet::Provider::Firewalld < Puppet::Provider
   end
 
   # v3.0.0
+  #
+  # Builds and runs a firewall-cmd (or firewall-offline-cmd, if firewalld is
+  # not online) invocation with the given arguments.
+  #
+  # @param args [Array] the arguments to pass to the command
+  # @param zone [String, nil] optional zone to target with --zone
+  # @param policy [String, nil] optional policy to target with --policy
+  # @param perm [Boolean] whether to add --permanent to the command
+  # @param failonfail [Boolean] whether to raise if the command fails
+  # @param check_online [Boolean] whether to check firewalld's online
+  #   state to decide between firewall-cmd and firewall-offline-cmd
+  #
+  # @return [Puppet::Util::Execution::ProcessOutput] the command's output
   def self.execute_firewall_cmd(args, zone = nil, policy = nil, perm = true, failonfail = true, check_online = true)
     if check_online && !online?
       shell_cmd = 'firewall-offline-cmd'
@@ -73,10 +109,28 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     firewall_cmd.execute(cmd_args.flatten)
   end
 
+  # Instance wrapper that runs a firewall-cmd invocation scoped to a zone.
+  #
+  # @param args [Array] the arguments to pass to the command
+  # @param zone [String, nil] zone to target with --zone, defaults to the
+  #   resource's zone
+  # @param perm [Boolean] whether to add --permanent to the command
+  # @param failonfail [Boolean] whether to raise if the command fails
+  #
+  # @return [Puppet::Util::Execution::ProcessOutput] the command's output
   def execute_firewall_cmd(args, zone = @resource[:zone], perm = true, failonfail = true)
     self.class.execute_firewall_cmd(args, zone, nil, perm, failonfail)
   end
 
+  # Instance wrapper that runs a firewall-cmd invocation scoped to a policy.
+  #
+  # @param args [Array] the arguments to pass to the command
+  # @param policy [String, nil] policy to target with --policy, defaults
+  #   to the resource's policy
+  # @param perm [Boolean] whether to add --permanent to the command
+  # @param failonfail [Boolean] whether to raise if the command fails
+  #
+  # @return [Puppet::Util::Execution::ProcessOutput] the command's output
   def execute_firewall_cmd_policy(args, policy = @resource[:policy], perm = true, failonfail = true)
     self.class.execute_firewall_cmd(args, nil, policy, perm, failonfail)
   end

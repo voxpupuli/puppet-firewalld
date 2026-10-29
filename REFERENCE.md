@@ -15,9 +15,9 @@
 * [`firewalld_custom_service`](#firewalld_custom_service): Creates a custom firewalld service.
 * [`firewalld_direct_chain`](#firewalld_direct_chain): Allow to create a custom chain in iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_direct_chain {'Add c
 * [`firewalld_direct_passthrough`](#firewalld_direct_passthrough): Allow to create a custom passthroughhrough traffic in iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_
-* [`firewalld_direct_purge`](#firewalld_direct_purge): Allow to purge direct rules in iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_direct_purge {'chain': 
+* [`firewalld_direct_purge`](#firewalld_direct_purge): Allow to purge direct rules in iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_direct_purge {'chain':
 * [`firewalld_direct_rule`](#firewalld_direct_rule): Allow to pass rules directly to iptables/ip6tables/ebtables using firewalld direct interface.  Example:      firewalld_direct_rule {'Allow ou
-* [`firewalld_ipset`](#firewalld_ipset): Configure IPsets in Firewalld  Example:     firewalld_ipset {'internal net':         ensure   => 'present',         type     => 'hash:net',  
+* [`firewalld_ipset`](#firewalld_ipset): Configure IPsets in Firewalld  Example:     firewalld_ipset {'internal net':         ensure   => 'present',         type     => 'hash:net',
 * [`firewalld_policy`](#firewalld_policy): Creates and manages firewalld policies.
 * [`firewalld_port`](#firewalld_port): Assigns a port to a specific firewalld zone.  firewalld_port will autorequire the firewalld_zone specified in the zone parameter or the firew
 * [`firewalld_rich_rule`](#firewalld_rich_rule): Manages firewalld rich rules.  firewalld_rich_rules will autorequire the firewalld_zone specified in the zone parameter or the firewalld_poli
@@ -1429,4 +1429,3 @@ Options:
 
 * **file_extension** `String[1]`: This will be stripped from the end of the string prior to processing and
 re-added afterwards
-

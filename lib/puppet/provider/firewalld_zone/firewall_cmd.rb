@@ -10,8 +10,42 @@ Puppet::Type.type(:firewalld_zone).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  # Lists every existing zone with a single firewall-cmd invocation. Unlike
+  # firewalld_service's predefined service catalog, --get-zones does reflect
+  # real configured zones, so it's safe to use directly here.
+  #
+  # Deliberately not memoized across calls: firewalld's state can change
+  # between Puppet runs (and even within long-lived processes such as a
+  # puppetserver or an rspec suite), so each call to prefetch must re-fetch.
+  #
+  def self.all_zones
+    execute_firewall_cmd(['--get-zones'], nil).split
+  end
+
+  def self.instances
+    all_zones.map { |z| new(ensure: :present, name: z) }
+  end
+
+  # firewalld_zone's namevar is the zone name itself (unlike
+  # firewalld_service, where the Puppet title and the firewalld-level name
+  # can differ), so resources can safely be matched by name.
+  #
+  def self.prefetch(resources)
+    zones = all_zones
+
+    resources.each_value do |resource|
+      resource.provider = new(ensure: zones.include?(resource[:name]) ? :present : :absent, name: resource[:name])
+    end
+  end
+
+  # If this instance went through self.prefetch, @property_hash[:ensure] is
+  # already known and no shellout is needed. Resources built outside the
+  # normal catalog/prefetch flow have no prefetched state, so fall back to a
+  # live query for those.
   def exists?
     @resource[:zone] = @resource[:name]
+    return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+
     execute_firewall_cmd(['--get-zones'], nil).split.include?(@resource[:name])
   end
 

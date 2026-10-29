@@ -326,4 +326,55 @@ describe provider_class do
       provider.ipv6_destination = resource[:ipv6_destination]
     end
   end
+
+  describe 'self.instances' do
+    it 'reflects every known service name' do
+      expect(provider_class).to receive(:execute_firewall_cmd).with(['--get-services'], nil).and_return('ssh test_service other')
+      expect(provider_class.instances.map(&:name)).to contain_exactly('ssh', 'test_service', 'other')
+    end
+  end
+
+  describe 'self.prefetch' do
+    it 'matches resources by name, since the custom_service namevar maps to the firewalld service name' do
+      resource = Puppet::Type.type(:firewalld_custom_service).new(name: 'test_service')
+
+      expect(provider_class).to receive(:execute_firewall_cmd).with(['--get-services'], nil).and_return('test_service foo bar')
+      expect(provider_class).to receive(:execute_firewall_cmd).with(['--path-service', 'test_service'], nil).and_return('/etc/test_service.xml')
+
+      provider_class.prefetch('test_service' => resource)
+
+      expect(resource.provider.exists?).to be true
+    end
+
+    it 'does not falsely report present for an unconfigured service' do
+      resource = Puppet::Type.type(:firewalld_custom_service).new(name: 'missing_service')
+
+      expect(provider_class).to receive(:execute_firewall_cmd).with(['--get-services'], nil).and_return('foo bar')
+
+      provider_class.prefetch('missing_service' => resource)
+
+      expect(resource.provider.exists?).to be false
+    end
+
+    it 'reports absent for a builtin service when ensure is absent' do
+      resource = Puppet::Type.type(:firewalld_custom_service).new(name: 'ssh', ensure: :absent)
+
+      expect(provider_class).to receive(:execute_firewall_cmd).with(['--get-services'], nil).and_return('ssh foo bar')
+      expect(provider_class).to receive(:execute_firewall_cmd).with(['--path-service', 'ssh'], nil).and_return('/usr/lib/firewalld/services/ssh.xml')
+
+      provider_class.prefetch('ssh' => resource)
+
+      expect(resource.provider.exists?).to be false
+    end
+  end
+
+  describe '#exists? with a prefetched property_hash' do
+    it 'relies on the prefetched property_hash rather than shelling out' do
+      resource = Puppet::Type.type(:firewalld_custom_service).new(name: 'test_service')
+      resource.provider.instance_variable_set(:@property_hash, ensure: :present)
+
+      expect(resource.provider).not_to receive(:execute_firewall_cmd)
+      expect(resource.provider.exists?).to be true
+    end
+  end
 end

@@ -11,7 +11,54 @@ Puppet::Type.type(:firewalld_custom_service).provide(
 
   mk_resource_methods
 
+  # Lists every known service name (predefined + custom) with a single
+  # firewall-cmd invocation. Note this is the same --get-services catalog
+  # firewalld_service's instances mistakenly used to rely on; it's correct
+  # to use here because firewalld_custom_service really is asking "does a
+  # service definition with this name exist at all", not "is this service
+  # bound to a zone".
+  #
+  # Deliberately not memoized across calls: firewalld's state can change
+  # between Puppet runs (and even within long-lived processes such as a
+  # puppetserver or an rspec suite), so each call to prefetch must re-fetch.
+  #
+  def self.all_service_names
+    execute_firewall_cmd(['--get-services'], nil).strip.split
+  end
+
+  def self.instances
+    all_service_names.map { |s| new(ensure: :present, name: s) }
+  end
+
+  # firewalld_custom_service's namevar maps directly to the firewalld
+  # service name (unlike firewalld_service, where the Puppet title and the
+  # firewalld-level name can differ), so resources can safely be matched by
+  # name. --path-service still requires one shellout per resource actually
+  # found, since firewalld has no bulk "which of these are builtin" query;
+  # that call is only made when needed, same as before.
+  #
+  def self.prefetch(resources)
+    names = all_service_names
+
+    resources.each_value do |resource|
+      builtin = true
+      found_resource = names.include?(resource[:name])
+      builtin = false if found_resource && execute_firewall_cmd(['--path-service', resource[:name]], nil).start_with?('/etc')
+
+      present = found_resource
+      present = false if builtin && resource[:ensure] == :absent
+
+      resource.provider = new(ensure: present ? :present : :absent, name: resource[:name])
+    end
+  end
+
+  # If this instance went through self.prefetch, @property_hash[:ensure] is
+  # already known and no shellout is needed. Resources built outside the
+  # normal catalog/prefetch flow have no prefetched state, so fall back to a
+  # live query for those.
   def exists?
+    return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+
     builtin = true
 
     found_resource = execute_firewall_cmd(['--get-services'], nil).strip.split.include?(@resource[:name])

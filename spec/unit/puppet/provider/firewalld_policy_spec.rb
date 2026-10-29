@@ -72,4 +72,48 @@ describe provider_class do
       end
     end
   end
+
+  describe 'self.instances' do
+    it 'reflects every existing policy' do
+      allow(provider_class).to receive(:execute_firewall_cmd).with(['--get-policies'], nil).and_return('anytorestricted allow-host-ipv6')
+      expect(provider_class.instances.map(&:name)).to contain_exactly('anytorestricted', 'allow-host-ipv6')
+    end
+  end
+
+  describe 'self.prefetch' do
+    it 'matches resources by name, since the policy namevar is the policy name itself' do
+      allow(provider_class).to receive(:execute_firewall_cmd).with(['--get-policies'], nil).and_return('anytorestricted allow-host-ipv6')
+      policy = Puppet::Type.type(:firewalld_policy).new(name: 'anytorestricted', ingress_zones: ['public'], egress_zones: ['restricted'])
+
+      provider_class.prefetch('anytorestricted' => policy)
+
+      expect(policy.provider.exists?).to be true
+    end
+
+    it 'does not falsely report present for an unconfigured policy' do
+      allow(provider_class).to receive(:execute_firewall_cmd).with(['--get-policies'], nil).and_return('anytorestricted')
+      policy = Puppet::Type.type(:firewalld_policy).new(name: 'other-policy', ingress_zones: ['public'], egress_zones: ['restricted'])
+
+      provider_class.prefetch('other-policy' => policy)
+
+      expect(policy.provider.exists?).to be false
+    end
+  end
+
+  describe '#exists?' do
+    it 'relies on the prefetched property_hash rather than shelling out' do
+      policy = Puppet::Type.type(:firewalld_policy).new(name: 'anytorestricted', ingress_zones: ['public'], egress_zones: ['restricted'])
+      policy.provider.instance_variable_set(:@property_hash, ensure: :present)
+
+      expect(policy.provider).not_to receive(:execute_firewall_cmd_policy)
+      expect(policy.provider.exists?).to be true
+    end
+
+    it 'falls back to a live query when the resource was never prefetched' do
+      policy = Puppet::Type.type(:firewalld_policy).new(name: 'anytorestricted', ingress_zones: ['public'], egress_zones: ['restricted'], ensure: :absent)
+
+      expect(policy.provider).to receive(:execute_firewall_cmd_policy).with(['--get-policies'], nil).and_return('anytorestricted')
+      expect(policy.provider.exists?).to be true
+    end
+  end
 end

@@ -10,8 +10,43 @@ Puppet::Type.type(:firewalld_policy).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  # Lists every existing policy with a single firewall-cmd invocation.
+  # Unlike firewalld_service's predefined service catalog, --get-policies
+  # does reflect real configured policies, so it's safe to use directly
+  # here.
+  #
+  # Deliberately not memoized across calls: firewalld's state can change
+  # between Puppet runs (and even within long-lived processes such as a
+  # puppetserver or an rspec suite), so each call to prefetch must re-fetch.
+  #
+  def self.all_policies
+    execute_firewall_cmd(['--get-policies'], nil).split
+  end
+
+  def self.instances
+    all_policies.map { |p| new(ensure: :present, name: p) }
+  end
+
+  # firewalld_policy's namevar is the policy name itself (unlike
+  # firewalld_service, where the Puppet title and the firewalld-level name
+  # can differ), so resources can safely be matched by name.
+  #
+  def self.prefetch(resources)
+    policies = all_policies
+
+    resources.each_value do |resource|
+      resource.provider = new(ensure: policies.include?(resource[:name]) ? :present : :absent, name: resource[:name])
+    end
+  end
+
+  # If this instance went through self.prefetch, @property_hash[:ensure] is
+  # already known and no shellout is needed. Resources built outside the
+  # normal catalog/prefetch flow have no prefetched state, so fall back to a
+  # live query for those.
   def exists?
     @resource[:policy] = @resource[:name]
+    return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+
     execute_firewall_cmd_policy(['--get-policies'], nil).split.include?(@resource[:name])
   end
 

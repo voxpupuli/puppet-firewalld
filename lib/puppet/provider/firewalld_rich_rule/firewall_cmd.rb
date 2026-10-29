@@ -11,7 +11,72 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
 
   mk_resource_methods
 
+  # Builds a Hash of zone/policy name => { 'rich_rules' => [...], ... } from
+  # a single firewall-cmd invocation. See Puppet::Provider::Firewalld.parse_list_all.
+  #
+  # Deliberately not memoized across calls: firewalld's state can change
+  # between Puppet runs (and even within long-lived processes such as a
+  # puppetserver or an rspec suite), so each call to prefetch must re-fetch.
+  #
+  def self.zone_rich_rule_map
+    parse_list_all(execute_firewall_cmd(['--list-all-zones'], nil))
+  end
+
+  def self.policy_rich_rule_map
+    parse_list_all(execute_firewall_cmd(['--list-all-policies'], nil))
+  end
+
+  def self.instances
+    found = []
+    zone_rich_rule_map.each do |zone, data|
+      data['rich_rules'].each do |rule|
+        found << new(ensure: :present, name: rule, raw_rule: rule, zone: zone, policy: :unset)
+      end
+    end
+    policy_rich_rule_map.each do |policy, data|
+      data['rich_rules'].each do |rule|
+        found << new(ensure: :present, name: rule, raw_rule: rule, zone: :unset, policy: policy)
+      end
+    end
+    found
+  end
+
+  # Resources are keyed by an arbitrary Puppet title, so we can't match
+  # discovered instances back to resources by name (see self.instances).
+  # Instead each declared resource's rule text is built and looked up
+  # directly in the zone/policy maps gathered above. This relies on
+  # build_rich_rule producing a string byte-for-byte identical to
+  # firewalld's own canonical rich-rule serialization (field order:
+  # priority, family, source, destination, element, log, audit, action).
+  #
+  def self.prefetch(resources)
+    # Only fetch what's actually referenced, in case a catalog only uses
+    # zones or only uses policies.
+    zones = (resources.each_value.any? { |r| r[:zone] != :unset }) ? zone_rich_rule_map : {}
+    policies = (resources.each_value.any? { |r| r[:policy] != :unset }) ? policy_rich_rule_map : {}
+
+    resources.each_value do |resource|
+      rule_str = resource.provider.build_rich_rule
+      data = (resource[:zone] == :unset) ? policies[resource[:policy]] : zones[resource[:zone]]
+      present = data ? data['rich_rules'].include?(rule_str) : false
+      resource.provider = new(
+        ensure: present ? :present : :absent,
+        name: resource[:name],
+        raw_rule: rule_str,
+        zone: resource[:zone],
+        policy: resource[:policy],
+      )
+    end
+  end
+
+  # If this instance went through self.prefetch, @property_hash[:ensure] is
+  # already known and no shellout is needed. Resources built outside the
+  # normal catalog/prefetch flow (eg. the ad-hoc resources firewalld_zone's
+  # purge_rich_rules constructs to check and remove unmanaged rules) have no
+  # prefetched state, so fall back to a live query for those.
   def exists?
+    return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+
     @rule_args ||= build_rich_rule
     output = if @resource[:zone] == :unset
                execute_firewall_cmd_policy(['--query-rich-rule', @rule_args],
@@ -129,10 +194,17 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   def build_rich_rule
     return @resource[:raw_rule] if @resource[:raw_rule]
 
+    # Field order must match firewalld's own canonical serialization (see
+    # Rich_Rule.__str__ in firewalld's python sources: priority, family,
+    # source, destination, element, log, audit, action) so that the string
+    # this builds is byte-for-byte identical to what `--list-rich-rules`/
+    # `--list-all-zones` report back. Resources with a priority set would
+    # otherwise never raw-string-match firewalld's output, breaking
+    # purge_rich_rules and any other exact-match comparison.
     rule = ['rule']
     rule << [
-      key_val_opt('family'),
       eval_priority,
+      key_val_opt('family'),
       eval_source,
       eval_dest,
       eval_element,

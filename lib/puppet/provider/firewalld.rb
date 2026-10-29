@@ -153,6 +153,26 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     execute_firewall_cmd(['--reload'], nil, false) if online?
   end
 
+  # firewall-cmd accepts repeated flags in a single invocation (eg.
+  # `--add-source A --add-source B`), applying each one internally, which
+  # collapses what would be N interpreter-startup + D-Bus-connection-setup
+  # shellouts into one.
+  #
+  # IMPORTANT: firewall-cmd's argument parsing is one large if/elif chain,
+  # so only the *first* recognized action flag in a given invocation is
+  # acted on; mixing --add-X and --remove-X (or any two different actions)
+  # in the same call silently drops everything after the first match. This
+  # helper must therefore only ever be used to batch repetitions of the
+  # *same* flag, one call for additions and a separate call for removals.
+  #
+  # @param flag [String] eg. '--add-source'
+  # @param values [Array<String>] the values to add/remove, may be empty
+  # @return [Array<String>] the flag/value pairs ready to splat into args,
+  #   eg. ['--add-source', 'A', '--add-source', 'B']
+  def batch_flag(flag, values)
+    Array(values).flat_map { |v| [flag, v] }
+  end
+
   def offline?
     state == false || state.nil?
   end

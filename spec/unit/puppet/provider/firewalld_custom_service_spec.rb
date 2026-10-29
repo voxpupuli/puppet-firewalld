@@ -131,16 +131,17 @@ describe provider_class do
       provider.description = resource[:description]
     end
 
+    # Multiple added/removed ports, protocols, and modules are each batched
+    # into a single firewall-cmd call (one for additions, one for removals)
+    # instead of one call per value, since --add-X/--remove-X accept being
+    # repeated in one invocation. Adds and removes can never be combined in
+    # the same call: firewall-cmd's argument parsing only acts on the first
+    # recognized action flag it sees.
     context 'setting ports' do
       it 'works without existing ports' do
-        [
-          '123/tcp',
-          '234/udp',
-          '345/udp',
-          '456/tcp',
-        ].each do |port|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-port', port], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--add-port', '123/tcp', '--add-port', '234/udp', '--add-port', '345/udp', '--add-port', '456/tcp'], nil
+        )
 
         ports = []
         provider.instance_variable_set('@property_hash', ports: ports)
@@ -148,14 +149,9 @@ describe provider_class do
       end
 
       it 'works with disjoint existing ports' do
-        [
-          '123/tcp',
-          '234/udp',
-          '345/udp',
-          '456/tcp',
-        ].each do |port|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-port', port], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--add-port', '123/tcp', '--add-port', '234/udp', '--add-port', '345/udp', '--add-port', '456/tcp'], nil
+        )
 
         ports = [
           { 'port' => '789', 'protocol' => 'udp' },
@@ -163,24 +159,17 @@ describe provider_class do
         ]
         provider.instance_variable_set('@property_hash', ports: ports)
 
-        [
-          '789/udp',
-          '8910/tcp',
-        ].each do |port|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-port', port], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--remove-port', '789/udp', '--remove-port', '8910/tcp'], nil
+        )
 
         provider.ports = resource[:ports]
       end
 
       it 'works with overlapping existing ports' do
-        [
-          '123/tcp',
-          '234/udp',
-          '456/tcp',
-        ].each do |port|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-port', port], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--add-port', '123/tcp', '--add-port', '234/udp', '--add-port', '456/tcp'], nil
+        )
 
         ports = [
           { 'port' => '345', 'protocol' => 'udp' },
@@ -188,11 +177,7 @@ describe provider_class do
         ]
         provider.instance_variable_set('@property_hash', ports: ports)
 
-        [
-          '8910/tcp',
-        ].each do |port|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-port', port], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-port', '8910/tcp'], nil)
 
         provider.ports = resource[:ports]
       end
@@ -200,14 +185,9 @@ describe provider_class do
 
     context 'setting protocols' do
       it 'works without existing protocols' do
-        %w[
-          foo
-          bar
-          baz
-          dccp
-        ].each do |protocol|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-protocol', protocol], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--add-protocol', 'foo', '--add-protocol', 'bar', '--add-protocol', 'baz', '--add-protocol', 'dccp'], nil
+        )
 
         protocols = []
         provider.instance_variable_set('@property_hash', protocols: protocols)
@@ -215,14 +195,9 @@ describe provider_class do
       end
 
       it 'works with disjoint existing protocols' do
-        %w[
-          foo
-          bar
-          baz
-          dccp
-        ].each do |protocol|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-protocol', protocol], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--add-protocol', 'foo', '--add-protocol', 'bar', '--add-protocol', 'baz', '--add-protocol', 'dccp'], nil
+        )
 
         protocols = %w[
           icmp
@@ -230,21 +205,17 @@ describe provider_class do
         ]
         provider.instance_variable_set('@property_hash', protocols: protocols)
 
-        protocols.each do |protocol|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-protocol', protocol], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--remove-protocol', 'icmp', '--remove-protocol', 'test'], nil
+        )
 
         provider.protocols = resource[:protocols]
       end
 
       it 'works with overlapping existing protocols' do
-        %w[
-          foo
-          baz
-          dccp
-        ].each do |protocol|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-protocol', protocol], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--add-protocol', 'foo', '--add-protocol', 'baz', '--add-protocol', 'dccp'], nil
+        )
 
         protocols = %w[
           bar
@@ -252,9 +223,7 @@ describe provider_class do
         ]
         provider.instance_variable_set('@property_hash', protocols: protocols)
 
-        ['icmp'].each do |protocol|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-protocol', protocol], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-protocol', 'icmp'], nil)
 
         provider.protocols = resource[:protocols]
       end
@@ -262,12 +231,9 @@ describe provider_class do
 
     context 'setting modules' do
       it 'works without existing modules' do
-        %w[
-          nf_thingy
-          nf_other_thingy
-        ].each do |mod|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', mod], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--add-module', 'nf_thingy', '--add-module', 'nf_other_thingy'], nil
+        )
 
         modules = []
         provider.instance_variable_set('@property_hash', modules: modules)
@@ -275,12 +241,9 @@ describe provider_class do
       end
 
       it 'works with disjoint existing modules' do
-        %w[
-          nf_thingy
-          nf_other_thingy
-        ].each do |mod|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', mod], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--add-module', 'nf_thingy', '--add-module', 'nf_other_thingy'], nil
+        )
 
         modules = %w[
           nf_stuff
@@ -288,19 +251,15 @@ describe provider_class do
         ]
         provider.instance_variable_set('@property_hash', modules: modules)
 
-        modules.each do |mod|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-module', mod], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(
+          ['--service', resource[:name], '--remove-module', 'nf_stuff', '--remove-module', 'nf_bob'], nil
+        )
 
         provider.modules = resource[:modules]
       end
 
       it 'works with overlapping existing modules' do
-        [
-          'nf_other_thingy',
-        ].each do |mod|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', mod], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--add-module', 'nf_other_thingy'], nil)
 
         modules = %w[
           nf_thingy
@@ -308,9 +267,7 @@ describe provider_class do
         ]
         provider.instance_variable_set('@property_hash', modules: modules)
 
-        ['nf_bob'].each do |mod|
-          expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-module', mod], nil)
-        end
+        expect(provider).to receive(:execute_firewall_cmd).with(['--service', resource[:name], '--remove-module', 'nf_bob'], nil)
 
         provider.modules = resource[:modules]
       end

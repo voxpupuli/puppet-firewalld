@@ -21,6 +21,17 @@ describe provider_class do
     allow(provider).to receive(:execute_firewall_cmd).with(['--list-interfaces']).and_return(double(exitstatus: 0, chomp: ''))
   end
 
+  describe 'when firewalld is not available' do
+    before do
+      allow(provider).to receive(:available?).and_return(false)
+    end
+
+    it 'exists? returns false without calling firewall-cmd' do
+      expect(provider).not_to receive(:execute_firewall_cmd)
+      expect(provider.exists?).to be false
+    end
+  end
+
   describe 'when creating' do
     context 'with name white' do
       it 'executes firewall_cmd with new-zone' do

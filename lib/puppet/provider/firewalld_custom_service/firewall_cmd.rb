@@ -12,6 +12,8 @@ Puppet::Type.type(:firewalld_custom_service).provide(
   mk_resource_methods
 
   def exists?
+    return false unless available?
+
     builtin = true
 
     found_resource = execute_firewall_cmd(['--get-services'], nil).strip.split.include?(@resource[:name])

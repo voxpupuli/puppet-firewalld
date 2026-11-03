@@ -65,4 +65,48 @@ describe provider_class do
       end
     end
   end
+
+  describe 'self.instances' do
+    it 'reflects every existing zone' do
+      allow(provider_class).to receive(:execute_firewall_cmd).with(['--get-zones'], nil).and_return('public work internal')
+      expect(provider_class.instances.map(&:name)).to contain_exactly('public', 'work', 'internal')
+    end
+  end
+
+  describe 'self.prefetch' do
+    it 'matches resources by name, since the zone namevar is the zone name itself' do
+      allow(provider_class).to receive(:execute_firewall_cmd).with(['--get-zones'], nil).and_return('public work')
+      zone = Puppet::Type.type(:firewalld_zone).new(name: 'public')
+
+      provider_class.prefetch('public' => zone)
+
+      expect(zone.provider.exists?).to be true
+    end
+
+    it 'does not falsely report present for an unconfigured zone' do
+      allow(provider_class).to receive(:execute_firewall_cmd).with(['--get-zones'], nil).and_return('public work')
+      zone = Puppet::Type.type(:firewalld_zone).new(name: 'restricted')
+
+      provider_class.prefetch('restricted' => zone)
+
+      expect(zone.provider.exists?).to be false
+    end
+  end
+
+  describe '#exists?' do
+    it 'relies on the prefetched property_hash rather than shelling out' do
+      zone = Puppet::Type.type(:firewalld_zone).new(name: 'public')
+      zone.provider.instance_variable_set(:@property_hash, ensure: :present)
+
+      expect(zone.provider).not_to receive(:execute_firewall_cmd)
+      expect(zone.provider.exists?).to be true
+    end
+
+    it 'falls back to a live query when the resource was never prefetched' do
+      zone = Puppet::Type.type(:firewalld_zone).new(name: 'public', ensure: :absent)
+
+      expect(zone.provider).to receive(:execute_firewall_cmd).with(['--get-zones'], nil).and_return('public work')
+      expect(zone.provider.exists?).to be true
+    end
+  end
 end

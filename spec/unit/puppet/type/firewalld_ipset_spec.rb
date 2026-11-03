@@ -118,8 +118,7 @@ describe Puppet::Type.type(:firewalld_ipset) do
 
     it 'creates' do
       expect(provider).to receive(:execute_firewall_cmd).with(['--new-ipset=whitelist', '--type=hash:ip'], nil)
-      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
-      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=10.72.1.100'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry', '192.168.2.2', '--add-entry', '10.72.1.100'], nil)
       provider.create
     end
 
@@ -130,16 +129,14 @@ describe Puppet::Type.type(:firewalld_ipset) do
 
     it 'sets entries' do
       expect(provider).to receive(:entries).and_return([])
-      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
-      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=10.72.1.100'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry', '192.168.2.2', '--add-entry', '10.72.1.100'], nil)
       provider.entries = ['192.168.2.2', '10.72.1.100']
     end
 
     it 'removes unconfigured entries' do
       expect(provider).to receive(:entries).and_return(['10.9.9.9', '10.8.8.8', '10.72.1.100'])
-      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry=192.168.2.2'], nil)
-      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.9.9.9'], nil)
-      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry=10.8.8.8'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--remove-entry', '10.9.9.9', '--remove-entry', '10.8.8.8'], nil)
+      expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=whitelist', '--add-entry', '192.168.2.2'], nil)
       provider.entries = ['192.168.2.2', '10.72.1.100']
     end
   end

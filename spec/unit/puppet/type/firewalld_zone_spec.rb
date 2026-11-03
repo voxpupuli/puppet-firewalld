@@ -185,13 +185,14 @@ describe Puppet::Type.type(:firewalld_zone) do
         expect(provider).to receive(:icmp_blocks=).with(%w[redirect router-advertisment])
         expect(provider).to receive(:icmp_block_inversion=).with(:true)
 
+        # Multiple added sources/protocols/interfaces are batched into a
+        # single firewall-cmd call per property, instead of one call per
+        # value, since --add-X accepts being repeated in one invocation.
         expect(provider).to receive(:sources).and_return([])
-        expect(provider).to receive(:execute_firewall_cmd).with(['--add-source', '192.168.2.2'])
-        expect(provider).to receive(:execute_firewall_cmd).with(['--add-source', '10.72.1.100'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-source', '192.168.2.2', '--add-source', '10.72.1.100'])
 
         expect(provider).to receive(:protocols).and_return([])
-        expect(provider).to receive(:execute_firewall_cmd).with(['--add-protocol', 'icmp'])
-        expect(provider).to receive(:execute_firewall_cmd).with(['--add-protocol', 'igmp'])
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-protocol', 'icmp', '--add-protocol', 'igmp'])
 
         expect(provider).to receive(:interfaces).and_return([])
         expect(provider).to receive(:execute_firewall_cmd).with(['--add-interface', 'eth0'])

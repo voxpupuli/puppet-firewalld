@@ -71,8 +71,7 @@ describe provider_class do
         expect(resource).to receive(:[]).with(:manage_entries).and_return(true)
         expect(resource).to receive(:[]).with(:entries).and_return(['192.168.0/24', '10.0.0/8'])
         expect(provider).to receive(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet', '--option=hashsize=1024', '--option=maxelem=65536'], nil)
-        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=192.168.0/24'], nil)
-        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=10.0.0/8'], nil)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry', '192.168.0/24', '--add-entry', '10.0.0/8'], nil)
         provider.create
       end
     end
@@ -93,8 +92,7 @@ describe provider_class do
         expect(resource).to receive(:[]).with(:entries).and_return(['192.168.0/24', '10.0.0/8']).at_least(:once)
         expect(provider).to receive(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet'], nil)
         expect(provider).to receive(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet', '--option=hashsize=2048'], nil)
-        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=192.168.0/24'], nil).at_least(:once)
-        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=10.0.0/8'], nil).at_least(:once)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry', '192.168.0/24', '--add-entry', '10.0.0/8'], nil).at_least(:once)
         expect(provider).to receive(:execute_firewall_cmd).with(['--delete-ipset=white'], nil)
         provider.create
         provider.hashsize = 2048
@@ -114,10 +112,9 @@ describe provider_class do
         expect(resource).to receive(:[]).with(:entries).and_return(['192.168.0.0/24', '10.0.0.0/8']).at_least(:once)
         expect(provider).to receive(:entries).and_return(['192.168.0.0/24', '10.0.0.0/8'])
         expect(provider).to receive(:execute_firewall_cmd).with(['--new-ipset=white', '--type=hash:net', '--option=family=inet'], nil)
-        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=192.168.0.0/24'], nil).at_least(:once)
-        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=10.0.0.0/8'], nil).at_least(:once)
-        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry=192.168.14.0/24'], nil)
-        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--remove-entry=192.168.0.0/24'], nil)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry', '192.168.0.0/24', '--add-entry', '10.0.0.0/8'], nil).at_least(:once)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--remove-entry', '192.168.0.0/24'], nil)
+        expect(provider).to receive(:execute_firewall_cmd).with(['--ipset=white', '--add-entry', '192.168.14.0/24'], nil)
         provider.create
         provider.entries = ['192.168.14.0/24', '10.0.0.0/8']
       end

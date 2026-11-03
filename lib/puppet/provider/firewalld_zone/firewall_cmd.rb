@@ -10,8 +10,42 @@ Puppet::Type.type(:firewalld_zone).provide(
 ) do
   desc 'Interact with firewall-cmd'
 
+  # Lists every existing zone with a single firewall-cmd invocation. Unlike
+  # firewalld_service's predefined service catalog, --get-zones does reflect
+  # real configured zones, so it's safe to use directly here.
+  #
+  # Deliberately not memoized across calls: firewalld's state can change
+  # between Puppet runs (and even within long-lived processes such as a
+  # puppetserver or an rspec suite), so each call to prefetch must re-fetch.
+  #
+  def self.all_zones
+    execute_firewall_cmd(['--get-zones'], nil).split
+  end
+
+  def self.instances
+    all_zones.map { |z| new(ensure: :present, name: z) }
+  end
+
+  # firewalld_zone's namevar is the zone name itself (unlike
+  # firewalld_service, where the Puppet title and the firewalld-level name
+  # can differ), so resources can safely be matched by name.
+  #
+  def self.prefetch(resources)
+    zones = all_zones
+
+    resources.each_value do |resource|
+      resource.provider = new(ensure: zones.include?(resource[:name]) ? :present : :absent, name: resource[:name])
+    end
+  end
+
+  # If this instance went through self.prefetch, @property_hash[:ensure] is
+  # already known and no shellout is needed. Resources built outside the
+  # normal catalog/prefetch flow have no prefetched state, so fall back to a
+  # live query for those.
   def exists?
     @resource[:zone] = @resource[:name]
+    return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+
     execute_firewall_cmd(['--get-zones'], nil).split.include?(@resource[:name])
   end
 
@@ -53,51 +87,60 @@ Puppet::Type.type(:firewalld_zone).provide(
     execute_firewall_cmd(['--list-interfaces']).chomp.split || []
   end
 
+  # NOTE: --add-interface and --remove-interface must never be combined in
+  # a single firewall-cmd invocation: firewall-cmd's argument parsing only
+  # acts on the first recognized action flag it sees, so a mixed call would
+  # silently drop everything after it. Repeating the *same* flag for
+  # multiple values is fine and is what collapses N calls into one here.
   def interfaces=(new_interfaces)
     new_interfaces ||= []
     cur_interfaces = interfaces
-    (new_interfaces - cur_interfaces).each do |missing_interface|
-      debug("Adding interface '#{missing_interface}' to zone #{@resource[:name]}")
-      execute_firewall_cmd(['--add-interface', missing_interface])
-    end
-    (cur_interfaces - new_interfaces).each do |extraneous_interface|
-      debug("Removing interface '#{extraneous_interface}' from zone #{@resource[:name]}")
-      execute_firewall_cmd(['--remove-interface', extraneous_interface])
-    end
+    missing_interfaces = new_interfaces - cur_interfaces
+    extraneous_interfaces = cur_interfaces - new_interfaces
+
+    missing_interfaces.each { |i| debug("Adding interface '#{i}' to zone #{@resource[:name]}") }
+    extraneous_interfaces.each { |i| debug("Removing interface '#{i}' from zone #{@resource[:name]}") }
+
+    execute_firewall_cmd(batch_flag('--add-interface', missing_interfaces)) unless missing_interfaces.empty?
+    execute_firewall_cmd(batch_flag('--remove-interface', extraneous_interfaces)) unless extraneous_interfaces.empty?
   end
 
   def sources
     execute_firewall_cmd(['--list-sources']).chomp.split.sort || []
   end
 
+  # See the note on interfaces= above: --add-source and --remove-source must
+  # not be combined in a single firewall-cmd invocation.
   def sources=(new_sources)
     new_sources ||= []
     cur_sources = sources
-    (new_sources - cur_sources).each do |missing_source|
-      debug("Adding source '#{missing_source}' to zone #{@resource[:name]}")
-      execute_firewall_cmd(['--add-source', missing_source])
-    end
-    (cur_sources - new_sources).each do |extraneous_source|
-      debug("Removing source '#{extraneous_source}' from zone #{@resource[:name]}")
-      execute_firewall_cmd(['--remove-source', extraneous_source])
-    end
+    missing_sources = new_sources - cur_sources
+    extraneous_sources = cur_sources - new_sources
+
+    missing_sources.each { |s| debug("Adding source '#{s}' to zone #{@resource[:name]}") }
+    extraneous_sources.each { |s| debug("Removing source '#{s}' from zone #{@resource[:name]}") }
+
+    execute_firewall_cmd(batch_flag('--add-source', missing_sources)) unless missing_sources.empty?
+    execute_firewall_cmd(batch_flag('--remove-source', extraneous_sources)) unless extraneous_sources.empty?
   end
 
   def protocols
     execute_firewall_cmd(['--list-protocols']).chomp.split.sort || []
   end
 
+  # See the note on interfaces= above: --add-protocol and --remove-protocol
+  # must not be combined in a single firewall-cmd invocation.
   def protocols=(new_protocols)
     new_protocols ||= []
     cur_protocols = protocols
-    (new_protocols - cur_protocols).each do |p|
-      debug("Adding protocol '#{p}' to zone #{@resource[:name]}")
-      execute_firewall_cmd(['--add-protocol', p])
-    end
-    (cur_protocols - new_protocols).each do |p|
-      debug("Removing protocol '#{p}' from zone #{@resource[:name]}")
-      execute_firewall_cmd(['--remove-protocol', p])
-    end
+    missing_protocols = new_protocols - cur_protocols
+    extraneous_protocols = cur_protocols - new_protocols
+
+    missing_protocols.each { |p| debug("Adding protocol '#{p}' to zone #{@resource[:name]}") }
+    extraneous_protocols.each { |p| debug("Removing protocol '#{p}' from zone #{@resource[:name]}") }
+
+    execute_firewall_cmd(batch_flag('--add-protocol', missing_protocols)) unless missing_protocols.empty?
+    execute_firewall_cmd(batch_flag('--remove-protocol', extraneous_protocols)) unless extraneous_protocols.empty?
   end
 
   def masquerade
@@ -134,14 +177,14 @@ Puppet::Type.type(:firewalld_zone).provide(
     set_blocks = new_icmp_blocks - icmp_blocks
     remove_blocks = icmp_blocks - new_icmp_blocks
 
-    Array(remove_blocks).each do |block|
-      debug("removing block #{block} from zone #{@resource[:name]}")
-      execute_firewall_cmd(['--remove-icmp-block', block], @resource[:name])
-    end
-    Array(set_blocks).each do |block|
-      debug("adding block #{new_icmp_blocks} to zone #{@resource[:name]}")
-      execute_firewall_cmd(['--add-icmp-block', block], @resource[:name])
-    end
+    # See the note on interfaces= above: --add-icmp-block and
+    # --remove-icmp-block must not be combined in a single firewall-cmd
+    # invocation.
+    Array(remove_blocks).each { |block| debug("removing block #{block} from zone #{@resource[:name]}") }
+    execute_firewall_cmd(batch_flag('--remove-icmp-block', remove_blocks), @resource[:name]) unless remove_blocks.empty?
+
+    Array(set_blocks).each { |block| debug("adding block #{block} to zone #{@resource[:name]}") }
+    execute_firewall_cmd(batch_flag('--add-icmp-block', set_blocks), @resource[:name]) unless set_blocks.empty?
   end
 
   def icmp_block_inversion

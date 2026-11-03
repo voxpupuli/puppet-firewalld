@@ -11,7 +11,54 @@ Puppet::Type.type(:firewalld_custom_service).provide(
 
   mk_resource_methods
 
+  # Lists every known service name (predefined + custom) with a single
+  # firewall-cmd invocation. Note this is the same --get-services catalog
+  # firewalld_service's instances mistakenly used to rely on; it's correct
+  # to use here because firewalld_custom_service really is asking "does a
+  # service definition with this name exist at all", not "is this service
+  # bound to a zone".
+  #
+  # Deliberately not memoized across calls: firewalld's state can change
+  # between Puppet runs (and even within long-lived processes such as a
+  # puppetserver or an rspec suite), so each call to prefetch must re-fetch.
+  #
+  def self.all_service_names
+    execute_firewall_cmd(['--get-services'], nil).strip.split
+  end
+
+  def self.instances
+    all_service_names.map { |s| new(ensure: :present, name: s) }
+  end
+
+  # firewalld_custom_service's namevar maps directly to the firewalld
+  # service name (unlike firewalld_service, where the Puppet title and the
+  # firewalld-level name can differ), so resources can safely be matched by
+  # name. --path-service still requires one shellout per resource actually
+  # found, since firewalld has no bulk "which of these are builtin" query;
+  # that call is only made when needed, same as before.
+  #
+  def self.prefetch(resources)
+    names = all_service_names
+
+    resources.each_value do |resource|
+      builtin = true
+      found_resource = names.include?(resource[:name])
+      builtin = false if found_resource && execute_firewall_cmd(['--path-service', resource[:name]], nil).start_with?('/etc')
+
+      present = found_resource
+      present = false if builtin && resource[:ensure] == :absent
+
+      resource.provider = new(ensure: present ? :present : :absent, name: resource[:name])
+    end
+  end
+
+  # If this instance went through self.prefetch, @property_hash[:ensure] is
+  # already known and no shellout is needed. Resources built outside the
+  # normal catalog/prefetch flow have no prefetched state, so fall back to a
+  # live query for those.
   def exists?
+    return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+
     builtin = true
 
     found_resource = execute_firewall_cmd(['--get-services'], nil).strip.split.include?(@resource[:name])
@@ -67,6 +114,13 @@ Puppet::Type.type(:firewalld_custom_service).provide(
     @property_hash[:ports]
   end
 
+  # NOTE: --add-port and --remove-port must never be combined in a single
+  # firewall-cmd invocation: firewall-cmd's argument parsing only acts on
+  # the first recognized action flag it sees, so a mixed call would
+  # silently drop everything after it. Repeating the same flag for multiple
+  # values is fine and is what collapses N calls into one here. Because
+  # that means we can no longer isolate which individual port failed,
+  # add/remove failures are now reported per-batch rather than per-port.
   def ports=(should)
     to_add = []
     to_remove = []
@@ -78,26 +132,21 @@ Puppet::Type.type(:firewalld_custom_service).provide(
       to_add = should - @property_hash[:ports]
     end
 
+    # Protocols could have been specified in there
+    add_strs = to_add.select { |entry| entry['port'] }.map { |entry| "#{entry['port']}/#{entry['protocol']}" }
+    remove_strs = to_remove.map { |entry| "#{entry['port']}/#{entry['protocol']}" }
+
     errors = []
-    to_add.each do |entry|
-      # Protocols could have been specified in there
-      next unless entry['port']
-
-      begin
-        port_str = "#{entry['port']}/#{entry['protocol']}"
-
-        execute_firewall_cmd(['--service', @resource[:name], '--add-port', port_str], nil)
-      rescue Puppet::ExecutionFailure => e
-        errors << "Could not add port '#{port_str} to #{@resource[:name]}' => #{e}"
-      end
+    begin
+      execute_firewall_cmd(['--service', @resource[:name]] + batch_flag('--add-port', add_strs), nil) unless add_strs.empty?
+    rescue Puppet::ExecutionFailure => e
+      errors << "Could not add port(s) '#{add_strs.join(', ')}' to #{@resource[:name]} => #{e}"
     end
 
-    to_remove.each do |entry|
-      port_str = "#{entry['port']}/#{entry['protocol']}"
-
-      execute_firewall_cmd(['--service', @resource[:name], '--remove-port', port_str], nil)
+    begin
+      execute_firewall_cmd(['--service', @resource[:name]] + batch_flag('--remove-port', remove_strs), nil) unless remove_strs.empty?
     rescue Puppet::ExecutionFailure => e
-      errors << "Could not remove port '#{port_str} from #{@resource[:name]}' => #{e}"
+      errors << "Could not remove port(s) '#{remove_strs.join(', ')}' from #{@resource[:name]} => #{e}"
     end
 
     raise Puppet::ResourceError, errors.join("\n") unless errors.empty?
@@ -109,6 +158,8 @@ Puppet::Type.type(:firewalld_custom_service).provide(
     @property_hash[:protocols]
   end
 
+  # See the note on ports= above: --add-protocol and --remove-protocol must
+  # not be combined in a single firewall-cmd invocation.
   def protocols=(should)
     to_add = []
     to_remove = []
@@ -123,16 +174,16 @@ Puppet::Type.type(:firewalld_custom_service).provide(
     end
 
     errors = []
-    to_add.each do |entry|
-      execute_firewall_cmd(['--service', @resource[:name], '--add-protocol', entry], nil)
+    begin
+      execute_firewall_cmd(['--service', @resource[:name]] + batch_flag('--add-protocol', to_add), nil) unless to_add.empty?
     rescue Puppet::ExecutionFailure => e
-      errors << "Could not add protocol '#{entry} to #{@resource[:name]}' => #{e}"
+      errors << "Could not add protocol(s) '#{to_add.join(', ')}' to #{@resource[:name]} => #{e}"
     end
 
-    to_remove.each do |entry|
-      execute_firewall_cmd(['--service', @resource[:name], '--remove-protocol', entry], nil)
+    begin
+      execute_firewall_cmd(['--service', @resource[:name]] + batch_flag('--remove-protocol', to_remove), nil) unless to_remove.empty?
     rescue Puppet::ExecutionFailure => e
-      errors << "Could not remove protocol'#{entry} from #{@resource[:name]}' => #{e}"
+      errors << "Could not remove protocol(s) '#{to_remove.join(', ')}' from #{@resource[:name]} => #{e}"
     end
 
     raise Puppet::ResourceError, errors.join("\n") unless errors.empty?
@@ -144,6 +195,8 @@ Puppet::Type.type(:firewalld_custom_service).provide(
     @property_hash[:modules]
   end
 
+  # See the note on ports= above: --add-module and --remove-module must not
+  # be combined in a single firewall-cmd invocation.
   def modules=(should)
     to_add = []
     to_remove = []
@@ -156,16 +209,16 @@ Puppet::Type.type(:firewalld_custom_service).provide(
     end
 
     errors = []
-    to_add.each do |entry|
-      execute_firewall_cmd(['--service', @resource[:name], '--add-module', entry], nil)
+    begin
+      execute_firewall_cmd(['--service', @resource[:name]] + batch_flag('--add-module', to_add), nil) unless to_add.empty?
     rescue Puppet::ExecutionFailure => e
-      errors << "Could not add module '#{entry} to #{@resource[:name]}' => #{e}"
+      errors << "Could not add module(s) '#{to_add.join(', ')}' to #{@resource[:name]} => #{e}"
     end
 
-    to_remove.each do |entry|
-      execute_firewall_cmd(['--service', @resource[:name], '--remove-module', entry], nil)
+    begin
+      execute_firewall_cmd(['--service', @resource[:name]] + batch_flag('--remove-module', to_remove), nil) unless to_remove.empty?
     rescue Puppet::ExecutionFailure => e
-      errors << "Could not remove module '#{entry} from #{@resource[:name]}' => #{e}"
+      errors << "Could not remove module(s) '#{to_remove.join(', ')}' from #{@resource[:name]} => #{e}"
     end
 
     raise Puppet::ResourceError, errors.join("\n") unless errors.empty?

@@ -18,6 +18,8 @@ Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, parent: Puppet
   end
 
   def self.instances
+    return [] unless available?
+
     all_chains.map do |c|
       new(ensure: :present, name: c['name'], inet_protocol: c['inet_protocol'], table: c['table'])
     end
@@ -29,6 +31,8 @@ Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, parent: Puppet
   # directly against each resource's own parameters rather than by name.
   #
   def self.prefetch(resources)
+    return unless available?
+
     chains = all_chains
 
     resources.each_value do |resource|
@@ -50,6 +54,7 @@ Puppet::Type.type(:firewalld_direct_chain).provide(:firewall_cmd, parent: Puppet
   # live query for those.
   def exists?
     return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+    return false unless available?
 
     @chain_args ||= generate_raw
     output = execute_firewall_cmd(['--direct', '--query-chain', @chain_args], nil, true, false)

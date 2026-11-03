@@ -21,6 +21,8 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
   end
 
   def self.instances
+    return [] unless available?
+
     all_passthroughs.map do |p|
       new(ensure: :present, name: p['args'].join(' '), inet_protocol: p['inet_protocol'], args: p['args'].join(' '))
     end
@@ -33,6 +35,8 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
   # gathered above.
   #
   def self.prefetch(resources)
+    return unless available?
+
     passthroughs = all_passthroughs
 
     resources.each_value do |resource|
@@ -56,6 +60,7 @@ Puppet::Type.type(:firewalld_direct_passthrough).provide(
   # live query for those.
   def exists?
     return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+    return false unless available?
 
     @passt_args ||= generate_raw
     output = execute_firewall_cmd(['--direct', '--query-passthrough', @passt_args], nil, true, false)

@@ -11,6 +11,7 @@ Puppet::Type.type(:firewalld_direct_purge).provide(
 
   def get_instances_of(restype)
     raise Puppet::Error, "Unknown type #{restype}" unless %i[chain passthrough rule].include?(restype)
+    return [] unless available?
 
     perm = execute_firewall_cmd(['--direct', "--get-all-#{restype}s"], nil).split(%r{\n})
     curr = execute_firewall_cmd(['--direct', "--get-all-#{restype}s"], nil, false).split(%r{\n})

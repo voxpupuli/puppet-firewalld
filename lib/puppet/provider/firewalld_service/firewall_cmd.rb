@@ -31,6 +31,8 @@ Puppet::Type.type(:firewalld_service).provide(
   # catalog, not what's enabled anywhere) this reflects real bindings.
   #
   def self.instances
+    return [] unless available?
+
     found = []
     zone_service_map.each do |zone, data|
       data['services'].each do |service|
@@ -51,6 +53,8 @@ Puppet::Type.type(:firewalld_service).provide(
   # directly against the zone/policy maps gathered above.
   #
   def self.prefetch(resources)
+    return unless available?
+
     # Only fetch what's actually referenced, in case a catalog only uses
     # zones or only uses policies.
     zones = (resources.each_value.any? { |r| r[:zone] != :unset }) ? zone_service_map : {}
@@ -77,6 +81,7 @@ Puppet::Type.type(:firewalld_service).provide(
   # no prefetched state, so fall back to a live query for those.
   def exists?
     return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+    return false unless available?
 
     if @resource[:zone] == :unset
       execute_firewall_cmd_policy(['--list-services']).split.include?(@resource[:service])

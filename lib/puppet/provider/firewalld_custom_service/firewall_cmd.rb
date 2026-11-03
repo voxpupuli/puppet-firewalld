@@ -27,6 +27,8 @@ Puppet::Type.type(:firewalld_custom_service).provide(
   end
 
   def self.instances
+    return [] unless available?
+
     all_service_names.map { |s| new(ensure: :present, name: s) }
   end
 
@@ -38,6 +40,8 @@ Puppet::Type.type(:firewalld_custom_service).provide(
   # that call is only made when needed, same as before.
   #
   def self.prefetch(resources)
+    return unless available?
+
     names = all_service_names
 
     resources.each_value do |resource|
@@ -58,6 +62,7 @@ Puppet::Type.type(:firewalld_custom_service).provide(
   # live query for those.
   def exists?
     return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+    return false unless available?
 
     builtin = true
 

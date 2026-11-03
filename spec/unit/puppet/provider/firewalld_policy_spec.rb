@@ -116,4 +116,15 @@ describe provider_class do
       expect(policy.provider.exists?).to be true
     end
   end
+
+  it_behaves_like 'a noop-safe firewalld provider', provider_class do
+    let(:noop_resource) do
+      Puppet::Type.type(:firewalld_policy).new(
+        name: 'noop',
+        ingress_zones: ['public'],
+        egress_zones: ['restricted'],
+        ensure: :present,
+      )
+    end
+  end
 end

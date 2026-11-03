@@ -12,6 +12,8 @@ Puppet::Type.type(:firewalld_ipset).provide(
   mk_resource_methods
 
   def self.instances
+    return [] unless available?
+
     ipset_ids = execute_firewall_cmd(['--get-ipsets'], nil).split
     ipset_ids.map do |ipset_id|
       ipset_raw = execute_firewall_cmd(["--info-ipset=#{ipset_id}"], nil)
@@ -34,6 +36,8 @@ Puppet::Type.type(:firewalld_ipset).provide(
   end
 
   def self.prefetch(resources)
+    return unless available?
+
     instances.each do |prov|
       if (resource = resources[prov.name])
         resource.provider = prov

@@ -9,6 +9,7 @@ describe 'firewalld::reload::complete' do
   it {
     is_expected.to contain_exec('firewalld::complete-reload').with(path: '/usr/bin:/bin',
                                                                    command: 'firewall-cmd --complete-reload',
+                                                                   onlyif: 'command -v firewall-cmd >/dev/null',
                                                                    refreshonly: true,
                                                                    require: 'Class[Firewalld::Reload]')
   }

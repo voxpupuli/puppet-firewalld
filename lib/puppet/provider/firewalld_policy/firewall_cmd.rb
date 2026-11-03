@@ -24,6 +24,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   end
 
   def self.instances
+    return [] unless available?
+
     all_policies.map { |p| new(ensure: :present, name: p) }
   end
 
@@ -32,6 +34,8 @@ Puppet::Type.type(:firewalld_policy).provide(
   # can differ), so resources can safely be matched by name.
   #
   def self.prefetch(resources)
+    return unless available?
+
     policies = all_policies
 
     resources.each_value do |resource|
@@ -46,6 +50,7 @@ Puppet::Type.type(:firewalld_policy).provide(
   def exists?
     @resource[:policy] = @resource[:name]
     return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+    return false unless available?
 
     execute_firewall_cmd_policy(['--get-policies'], nil).split.include?(@resource[:name])
   end

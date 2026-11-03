@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v6.1.0](https://github.com/voxpupuli/puppet-firewalld/tree/v6.1.0) (2026-11-03)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v6.0.0...v6.1.0)
+
+**Implemented enhancements:**
+
+- Batch and prefetch tool calls [\#417](https://github.com/voxpupuli/puppet-firewalld/pull/417) ([jcpunk](https://github.com/jcpunk))
+- puppetlabs/stdlib: Allow 10.x [\#415](https://github.com/voxpupuli/puppet-firewalld/pull/415) ([bastelfreak](https://github.com/bastelfreak))
+- Update requirements to allow OpenVox 9 [\#414](https://github.com/voxpupuli/puppet-firewalld/pull/414) ([sebastianrakel](https://github.com/sebastianrakel))
+
+**Fixed bugs:**
+
+- Make the module noop safe if firewalld isn't installed [\#418](https://github.com/voxpupuli/puppet-firewalld/pull/418) ([jcpunk](https://github.com/jcpunk))
+
+**Closed issues:**
+
+- The firewalld-cmd command is not currently noop-safe [\#407](https://github.com/voxpupuli/puppet-firewalld/issues/407)
+
+**Merged pull requests:**
+
+- Add missing doc strings [\#416](https://github.com/voxpupuli/puppet-firewalld/pull/416) ([jcpunk](https://github.com/jcpunk))
+
 ## [v6.0.0](https://github.com/voxpupuli/puppet-firewalld/tree/v6.0.0) (2026-09-17)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v5.1.0...v6.0.0)

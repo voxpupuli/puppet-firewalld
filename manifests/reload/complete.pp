@@ -8,6 +8,7 @@ class firewalld::reload::complete {
   exec { 'firewalld::complete-reload':
     path        => '/usr/bin:/bin',
     command     => 'firewall-cmd --complete-reload',
+    onlyif      => 'command -v firewall-cmd >/dev/null',
     refreshonly => true,
     require     => Class['firewalld::reload'],
   }

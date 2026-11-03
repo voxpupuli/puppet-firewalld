@@ -23,6 +23,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   end
 
   def self.instances
+    return [] unless available?
+
     all_zones.map { |z| new(ensure: :present, name: z) }
   end
 
@@ -31,6 +33,8 @@ Puppet::Type.type(:firewalld_zone).provide(
   # can differ), so resources can safely be matched by name.
   #
   def self.prefetch(resources)
+    return unless available?
+
     zones = all_zones
 
     resources.each_value do |resource|
@@ -45,6 +49,7 @@ Puppet::Type.type(:firewalld_zone).provide(
   def exists?
     @resource[:zone] = @resource[:name]
     return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+    return false unless available?
 
     execute_firewall_cmd(['--get-zones'], nil).split.include?(@resource[:name])
   end

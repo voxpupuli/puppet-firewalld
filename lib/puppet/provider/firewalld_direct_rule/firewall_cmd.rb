@@ -21,6 +21,8 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
   end
 
   def self.instances
+    return [] unless available?
+
     all_rules.map do |r|
       new(
         ensure: :present,
@@ -41,6 +43,8 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
   # above.
   #
   def self.prefetch(resources)
+    return unless available?
+
     rules = all_rules
 
     resources.each_value do |resource|
@@ -71,6 +75,7 @@ Puppet::Type.type(:firewalld_direct_rule).provide(
   # live query for those.
   def exists?
     return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+    return false unless available?
 
     @rule_args ||= generate_raw
     output = execute_firewall_cmd(['--direct', '--query-rule', @rule_args], nil, true, false)

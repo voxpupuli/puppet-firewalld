@@ -334,4 +334,8 @@ describe provider_class do
       expect(resource.provider.exists?).to be true
     end
   end
+
+  it_behaves_like 'a noop-safe firewalld provider', provider_class do
+    let(:noop_resource) { Puppet::Type.type(:firewalld_custom_service).new(name: 'noop', ensure: :present) }
+  end
 end

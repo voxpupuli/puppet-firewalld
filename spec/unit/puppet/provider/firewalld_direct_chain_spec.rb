@@ -72,4 +72,15 @@ describe provider_class do
       expect(provider.exists?).to be true
     end
   end
+
+  it_behaves_like 'a noop-safe firewalld provider', provider_class do
+    let(:noop_resource) do
+      Puppet::Type.type(:firewalld_direct_chain).new(
+        name: 'noop',
+        inet_protocol: 'ipv4',
+        table: 'filter',
+        ensure: :present,
+      )
+    end
+  end
 end

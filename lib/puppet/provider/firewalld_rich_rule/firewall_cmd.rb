@@ -27,6 +27,8 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   end
 
   def self.instances
+    return [] unless available?
+
     found = []
     zone_rich_rule_map.each do |zone, data|
       data['rich_rules'].each do |rule|
@@ -50,6 +52,8 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   # priority, family, source, destination, element, log, audit, action).
   #
   def self.prefetch(resources)
+    return unless available?
+
     # Only fetch what's actually referenced, in case a catalog only uses
     # zones or only uses policies.
     zones = (resources.each_value.any? { |r| r[:zone] != :unset }) ? zone_rich_rule_map : {}
@@ -76,6 +80,7 @@ Puppet::Type.type(:firewalld_rich_rule).provide(
   # prefetched state, so fall back to a live query for those.
   def exists?
     return @property_hash[:ensure] == :present if @property_hash.key?(:ensure)
+    return false unless available?
 
     @rule_args ||= build_rich_rule
     output = if @resource[:zone] == :unset

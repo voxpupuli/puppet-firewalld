@@ -109,4 +109,8 @@ describe provider_class do
       expect(zone.provider.exists?).to be true
     end
   end
+
+  it_behaves_like 'a noop-safe firewalld provider', provider_class do
+    let(:noop_resource) { Puppet::Type.type(:firewalld_zone).new(name: 'noop', ensure: :present) }
+  end
 end

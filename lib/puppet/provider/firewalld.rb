@@ -287,15 +287,18 @@ class Puppet::Provider::Firewalld < Puppet::Provider
     state == true
   end
 
-  # available? returns a true or false response as to whether firewalld is availabe.
-  # unlike online? it will only return false if it is unable to determine the status
-  # of firewalld, normally due to the fact that the package isn't installed yet.
+  # available? returns a true or false response as to whether firewalld is available.
+  # unlike online? it will only return false if the firewall-cmd / firewall-offline-cmd
+  # executables cannot be found, normally because the package is not installed yet.
   #
   def available?
     self.class.available?
   end
 
   def self.available?
-    !state.nil?
+    return true if Puppet::Util.which('firewall-cmd')
+    return true if Puppet::Util.which('firewall-offline-cmd')
+
+    false
   end
 end

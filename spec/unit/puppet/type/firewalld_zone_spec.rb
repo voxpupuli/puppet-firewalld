@@ -129,7 +129,7 @@ describe Puppet::Type.type(:firewalld_zone) do
       it 'creates' do
         expect(provider).to receive(:execute_firewall_cmd).with(['--new-zone', 'restricted'], nil)
         expect(provider).to receive(:execute_firewall_cmd).with(['--set-target', '%%REJECT%%'])
-        expect(provider).to receive(:execute_firewall_cmd).with(['--remove-icmp-block-inversion'], 'restricted')
+        expect(provider).not_to receive(:execute_firewall_cmd).with(['--remove-icmp-block-inversion'], 'restricted')
 
         expect(provider).to receive(:interfaces).and_return([])
         expect(provider).to receive(:execute_firewall_cmd).with(['--add-interface', 'eth0'])

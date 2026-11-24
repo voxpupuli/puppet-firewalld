@@ -30,13 +30,40 @@ describe provider_class do
         expect(resource).to receive(:[]).with(:protocols).and_return(nil).at_least(:once)
         expect(resource).to receive(:[]).with(:interfaces).and_return(['eth0']).at_least(:once)
         expect(resource).to receive(:[]).with(:icmp_blocks).and_return(nil).at_least(:once)
-        expect(resource).to receive(:[]).with(:icmp_block_inversion).and_return(false).at_least(:once)
+        expect(resource).to receive(:[]).with(:icmp_block_inversion).and_return(:false).at_least(:once)
         expect(resource).to receive(:[]).with(:description).and_return(nil).at_least(:once)
         expect(resource).to receive(:[]).with(:short).and_return('little description').at_least(:once)
         expect(provider).to receive(:execute_firewall_cmd).with(['--list-interfaces'])
         expect(provider).to receive(:execute_firewall_cmd).with(['--add-interface', 'eth0'])
         expect(provider).to receive(:execute_firewall_cmd).with(['--new-zone', 'white'], nil)
         expect(provider).to receive(:execute_firewall_cmd).with(['--set-short', 'little description'], 'white', true, false)
+        provider.create
+      end
+    end
+
+    # icmp_block_inversion defaults to the symbol :false, which is truthy, so
+    # create must not treat "set" as "enabled". firewall-offline-cmd exits 12
+    # (NOT_ENABLED) on --remove-icmp-block-inversion for a zone without it.
+    context 'with the default icmp_block_inversion' do
+      it 'does not remove icmp block inversion from the new zone' do
+        expect(resource[:icmp_block_inversion]).to eq(:false)
+        expect(provider).not_to receive(:execute_firewall_cmd).with(['--remove-icmp-block-inversion'], anything)
+        provider.create
+      end
+    end
+
+    context 'with icmp_block_inversion enabled' do
+      let(:resource) do
+        Puppet::Type.type(:firewalld_zone).new(
+          ensure: :present,
+          name: 'internal',
+          icmp_block_inversion: true,
+          provider: described_class.name,
+        )
+      end
+
+      it 'adds icmp block inversion to the new zone' do
+        expect(provider).to receive(:execute_firewall_cmd).with(['--add-icmp-block-inversion'], 'internal')
         provider.create
       end
     end

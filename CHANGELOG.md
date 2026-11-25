@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v6.2.0](https://github.com/voxpupuli/puppet-firewalld/tree/v6.2.0) (2026-11-25)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v6.1.0...v6.2.0)
+
+**Implemented enhancements:**
+
+- Update dependency puppetlabs/augeas\_core to v2 [\#420](https://github.com/voxpupuli/puppet-firewalld/pull/420) ([pccibot](https://github.com/pccibot))
+
+**Fixed bugs:**
+
+- firewalld\_zone: only apply icmp\_block\_inversion on create when true [\#422](https://github.com/voxpupuli/puppet-firewalld/pull/422) ([michael-riddle](https://github.com/michael-riddle))
+
 ## [v6.1.0](https://github.com/voxpupuli/puppet-firewalld/tree/v6.1.0) (2026-11-03)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-firewalld/compare/v6.0.0...v6.1.0)

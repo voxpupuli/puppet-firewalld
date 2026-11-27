@@ -69,6 +69,7 @@ Puppet::Type.type(:firewalld_zone).provide(
     self.icmp_block_inversion = :true if @resource[:icmp_block_inversion] == :true
     self.description = (@resource[:description]) if @resource[:description]
     self.short = (@resource[:short]) if @resource[:short]
+    self.forward = (@resource[:forward]) if @resource[:forward]
   end
 
   def destroy
@@ -149,6 +150,23 @@ Puppet::Type.type(:firewalld_zone).provide(
 
     execute_firewall_cmd(batch_flag('--add-protocol', missing_protocols)) unless missing_protocols.empty?
     execute_firewall_cmd(batch_flag('--remove-protocol', extraneous_protocols)) unless extraneous_protocols.empty?
+  end
+
+  def forward
+    if execute_firewall_cmd(['--query-forward'], @resource[:name], true, false).chomp == 'yes'
+      :true
+    else
+      :false
+    end
+  end
+
+  def forward=(bool)
+    case bool
+    when :true
+      execute_firewall_cmd(['--add-forward'], @resource[:name])
+    when :false
+      execute_firewall_cmd(['--remove-forward'], @resource[:name])
+    end
   end
 
   def masquerade
